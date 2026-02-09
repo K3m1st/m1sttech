@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>m1st | Security &amp; AI</title>
+<meta name="description" content="Security Researcher & AI Craftsman — Breaking and building intelligent systems.">
+<style>
+/* ============================================
+   CSS RESET & BASE
+   ============================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #07060b;
+  --bg-secondary: #0e0c15;
+  --bg-card: #13111c;
+  --bg-card-hover: #1a1727;
+  --text-primary: #e8e6f0;
+  --text-secondary: #9895a8;
+  --text-muted: #5d5a6e;
+  --accent: #a855f7;
+  --accent-dim: #7c3aed;
+  --accent-glow: rgba(168, 85, 247, 0.3);
+  --accent-glow-strong: rgba(168, 85, 247, 0.6);
+  --border: #1e1b2e;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) var(--bg-secondary);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #c084fc;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+/* ============================================
+   PARTICLE CANVAS
+   ============================================ */
+#particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(7, 6, 11, 0.8);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+nav.scrolled {
+  padding: 0.8rem 2rem;
+  background: rgba(7, 6, 11, 0.95);
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+.nav-logo span {
+  color: var(--text-muted);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.nav-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 .glitch {
+  position: relative;
+  display: inline-block;
+  color: var(--text-primary);
+}
+.hero h1 .glitch::before,
+.hero h1 .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+.hero h1 .glitch::before {
+  color: #ff00ff;
+  animation: glitch-1 4s infinite linear alternate-reverse;
+}
+.hero h1 .glitch::after {
+  color: #00ffff;
+  animation: glitch-2 4s infinite linear alternate-reverse;
+}
+
+.hero-typed {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  min-height: 1.7em;
+}
+.hero-typed .cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--accent);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.8s infinite;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-sans);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+.btn-primary:hover {
+  background: #b96ef7;
+  color: #fff;
+  box-shadow: 0 0 35px var(--accent-glow-strong);
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   SECTIONS (SHARED)
+   ============================================ */
+section {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 3rem;
+  font-size: 1.05rem;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.about-text p {
+  color: var(--text-secondary);
+  margin-bottom: 1.2rem;
+  font-size: 1.02rem;
+}
+.about-text p strong {
+  color: var(--text-primary);
+}
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.stat-card:hover {
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.08);
+}
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.3rem;
+}
+
+/* ============================================
+   SKILLS
+   ============================================ */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.skill-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2rem;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.skill-card:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.08);
+}
+.skill-icon {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.1);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.skill-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.skill-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.15);
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   PROJECTS
+   ============================================ */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.project-card:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(168, 85, 247, 0.08);
+}
+.project-banner {
+  height: 180px;
+  background: linear-gradient(135deg, var(--accent-dim), #4c1d95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+.project-body {
+  padding: 1.5rem;
+}
+.project-body h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.project-body p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin-bottom: 1rem;
+}
+.project-links {
+  display: flex;
+  gap: 1rem;
+}
+.project-links a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  transition: color 0.2s;
+}
+.project-links a:hover {
+  color: #c084fc;
+}
+
+/* ============================================
+   BLOG / WRITING
+   ============================================ */
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.blog-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.3s, transform 0.2s;
+  gap: 1rem;
+}
+.blog-item:hover {
+  border-color: var(--accent-dim);
+  transform: translateX(4px);
+}
+.blog-item h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.blog-item p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+.blog-meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ============================================
+   TIMELINE
+   ============================================ */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent-dim), var(--border), transparent);
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: 3rem;
+}
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -2rem;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: translateX(-4.5px);
+}
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.timeline-item h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.timeline-item h4 {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+.timeline-item p {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* ============================================
+   CONTACT
+   ============================================ */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.contact-info p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.contact-link:hover {
+  color: var(--accent);
+}
+.contact-link-icon {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  min-width: 20px;
+}
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.contact-form input,
+.contact-form textarea {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--accent-dim);
+}
+.contact-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+footer .footer-socials {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+footer .footer-socials a {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+footer .footer-socials a:hover {
+  color: var(--accent);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes glitch-1 {
+  0%, 88% { opacity: 0; }
+  89% { opacity: 0.6; transform: translate(-2px, -1px); clip-path: inset(20% 0 40% 0); }
+  90% { opacity: 0; }
+  94% { opacity: 0.4; transform: translate(2px, 1px); clip-path: inset(60% 0 10% 0); }
+  95% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes glitch-2 {
+  0%, 90% { opacity: 0; }
+  91% { opacity: 0.5; transform: translate(2px, 1px); clip-path: inset(40% 0 20% 0); }
+  92% { opacity: 0; }
+  96% { opacity: 0.3; transform: translate(-1px, -2px); clip-path: inset(10% 0 60% 0); }
+  97% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(7, 6, 11, 0.97);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem;
+    gap: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+  .about-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+  .blog-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  nav {
+    padding: 1rem;
+  }
+  section {
+    padding: 4rem 1.2rem;
+  }
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Particle Background -->
+<canvas id="particles"></canvas>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">m1st<span>_</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#writing">Writing</a></li>
+    <li><a href="#timeline">Timeline</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-label">// security researcher &amp; ai craftsman</div>
+  <h1>
+    <span class="glitch" data-text="Breaking &">Breaking &amp;</span><br>
+    <span class="glitch" data-text="Building">Building</span>
+    <span class="glitch" data-text="Intelligent" style="color: var(--accent);">Intelligent</span><br>
+    <span class="glitch" data-text="Systems.">Systems.</span>
+  </h1>
+  <div class="hero-typed">
+    <span id="typed"></span><span class="cursor"></span>
+  </div>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">View Work</a>
+    <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+  </div>
+</header>
+
+<!-- About -->
+<section id="about">
+  <div class="reveal">
+    <div class="section-label">01 // About</div>
+    <h2 class="section-title">Who I Am</h2>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>
+        I'm <strong>m1st</strong> &mdash; a security researcher and AI engineer operating at the
+        intersection of adversarial thinking and machine intelligence. I break systems
+        to understand them, and build systems that are harder to break.
+      </p>
+      <p>
+        My work spans offensive security, AI/ML model evaluation, vulnerability research,
+        and developing tools that leverage LLMs for defensive security operations.
+        I believe the best security comes from deeply understanding both sides.
+      </p>
+      <p>
+        When I'm not hunting bugs or training models, you'll find me contributing to
+        open-source security tools, writing about emerging threats, or speaking at
+        conferences about the convergence of AI and cybersecurity.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">CVEs Found</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">8+</div>
+        <div class="stat-label">Years Exp</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">20+</div>
+        <div class="stat-label">AI Models</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Talks Given</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section id="skills">
+  <div class="reveal">
+    <div class="section-label">02 // Skills &amp; Tools</div>
+    <h2 class="section-title">What I Work With</h2>
+    <p class="section-desc">Straddling the line between red team operations and AI engineering.</p>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">&gt;_</div>
+      <h3>Offensive Security</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Penetration testing, vulnerability research, exploit development, and red team operations.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">Burp Suite</span>
+        <span class="skill-tag">Ghidra</span>
+        <span class="skill-tag">Metasploit</span>
+        <span class="skill-tag">Cobalt Strike</span>
+        <span class="skill-tag">Frida</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">AI</div>
+      <h3>Machine Learning &amp; AI</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">LLM fine-tuning, adversarial ML, model security evaluation, and AI agent development.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">PyTorch</span>
+        <span class="skill-tag">Transformers</span>
+        <span class="skill-tag">LangChain</span>
+        <span class="skill-tag">ONNX</span>
+        <span class="skill-tag">MLflow</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">{}</div>
+      <h3>Development</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Building security tooling, APIs, and infrastructure for offensive and defensive operations.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">Go</span>
+        <span class="skill-tag">Rust</span>
+        <span class="skill-tag">TypeScript</span>
+        <span class="skill-tag">C</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#9651;</div>
+      <h3>Cloud &amp; Infrastructure</h3>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Cloud security assessment, container security, and infrastructure as code.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">AWS</span>
+        <span class="skill-tag">Kubernetes</span>
+        <span class="skill-tag">Terraform</span>
+        <span class="skill-tag">Docker</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="reveal">
+    <div class="section-label">03 // Projects</div>
+    <h2 class="section-title">Selected Work</h2>
+    <p class="section-desc">A few things I've built, broken, or both.</p>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-banner">01</div>
+      <div class="project-body">
+        <h3>SpecterAI</h3>
+        <p>AI-powered threat intelligence platform that correlates IOCs across multiple feeds using fine-tuned language models.</p>
+        <div class="skill-tags" style="margin-bottom: 1rem;">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">GPT-4</span>
+          <span class="skill-tag">FastAPI</span>
+        </div>
+        <div class="project-links">
+          <a href="#">[github]</a>
+          <a href="#">[live demo]</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-banner" style="background: linear-gradient(135deg, #4c1d95, #1e1b4b);">02</div>
+      <div class="project-body">
+        <h3>VulnForge</h3>
+        <p>Automated vulnerability scanner with ML-based false positive reduction. Reduced noise by 73% in production environments.</p>
+        <div class="skill-tags" style="margin-bottom: 1rem;">
+          <span class="skill-tag">Go</span>
+          <span class="skill-tag">TensorFlow</span>
+          <span class="skill-tag">gRPC</span>
+        </div>
+        <div class="project-links">
+          <a href="#">[github]</a>
+          <a href="#">[writeup]</a>
+        </div>
+      </div>
+    </div>
+    <div class="project-card reveal">
+      <div class="project-banner" style="background: linear-gradient(135deg, #581c87, #312e81);">03</div>
+      <div class="project-body">
+        <h3>RedPrompt</h3>
+        <p>Framework for evaluating LLM safety boundaries. Systematic adversarial prompt generation and model behavior analysis.</p>
+        <div class="skill-tags" style="margin-bottom: 1rem;">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">Anthropic API</span>
+          <span class="skill-tag">React</span>
+        </div>
+        <div class="project-links">
+          <a href="#">[github]</a>
+          <a href="#">[paper]</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Blog / Writing -->
+<section id="writing">
+  <div class="reveal">
+    <div class="section-label">04 // Writing</div>
+    <h2 class="section-title">Research &amp; Thoughts</h2>
+    <p class="section-desc">Published research, technical writeups, and conference talks.</p>
+  </div>
+  <div class="blog-list">
+    <a href="#" class="blog-item reveal">
+      <div>
+        <h3>Adversarial Attacks on LLM-Based Security Tools</h3>
+        <p>How attackers can manipulate AI-powered WAFs and IDS systems through carefully crafted inputs.</p>
+      </div>
+      <div class="blog-meta">2025.01</div>
+    </a>
+    <a href="#" class="blog-item reveal">
+      <div>
+        <h3>Zero-Day Discovery in Embedded IoT Firmware</h3>
+        <p>Walkthrough of finding and exploiting a critical RCE in a widely deployed smart home controller.</p>
+      </div>
+      <div class="blog-meta">2024.09</div>
+    </a>
+    <a href="#" class="blog-item reveal">
+      <div>
+        <h3>Building a Custom C2 Framework with AI-Driven Evasion</h3>
+        <p>DEF CON talk on leveraging transformer models for adaptive payload generation and AV evasion.</p>
+      </div>
+      <div class="blog-meta">2024.08</div>
+    </a>
+    <a href="#" class="blog-item reveal">
+      <div>
+        <h3>The Future of Red Teaming: Human + AI Collaboration</h3>
+        <p>How AI augmentation is changing the landscape of offensive security operations.</p>
+      </div>
+      <div class="blog-meta">2024.03</div>
+    </a>
+  </div>
+</section>
+
+<!-- Timeline -->
+<section id="timeline">
+  <div class="reveal">
+    <div class="section-label">05 // Experience</div>
+    <h2 class="section-title">Timeline</h2>
+    <p class="section-desc">Key milestones in the journey so far.</p>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2024 &mdash; Present</div>
+      <h3>Senior Security Researcher &amp; AI Engineer</h3>
+      <h4>Stealth Startup</h4>
+      <p>Leading AI-powered security product development. Building next-gen threat detection using large language models.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2022 &mdash; 2024</div>
+      <h3>Red Team Lead</h3>
+      <h4>Fortune 500 Tech Company</h4>
+      <p>Led adversarial operations against cloud infrastructure. Discovered critical vulnerabilities in production systems affecting millions of users.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2020 &mdash; 2022</div>
+      <h3>Security Researcher</h3>
+      <h4>Major Security Vendor</h4>
+      <p>Vulnerability research in embedded systems and IoT. Published 20+ CVEs. Spoke at Black Hat, DEF CON, and BSides.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2018 &mdash; 2020</div>
+      <h3>Penetration Tester</h3>
+      <h4>Boutique Consulting Firm</h4>
+      <p>Conducted security assessments across web, mobile, and network infrastructure for clients in finance and healthcare.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-date">2016 &mdash; 2018</div>
+      <h3>Bug Bounty Hunter</h3>
+      <h4>Independent</h4>
+      <p>Full-time bug bounty hunting. Top 100 on HackerOne. Found critical vulnerabilities in major tech platforms.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label">06 // Contact</div>
+    <h2 class="section-title">Let's Connect</h2>
+  </div>
+  <div class="contact-grid reveal">
+    <div class="contact-info">
+      <p>
+        Whether you need a security assessment, want to collaborate on AI research,
+        or just want to talk shop &mdash; I'm always open to interesting conversations.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:hello@example.com" class="contact-link">
+          <span class="contact-link-icon">&gt;</span>
+          hello@example.com
+        </a>
+        <a href="https://github.com" class="contact-link">
+          <span class="contact-link-icon">&gt;</span>
+          github.com/m1st
+        </a>
+        <a href="https://twitter.com" class="contact-link">
+          <span class="contact-link-icon">&gt;</span>
+          @m1st
+        </a>
+        <a href="https://linkedin.com" class="contact-link">
+          <span class="contact-link-icon">&gt;</span>
+          linkedin.com/in/m1st
+        </a>
+      </div>
+    </div>
+    <form class="contact-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Message Sent!'; this.querySelector('button').style.background='#22c55e';">
+      <input type="text" placeholder="Name" required>
+      <input type="email" placeholder="Email" required>
+      <textarea placeholder="Message" required></textarea>
+      <button type="submit" class="btn btn-primary" style="width: fit-content;">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-socials">
+    <a href="#">GitHub</a>
+    <a href="#">Twitter/X</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Email</a>
+  </div>
+  <p>&copy; 2025 m1st. All rights reserved.</p>
+</footer>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+// ---- Particle Background ----
+(function() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouse = { x: null, y: null };
+  const PARTICLE_COUNT = 80;
+  const CONNECTION_DIST = 150;
+  const MOUSE_DIST = 200;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  document.addEventListener('mousemove', function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.radius = Math.random() * 1.5 + 0.5;
+  }
+
+  Particle.prototype.update = function() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  };
+
+  Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+    ctx.fill();
+  };
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push(new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+
+      // Connect particles near each other
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < CONNECTION_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.08 * (1 - dist / CONNECTION_DIST)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+
+      // Mouse interaction
+      if (mouse.x !== null) {
+        const dx = particles[i].x - mouse.x;
+        const dy = particles[i].y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MOUSE_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.15 * (1 - dist / MOUSE_DIST)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ---- Typed Text Effect ----
+(function() {
+  const phrases = [
+    'Penetration Tester. AI Researcher. Builder.',
+    'Exploiting vulnerabilities. Shipping models.',
+    'Red team by day. Neural nets by night.',
+    'if (vulnerable) { exploit(); report(); fix(); }',
+    'Training models to think like adversaries.',
+  ];
+  const el = document.getElementById('typed');
+  let phraseIndex = 0;
+  let charIndex = 0;
+  let deleting = false;
+  let pauseTimer = 0;
+
+  function tick() {
+    const current = phrases[phraseIndex];
+    if (!deleting) {
+      el.textContent = current.substring(0, charIndex + 1);
+      charIndex++;
+      if (charIndex === current.length) {
+        pauseTimer = 60;
+        deleting = true;
+      }
+    } else {
+      if (pauseTimer > 0) {
+        pauseTimer--;
+        requestAnimationFrame(tick);
+        return;
+      }
+      el.textContent = current.substring(0, charIndex - 1);
+      charIndex--;
+      if (charIndex === 0) {
+        deleting = false;
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+      }
+    }
+    const speed = deleting ? 25 : 55;
+    setTimeout(tick, speed);
+  }
+  tick();
+})();
+
+// ---- Nav Scroll Effect ----
+(function() {
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 50) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+})();
+
+// ---- Mobile Nav Toggle ----
+(function() {
+  const toggle = document.getElementById('navToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function() {
+    links.classList.toggle('open');
+  });
+  links.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      links.classList.remove('open');
+    });
+  });
+})();
+
+// ---- Scroll Reveal ----
+(function() {
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  reveals.forEach(function(el) {
+    observer.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
