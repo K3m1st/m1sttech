@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>m1st | IRONTHREAD</title>
+<meta name="description" content="IRONTHREAD — Autonomous Offensive Security Agent Framework">
+<style>
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #07060b;
+  --bg-secondary: #0e0c15;
+  --bg-card: #13111c;
+  --bg-card-hover: #1a1727;
+  --text-primary: #e8e6f0;
+  --text-secondary: #9895a8;
+  --text-muted: #5d5a6e;
+  --accent: #a855f7;
+  --accent-dim: #7c3aed;
+  --accent-glow: rgba(168, 85, 247, 0.25);
+  --border: #1e1b2e;
+  --border-light: #2a2740;
+  --green: #34d399;
+  --green-dim: #059669;
+  --green-glow: rgba(52, 211, 153, 0.25);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  --topbar-height: 48px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) var(--bg-primary);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── TOP BAR ─────────────────────────────────── */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-height);
+  background: rgba(7, 6, 11, 0.92);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1.5rem;
+  z-index: 200;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  user-select: none;
+}
+
+.topbar-logo {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--text-muted); }
+
+.topbar-nav {
+  display: flex;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+.topbar-nav a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+.topbar-nav a:hover { color: var(--text-primary); }
+
+/* ── HERO ────────────────────────────────────── */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem 4rem;
+  overflow: hidden;
+}
+
+#particles-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 800px;
+}
+
+.ascii-container {
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.1vw, 0.75rem);
+  line-height: 1.35;
+  letter-spacing: 0.05em;
+  white-space: pre;
+  margin-bottom: 3rem;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ascii-frame { display: none; }
+.ascii-frame.active { display: block; }
+
+.c-oracle { color: var(--accent); }
+.c-elliot { color: var(--green); }
+.c-hub { color: var(--text-muted); }
+.c-data { color: var(--accent-dim); }
+.c-data2 { color: var(--green-dim); }
+.c-dim { color: #3a3650; }
+.c-bright { color: var(--text-primary); }
+
+.hero-title {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #c084fc 50%, var(--green) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  animation: pulse-down 2s ease-in-out infinite;
+}
+
+@keyframes pulse-down {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.8; transform: translateX(-50%) translateY(6px); }
+}
+
+/* ── SECTIONS ────────────────────────────────── */
+.section {
+  padding: 6rem 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.section-text {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 680px;
+  line-height: 1.8;
+}
+
+/* fade-in on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── ARCHITECTURE CARDS ──────────────────────── */
+.arch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.arch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.arch-card:hover {
+  transform: translateY(-2px);
+}
+.arch-card.oracle {
+  border-top: 2px solid var(--accent);
+}
+.arch-card.oracle:hover { border-color: var(--accent); }
+.arch-card.elliot {
+  border-top: 2px solid var(--green);
+}
+.arch-card.elliot:hover { border-color: var(--green); }
+
+.arch-card-name {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+.arch-card.oracle .arch-card-name { color: var(--accent); }
+.arch-card.elliot .arch-card-name { color: var(--green); }
+
+.arch-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.arch-handoff {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.arch-handoff p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.arch-handoff code {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.85rem;
+  background: rgba(168, 85, 247, 0.1);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+
+/* ── TOOL GRID ───────────────────────────────── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.tool-card:hover {
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+}
+
+.tool-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.tool-name {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.tool-desc {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ── BATTLE TESTED ───────────────────────────── */
+.battle-text {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  max-width: 680px;
+  margin-bottom: 1.5rem;
+}
+
+.battle-callout {
+  border-left: 3px solid var(--accent-dim);
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ── PRINCIPLES ──────────────────────────────── */
+.principles-list {
+  list-style: none;
+  counter-reset: principle;
+  margin-top: 1.5rem;
+}
+
+.principles-list li {
+  counter-increment: principle;
+  position: relative;
+  padding: 1rem 0 1rem 3.5rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  transition: color 0.2s;
+}
+.principles-list li:last-child { border-bottom: none; }
+.principles-list li:hover { color: var(--text-primary); }
+
+.principles-list li::before {
+  content: "0" counter(principle);
+  position: absolute;
+  left: 0;
+  top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  width: 2.5rem;
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  letter-spacing: 0.04em;
+}
+.footer-links a:hover { color: var(--accent); }
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 700px) {
+  .arch-grid { grid-template-columns: 1fr; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .ascii-container { font-size: 0.35rem; }
+  .section { padding: 4rem 1.25rem; }
+  #topbar { padding: 0 1rem; gap: 1rem; }
+  .topbar-nav { gap: 0.75rem; }
+  .topbar-nav a { font-size: 0.7rem; }
+}
+
+@media (max-width: 440px) {
+  .ascii-container { font-size: 0.28rem; }
+  .hero-title { letter-spacing: 0.08em; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ──────────────────────────────────── -->
+<nav id="topbar">
+  <a href="index.html" class="topbar-logo">m1st<span>_</span></a>
+  <div class="topbar-nav">
+    <a href="index.html">Portfolio</a>
+    <a href="blog.html">Writeups</a>
+    <a href="https://github.com/K3m1st" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<!-- ── HERO ────────────────────────────────────── -->
+<section id="hero">
+  <canvas id="particles-canvas"></canvas>
+  <div class="hero-content">
+    <div class="ascii-container" id="ascii-anim">
+
+      <!-- Frame 0: Idle / scanning -->
+      <div class="ascii-frame active" id="frame0"><span class="c-dim">                                                                          </span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |  </span><span class="c-data">recon</span><span class="c-oracle">     |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">analyze</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">|  HANDOFF  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">waiting</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">mapping</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">|  CHANNEL  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">........</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-dim">                                                                          </span></div>
+
+      <!-- Frame 1: Oracle sends contract -->
+      <div class="ascii-frame" id="frame1"><span class="c-dim">                                                                          </span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
+<span class="c-oracle">    |            |</span><span class="c-data">  ====>></span><span class="c-dim">..................    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-data">  ====>></span><span class="c-dim">  </span><span class="c-data">{contract}</span><span class="c-dim">        .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |  </span><span class="c-bright">SENDING</span><span class="c-oracle">   |</span><span class="c-data">  ====>></span><span class="c-dim">                .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">target:</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">waiting</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">10.10.x</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">| </span><span class="c-bright">ROUTING</span><span class="c-hub">   |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">........</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |  </span><span class="c-data">scope:web</span><span class="c-oracle"> |</span><span class="c-dim">    .    </span><span class="c-hub">|   </span><span class="c-data">>></span><span class="c-hub">      |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-dim">                                                                          </span></div>
+
+      <!-- Frame 2: Contract in transit / validating -->
+      <div class="ascii-frame" id="frame2"><span class="c-dim">                                                                          </span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |  </span><span class="c-data">awaiting</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">response</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">| </span><span class="c-bright">VALIDATE</span><span class="c-hub">  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">loading</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">........</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  </span><span class="c-data">sig:OK</span><span class="c-hub">   |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">contract</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">  </span><span class="c-data2">====>></span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    .                  </span><span class="c-data2">====>></span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    +============+</span><span class="c-dim">    ................</span><span class="c-data2">====>></span><span class="c-dim">    </span><span class="c-elliot">+============+</span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-dim">                                                                          </span></div>
+
+      <!-- Frame 3: Elliot executing -->
+      <div class="ascii-frame" id="frame3"><span class="c-dim">                                                                          </span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |  </span><span class="c-data">monitor</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-bright">EXPLOIT</span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">progress</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  HANDOFF  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">SQLi >></span><span class="c-elliot">  |</span>
+<span class="c-oracle">    |  </span><span class="c-data">........</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  CHANNEL  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">shell!</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">root #</span><span class="c-elliot">   |</span>
+<span class="c-oracle">    |            |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|            |</span>
+<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
+<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
+<span class="c-dim">                                                                          </span></div>
+
+    </div>
+
+    <h1 class="hero-title">IRONTHREAD</h1>
+    <p class="hero-subtitle">Autonomous Offensive Security Agent Framework</p>
+  </div>
+  <div class="hero-scroll-hint">SCROLL</div>
+</section>
+
+<!-- ── THE PROBLEM ─────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 01</div>
+  <h2 class="section-title">The Problem</h2>
+  <p class="section-text">
+    Pentesting chains multiple technologies &mdash; reconnaissance, web enumeration,
+    exploitation, post-access investigation. A generalist model does everything okay.
+    Specialists do each step better. Narrow and deep beats broad and shallow.
+    IRONTHREAD splits the work into purpose-built agents with strict boundaries,
+    connected by structured contracts that enforce sequencing and prevent scope creep.
+  </p>
+</section>
+
+<!-- ── ARCHITECTURE ────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 02</div>
+  <h2 class="section-title">Architecture</h2>
+  <div class="arch-grid">
+    <div class="arch-card oracle">
+      <div class="arch-card-name">Oracle</div>
+      <p class="arch-card-desc">
+        The strategic agent. Reconnaissance, analysis, attack surface mapping.
+        Decides <em>what</em> to attack and <em>why</em>. Builds a prioritized
+        target model and crafts scoped contracts for exploitation.
+      </p>
+    </div>
+    <div class="arch-card elliot">
+      <div class="arch-card-name">Elliot</div>
+      <p class="arch-card-desc">
+        The exploitation agent. Scoped attacks within defined boundaries.
+        Focused, fast, constrained. Receives a contract, executes the attack chain,
+        reports results. No wandering.
+      </p>
+    </div>
+  </div>
+  <div class="arch-handoff">
+    <p>
+      Connected by structured handoff contracts &mdash; <code>JSON</code> protocols
+      that enforce sequencing, validate signatures, and prevent scope creep.
+      Oracle thinks. Elliot acts. The channel keeps them honest.
+    </p>
+  </div>
+</section>
+
+<!-- ── TOOL LAYER ──────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 03</div>
+  <h2 class="section-title">Tool Layer</h2>
+  <p class="section-text" style="margin-bottom: 0.5rem;">
+    Four MCP tool servers provide the capability backbone.
+  </p>
+  <div class="tool-grid">
+    <div class="tool-card">
+      <span class="tool-icon">&#x25CE;</span>
+      <div class="tool-name">Reconnaissance</div>
+      <p class="tool-desc">Network scanning, port enumeration, service fingerprinting. The first look at the target.</p>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">&#x25CB;</span>
+      <div class="tool-name">Web Enumeration</div>
+      <p class="tool-desc">Directory brute-forcing, subdomain discovery, tech stack identification. Mapping the surface.</p>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">&#x2318;</span>
+      <div class="tool-name">Post-Access Investigation</div>
+      <p class="tool-desc">File system traversal, credential harvesting, privilege escalation paths. After the foothold.</p>
+    </div>
+    <div class="tool-card">
+      <span class="tool-icon">&#x2261;</span>
+      <div class="tool-name">Operational Memory</div>
+      <p class="tool-desc">Persistent storage across sessions. Findings, attack history, and learned patterns survive restarts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── BATTLE TESTED ───────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 04</div>
+  <h2 class="section-title">Battle-Tested</h2>
+  <p class="battle-text">
+    Validated against real HackTheBox machines. Full attack chains from recon to root,
+    autonomously. No human intervention between phases.
+  </p>
+  <div class="battle-callout">
+    Early testing exposed a critical gap &mdash; without handoff sequencing, agents burned
+    compute on rogue exploration. Elliot would wander off-scope, re-running recon instead
+    of exploiting. The fix &mdash; signed contracts with validation gates &mdash; is now a
+    core design principle. Failure drove the architecture.
+  </div>
+</section>
+
+<!-- ── DESIGN PRINCIPLES ──────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 05</div>
+  <h2 class="section-title">Design Principles</h2>
+  <ol class="principles-list">
+    <li>Split thinking from doing &mdash; strategy and execution are separate agents with separate contexts.</li>
+    <li>Structured handoffs prevent scope creep &mdash; JSON contracts with signatures and validation gates.</li>
+    <li>Persistent memory across sessions &mdash; operational knowledge survives restarts and compounds over time.</li>
+    <li>Human operator in the loop &mdash; autonomy within boundaries, escalation when confidence drops.</li>
+  </ol>
+</section>
+
+<!-- ── FOOTER ──────────────────────────────────── -->
+<footer>
+  <div class="footer-copy">m1st_ &copy; 2026</div>
+  <div class="footer-links">
+    <a href="https://github.com/K3m1st" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://x.com/x_k3m1st" target="_blank" rel="noopener">Twitter/X</a>
+    <a href="https://linkedin.com/in/kenn3thjr" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+// ── ASCII ANIMATION ──────────────────────────────
+(function() {
+  const frames = document.querySelectorAll('.ascii-frame');
+  let current = 0;
+  const delays = [2200, 1800, 1600, 2400]; // ms per frame
+  function nextFrame() {
+    frames[current].classList.remove('active');
+    current = (current + 1) % frames.length;
+    frames[current].classList.add('active');
+    setTimeout(nextFrame, delays[current]);
+  }
+  setTimeout(nextFrame, delays[0]);
+})();
+
+// ── PARTICLE BACKGROUND (hero only) ─────────────
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const N = 30;
+
+  function resize() {
+    const hero = document.getElementById('hero');
+    canvas.width = hero.offsetWidth;
+    canvas.height = hero.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function Particle() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.vx = (Math.random() - 0.5) * 0.25;
+    this.vy = (Math.random() - 0.5) * 0.25;
+    this.r = Math.random() * 1.0 + 0.3;
+  }
+  Particle.prototype.update = function() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+  };
+
+  for (let i = 0; i < N; i++) particles.push(new Particle());
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < N; i++) {
+      particles[i].update();
+      ctx.beginPath();
+      ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(168,85,247,0.35)';
+      ctx.fill();
+      for (let j = i + 1; j < N; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 150) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(168,85,247,' + (0.05 * (1 - d / 150)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ── SCROLL REVEAL ────────────────────────────────
+(function() {
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>m1st | Coming Soon</title>
-<meta name="description" content="Security Researcher & AI Craftsman — Portfolio coming soon.">
+<title>m1st | Security Researcher &amp; AI Craftsman</title>
+<meta name="description" content="Security Researcher & AI Craftsman — Portfolio, HTB Writeups, and Projects.">
 <style>
 *, *::before, *::after {
   margin: 0;
@@ -14,20 +14,22 @@
 
 :root {
   --bg-primary: #07060b;
+  --bg-secondary: #0e0c15;
+  --bg-card: #13111c;
+  --bg-card-hover: #1a1727;
   --text-primary: #e8e6f0;
   --text-secondary: #9895a8;
   --text-muted: #5d5a6e;
   --accent: #a855f7;
   --accent-dim: #7c3aed;
   --accent-glow: rgba(168, 85, 247, 0.3);
-  --accent-glow-strong: rgba(168, 85, 247, 0.6);
   --border: #1e1b2e;
-  --bg-card: #13111c;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
 }
 
 html {
+  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent-dim) var(--bg-primary);
 }
@@ -37,8 +39,7 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
-  overflow: hidden;
-  height: 100vh;
+  line-height: 1.7;
 }
 
 ::selection {
@@ -46,195 +47,344 @@ body {
   color: #fff;
 }
 
+a { color: inherit; text-decoration: none; }
+
+/* ── NAV ──────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: rgba(7, 6, 11, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  z-index: 100;
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+.nav-logo span { color: var(--text-muted); }
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ── PARTICLES ────────────────────────────────── */
 #particles {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   z-index: 0;
   pointer-events: none;
 }
 
-.container {
+/* ── HERO ─────────────────────────────────────── */
+.hero {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   text-align: center;
   padding: 2rem;
 }
 
-.logo {
+.hero-tag {
   font-family: var(--font-mono);
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 0.82rem;
   color: var(--accent);
-  letter-spacing: 0.05em;
-  margin-bottom: 3rem;
-}
-.logo span {
-  color: var(--text-muted);
-}
-
-h1 {
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: 1.5rem;
-}
-
-h1 .glitch {
-  position: relative;
-  display: inline-block;
-}
-h1 .glitch::before,
-h1 .glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
-h1 .glitch::before {
-  color: #ff00ff;
-  animation: glitch-1 4s infinite linear alternate-reverse;
-}
-h1 .glitch::after {
-  color: #00ffff;
-  animation: glitch-2 4s infinite linear alternate-reverse;
-}
-
-.tagline {
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-  min-height: 1.7em;
-}
-.tagline .cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1.05em;
-  background: var(--accent);
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  animation: blink 0.8s infinite;
-}
-
-.status {
-  margin-top: 3rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.2rem;
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent);
-  background: rgba(168, 85, 247, 0.08);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 50px;
-  padding: 0.5rem 1.2rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
 }
 
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-  box-shadow: 0 0 8px var(--accent-glow);
+.hero h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+.hero h1 .accent { color: var(--accent); }
+
+.hero-sub {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  max-width: 550px;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
 }
 
-.socials {
+.hero-links {
   display: flex;
   gap: 1.5rem;
-  margin-top: 0.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
 }
-.socials a {
+.hero-links a {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  text-decoration: none;
   transition: color 0.2s;
 }
-.socials a:hover {
+.hero-links a:hover { color: var(--accent); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1.2s forwards;
+}
+.scroll-hint::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 32px;
+  background: var(--accent-dim);
+  margin: 0.75rem auto 0;
+  animation: pulse-line 2s ease-in-out infinite;
+}
+
+/* ── SECTIONS ─────────────────────────────────── */
+section {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 2.5rem;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.section-desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+/* ── PROJECT CARDS ────────────────────────────── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2.5rem;
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  transition: border-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  text-decoration: none;
+  cursor: pointer;
+}
+.project-card:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.08);
+}
+
+.project-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.project-icon.purple { background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.25); }
+.project-icon.green  { background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.25); }
+.project-icon.amber  { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); }
+
+.project-content { flex: 1; }
+
+.project-name {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.project-name .arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  transition: transform 0.2s, color 0.2s;
+}
+.project-card:hover .arrow {
+  transform: translateX(4px);
   color: var(--accent);
 }
 
-.footer-line {
-  position: fixed;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
+.project-desc {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.project-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.project-tags span {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.2rem 0.5rem;
+}
+
+/* ── ABOUT ────────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.about-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2rem;
+}
+.about-card h3 {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+}
+.about-card p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.about-card ul {
+  list-style: none;
+  padding: 0;
+}
+.about-card ul li {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.about-card ul li:last-child { border-bottom: none; }
+
+/* ── FOOTER ───────────────────────────────────── */
+footer {
+  position: relative;
+  z-index: 1;
   text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border);
+}
+footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+footer .footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+footer .footer-links a:hover { color: var(--accent); }
+footer .copy {
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  z-index: 1;
 }
 
-/* Animations */
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.5); }
-}
-
-@keyframes glitch-1 {
-  0%, 88% { opacity: 0; }
-  89% { opacity: 0.6; transform: translate(-2px, -1px); clip-path: inset(20% 0 40% 0); }
-  90% { opacity: 0; }
-  94% { opacity: 0.4; transform: translate(2px, 1px); clip-path: inset(60% 0 10% 0); }
-  95% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-@keyframes glitch-2 {
-  0%, 90% { opacity: 0; }
-  91% { opacity: 0.5; transform: translate(2px, 1px); clip-path: inset(40% 0 20% 0); }
-  92% { opacity: 0; }
-  96% { opacity: 0.3; transform: translate(-1px, -2px); clip-path: inset(10% 0 60% 0); }
-  97% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-@keyframes fadeInUp {
+/* ── ANIMATIONS ───────────────────────────────── */
+@keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.fade-in {
-  animation: fadeInUp 0.8s ease forwards;
-  opacity: 0;
+@keyframes pulse-line {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
-.fade-in:nth-child(1) { animation-delay: 0.1s; }
-.fade-in:nth-child(2) { animation-delay: 0.3s; }
-.fade-in:nth-child(3) { animation-delay: 0.5s; }
-.fade-in:nth-child(4) { animation-delay: 0.7s; }
 
-@media (max-width: 480px) {
-  .container { padding: 1.5rem; }
-  h1 { font-size: 2rem; }
-  .socials { gap: 1rem; }
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links a { font-size: 0.78rem; }
+  section { padding: 4rem 1.5rem; }
+  .section-title { font-size: 1.8rem; }
+  .project-card { flex-direction: column; gap: 1.25rem; padding: 1.75rem; }
+  .about-grid { grid-template-columns: 1fr; }
+  .hero-links { flex-direction: column; gap: 0.75rem; }
 }
 </style>
 </head>
@@ -242,92 +392,164 @@ h1 .glitch::after {
 
 <canvas id="particles"></canvas>
 
-<div class="container">
-  <div class="logo fade-in">m1st<span>_</span></div>
-
-  <h1 class="fade-in">
-    <span class="glitch" data-text="Something">Something</span>
-    <span class="glitch" data-text="is" style="color: var(--accent);">is</span>
-    <span class="glitch" data-text="coming.">coming.</span>
-  </h1>
-
-  <div class="tagline fade-in">
-    <span id="typed"></span><span class="cursor"></span>
+<nav>
+  <div class="nav-logo">m1st<span>_</span></div>
+  <div class="nav-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="blog.html">Writeups</a>
+    <a href="https://github.com/K3m1st">GitHub</a>
   </div>
+</nav>
 
-  <div class="status fade-in">
-    <div class="status-badge">
-      <span class="pulse-dot"></span>
-      Under Construction
-    </div>
-    <div class="socials">
-      <a href="https://github.com/K3m1st">GitHub</a>
-      <a href="https://x.com/x_k3m1st">Twitter/X</a>
-      <a href="https://linkedin.com/in/kenn3thjr">LinkedIn</a>
-    </div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Security Researcher &amp; AI Craftsman</div>
+  <h1>I break things<br>to build them <span class="accent">better.</span></h1>
+  <p class="hero-sub">Offensive security, machine learning, and autonomous agent systems. UC Berkeley. Building at the intersection of AI and cybersecurity.</p>
+  <div class="hero-links">
+    <a href="https://github.com/K3m1st">GitHub</a>
+    <a href="https://x.com/x_k3m1st">Twitter/X</a>
+    <a href="https://linkedin.com/in/kenn3thjr">LinkedIn</a>
   </div>
+  <div class="scroll-hint">SCROLL</div>
 </div>
 
-<div class="footer-line">&copy; 2026 m1st</div>
+<!-- WORK -->
+<section id="work">
+  <div class="section-label reveal">// Featured Work</div>
+  <h2 class="section-title reveal">Projects</h2>
+  <p class="section-desc reveal">Things I've built, broken into, and shipped.</p>
+
+  <div class="projects-grid">
+    <a class="project-card reveal" href="ironthread.html">
+      <div class="project-icon purple">&#9876;</div>
+      <div class="project-content">
+        <div class="project-name">IRONTHREAD <span class="arrow">&rarr;</span></div>
+        <p class="project-desc">Autonomous offensive security agent framework. Two specialized AI agents &mdash; Oracle (strategy) and Elliot (exploitation) &mdash; orchestrated through structured handoff contracts. Built on the Model Context Protocol. Battle-tested on live HackTheBox machines.</p>
+        <div class="project-tags">
+          <span>AI Agents</span>
+          <span>MCP</span>
+          <span>Offensive Security</span>
+          <span>Python</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="mailmind.html">
+      <div class="project-icon green">&#9993;</div>
+      <div class="project-content">
+        <div class="project-name">MailMind <span class="arrow">&rarr;</span></div>
+        <p class="project-desc">Email phishing detection system evolved from Berkeley coursework into production. Character-level CNN (96K params) achieving 0.994 ROC-AUC. Deployed on bare metal polling Gmail in real-time with active learning and auto-quarantine.</p>
+        <div class="project-tags">
+          <span>PyTorch</span>
+          <span>CNN</span>
+          <span>Gmail API</span>
+          <span>Flask</span>
+          <span>Docker</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="project-card reveal" href="blog.html">
+      <div class="project-icon amber">&#128466;</div>
+      <div class="project-content">
+        <div class="project-name">HTB Writeups <span class="arrow">&rarr;</span></div>
+        <p class="project-desc">Detailed walkthroughs of HackTheBox machines &mdash; from recon to root. Covering SSRF chains, Active Directory attacks, CVE exploitation, container escapes, and more. 8 boxes documented with full attack paths and takeaways.</p>
+        <div class="project-tags">
+          <span>Pentesting</span>
+          <span>Active Directory</span>
+          <span>Linux</span>
+          <span>Windows</span>
+          <span>CVE Research</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">// About</div>
+  <h2 class="section-title reveal">Background</h2>
+  <p class="section-desc reveal">Security-focused engineer with a machine learning foundation.</p>
+
+  <div class="about-grid">
+    <div class="about-card reveal">
+      <h3>What I Do</h3>
+      <p>I research and build at the intersection of offensive security and AI. My work spans penetration testing, building autonomous security tooling, and developing ML systems that detect threats in production. I believe the best defenders understand offense.</p>
+    </div>
+    <div class="about-card reveal">
+      <h3>Stack</h3>
+      <ul>
+        <li>Python, Bash, PowerShell</li>
+        <li>PyTorch, scikit-learn, Flask</li>
+        <li>Kali Linux, Burp Suite, BloodHound</li>
+        <li>Wazuh, Suricata, Docker</li>
+        <li>Claude API, MCP, Agent Systems</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/K3m1st">GitHub</a>
+    <a href="https://x.com/x_k3m1st">Twitter/X</a>
+    <a href="https://linkedin.com/in/kenn3thjr">LinkedIn</a>
+  </div>
+  <div class="copy">&copy; 2026 m1st</div>
+</footer>
 
 <script>
-// Particle Background
+// ── PARTICLES ────────────────────────────────────
 (function() {
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
   let particles = [];
   let mouse = { x: null, y: null };
-  const PARTICLE_COUNT = 80;
-  const CONNECTION_DIST = 150;
-  const MOUSE_DIST = 200;
+  const N = 70;
+  const CONNECT = 140;
+  const MOUSE_DIST = 180;
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
   resize();
   window.addEventListener('resize', resize);
-  document.addEventListener('mousemove', function(e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
+  document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
   function Particle() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
-    this.vx = (Math.random() - 0.5) * 0.4;
-    this.vy = (Math.random() - 0.5) * 0.4;
-    this.radius = Math.random() * 1.5 + 0.5;
+    this.vx = (Math.random() - 0.5) * 0.35;
+    this.vy = (Math.random() - 0.5) * 0.35;
+    this.r = Math.random() * 1.3 + 0.5;
   }
   Particle.prototype.update = function() {
-    this.x += this.vx;
-    this.y += this.vy;
+    this.x += this.vx; this.y += this.vy;
     if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
     if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
   };
-  Particle.prototype.draw = function() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
-    ctx.fill();
-  };
 
-  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+  for (let i = 0; i < N; i++) particles.push(new Particle());
 
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < particles.length; i++) {
+    for (let i = 0; i < N; i++) {
       particles[i].update();
-      particles[i].draw();
-      for (let j = i + 1; j < particles.length; j++) {
+      ctx.beginPath();
+      ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(168, 85, 247, 0.4)';
+      ctx.fill();
+      for (let j = i + 1; j < N; j++) {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < CONNECTION_DIST) {
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < CONNECT) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.08 * (1 - dist / CONNECTION_DIST)) + ')';
+          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.07 * (1 - d / CONNECT)) + ')';
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -335,12 +557,12 @@ h1 .glitch::after {
       if (mouse.x !== null) {
         const dx = particles[i].x - mouse.x;
         const dy = particles[i].y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < MOUSE_DIST) {
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < MOUSE_DIST) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.15 * (1 - dist / MOUSE_DIST)) + ')';
+          ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.12 * (1 - d / MOUSE_DIST)) + ')';
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -351,32 +573,17 @@ h1 .glitch::after {
   animate();
 })();
 
-// Typed Text
+// ── SCROLL REVEAL ────────────────────────────────
 (function() {
-  const phrases = [
-    'Security Researcher & AI Craftsman.',
-    'Portfolio under construction...',
-    'Building something worth showing.',
-    'Check back soon.',
-  ];
-  const el = document.getElementById('typed');
-  let phraseIndex = 0, charIndex = 0, deleting = false, pauseTimer = 0;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
 
-  function tick() {
-    const current = phrases[phraseIndex];
-    if (!deleting) {
-      el.textContent = current.substring(0, charIndex + 1);
-      charIndex++;
-      if (charIndex === current.length) { pauseTimer = 80; deleting = true; }
-    } else {
-      if (pauseTimer > 0) { pauseTimer--; requestAnimationFrame(tick); return; }
-      el.textContent = current.substring(0, charIndex - 1);
-      charIndex--;
-      if (charIndex === 0) { deleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; }
-    }
-    setTimeout(tick, deleting ? 25 : 55);
-  }
-  tick();
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 })();
 </script>
 </body>
