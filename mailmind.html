@@ -924,34 +924,34 @@ footer .footer-socials a:hover {
     <div class="scan-result result-phish" style="animation: showResult 5s ease-in-out infinite 2.5s;">&#10007;</div>
   </div>
   <h1 class="reveal" style="margin-top: 2rem;">MailMind</h1>
-  <p class="hero-subtitle reveal">From Homework to Production &mdash; Building an Email Phishing Classifier</p>
+  <p class="hero-subtitle reveal">What happens when you take a Berkeley homework assignment and point it at your own inbox</p>
 </div>
 
 <!-- Section 1: The Story -->
 <section id="story">
   <div class="reveal">
     <div class="section-label">01 // The Story</div>
-    <h2 class="section-title">Evolution of a Classifier</h2>
-    <p class="section-desc">What started as a machine learning homework assignment became a real-world phishing detection system running on a home server.</p>
+    <h2 class="section-title">From Homework to Homelab</h2>
+    <p class="section-desc">My Gmail address has been on the darkweb for years. Same phishing campaigns, same credential theft attempts, same CarShield and Fidelity Life scams cycling through on repeat. When a Berkeley ML homework asked me to build a Naive Bayes text classifier, I thought: why train on a textbook dataset when I have a real one sitting in my inbox?</p>
   </div>
   <div class="story-timeline">
     <div class="phase-card reveal">
       <div class="phase-badge">1</div>
       <div class="phase-meta">Berkeley ML Coursework</div>
-      <h3>Naive Bayes Text Classification</h3>
-      <p>Implemented a Naive Bayes classifier from scratch on the 20 Newsgroups dataset. Learned the fundamentals of text vectorization, conditional probability, and evaluation metrics that would later drive MailMind.</p>
+      <h3>The Spark</h3>
+      <p>Implemented a Naive Bayes classifier on the 20 Newsgroups dataset for Berkeley MICS. Text vectorization, conditional probability, evaluation metrics. Standard homework &mdash; but the idea wouldn't leave my head: what if I pointed this at real email?</p>
     </div>
     <div class="phase-card reveal">
       <div class="phase-badge">2</div>
-      <div class="phase-meta">MailMind V1</div>
-      <h3>NB Classifier on Real Gmail</h3>
-      <p>Ported the Naive Bayes approach to real email data. Hand-labeled 585 emails from personal Gmail. Deployed on an HP Mini PC as a home phishing detection server. Achieved 0.850 phishing F1 and 0.983 ROC-AUC.</p>
+      <div class="phase-meta">MailMind V1 &mdash; The 3-Day Sprint</div>
+      <h3>Naive Bayes on Real Gmail</h3>
+      <p>Built the entire pipeline in 72 hours &mdash; IMAP ingestion, preprocessing, classifier, Flask dashboard, auto-quarantine poller, Docker deployment. Ported the homework code directly into production. First attempt used 17,536 synthetic emails from HuggingFace. Looked amazing in testing: 0.97 F1. <strong>Deployed against real Gmail: 59% of legitimate emails flagged as phishing.</strong> Synthetic data poisoned the model. Pivoted to pure Gmail data &mdash; 64 hand-labeled emails outperformed 17,536 synthetic ones. Scaled to 585 labels with active learning.</p>
     </div>
     <div class="phase-card reveal">
       <div class="phase-badge">3</div>
-      <div class="phase-meta">MailMind V2</div>
+      <div class="phase-meta">MailMind V2 &mdash; Going Deeper</div>
       <h3>Character-Level CNN</h3>
-      <p>Rebuilt with a character-level convolutional neural network. Expanded dataset to 840 emails with 6 augmentation strategies. Added an interactive Streamlit dashboard. Hit 0.973 phishing F1 and 0.994 ROC-AUC.</p>
+      <p>NB plateau'd at 81% phishing recall. Rebuilt with a 96K-parameter character-level CNN with multi-scale convolutions. Expanded dataset to 840 emails by auditing Gmail's spam folder &mdash; pulled 263 emails, manually reviewed each one, removed 8 false positives, kept 255 genuine phishing. No synthetic data. Real data, carefully labeled.</p>
     </div>
   </div>
 </section>
@@ -961,7 +961,7 @@ footer .footer-socials a:hover {
   <div class="reveal">
     <div class="section-label">02 // Model Comparison</div>
     <h2 class="section-title">CNN vs. Naive Bayes</h2>
-    <p class="section-desc">Head-to-head performance across key classification metrics. Toggle between the original and expanded datasets.</p>
+    <p class="section-desc">Same stratified 5-fold cross-validation splits, augmentation applied inside folds to prevent data leakage. Toggle between datasets to see how data expansion (not model architecture) drove the biggest gains.</p>
   </div>
 
   <div class="reveal">
@@ -1130,6 +1130,23 @@ footer .footer-socials a:hover {
   </div>
 </section>
 
+<!-- Section 7: Honest Limitations -->
+<section id="honest" style="max-width: 780px; margin: 0 auto; padding: 4rem 2rem;">
+  <div class="reveal">
+    <div class="section-label">07 // What This Actually Is</div>
+    <h2 class="section-title">A Proof of Concept, Not a Product</h2>
+    <p class="section-desc" style="max-width: 100%;">
+      Let me be honest about what MailMind is and isn't. My inbox is predictable &mdash; the same phishing campaigns have been hitting it for years. CarShield, Fidelity Life, Endurance Warranty, credential theft templates that barely change between runs. Many of the Gmail-collected phishing emails come from the same spam campaigns, which means near-duplicate emails likely appear across train and test folds. The 0.994 ROC-AUC should be interpreted with that caveat.
+    </p>
+    <p class="section-desc" style="max-width: 100%; margin-top: 1rem;">
+      At 250 hand-labeled emails, model performance <em>dropped</em>. Not because the model got worse &mdash; because my labels got worse. Twenty emails were mislabeled: aggressive marketing (PlayStation deals, gaming promotions) marked as phishing. Same senders had opposite labels. <strong>Fixing 20 labels improved F1 more than adding 100 new ones.</strong> That's the real lesson of this project. Not the CNN architecture. Not the augmentation pipeline. Understanding your data matters more than tuning hyperparameters.
+    </p>
+    <p class="section-desc" style="max-width: 100%; margin-top: 1rem;">
+      V2 has never been deployed as a live filter. V1 ran on an HP Mini PC auto-quarantining emails &mdash; V2 exists as a research artifact. The boundary between "phishing" and "aggressive spam" is subjective. 840 emails is small by ML standards. Performance on novel phishing tactics is unknown. This project taught me more about the practice of machine learning than any course &mdash; but it's a proof of concept built from homework, not a production security tool.
+    </p>
+  </div>
+</section>
+
 <!-- Footer -->
 <footer>
   <div class="footer-socials">
@@ -1137,7 +1154,7 @@ footer .footer-socials a:hover {
     <a href="index.html">Portfolio</a>
     <a href="blog.html">Writeups</a>
   </div>
-  <p>&copy; 2025 m1st. All rights reserved.</p>
+  <p>&copy; 2026 m1st</p>
 </footer>
 
 <!-- ============================================

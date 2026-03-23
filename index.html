@@ -245,6 +245,7 @@ section {
 .project-icon.purple { background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.25); }
 .project-icon.green  { background: rgba(74, 222, 128, 0.12); border: 1px solid rgba(74, 222, 128, 0.25); }
 .project-icon.amber  { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); }
+.project-icon.blue   { background: rgba(96, 165, 250, 0.12); border: 1px solid rgba(96, 165, 250, 0.25); }
 
 .project-content { flex: 1; }
 
@@ -451,6 +452,21 @@ footer .copy {
       </div>
     </a>
 
+    <a class="project-card reveal" href="homelab.html">
+      <div class="project-icon blue">&#128737;</div>
+      <div class="project-content">
+        <div class="project-name">Homelab &amp; TriageAgent <span class="arrow">&rarr;</span></div>
+        <p class="project-desc">Six-layer defensive security infrastructure &mdash; Pi-Hole DNS filtering, Suricata IDS, Wazuh SIEM, and an AI-powered triage pipeline. TriageAgent enriches alerts with GeoIP and reputation data, then sends them through Claude for structured analysis and MITRE ATT&amp;CK mapping.</p>
+        <div class="project-tags">
+          <span>Suricata</span>
+          <span>Wazuh</span>
+          <span>Claude API</span>
+          <span>Python</span>
+          <span>Docker</span>
+        </div>
+      </div>
+    </a>
+
     <a class="project-card reveal" href="blog.html">
       <div class="project-icon amber">&#128466;</div>
       <div class="project-content">
@@ -485,7 +501,7 @@ footer .copy {
         <li>Python, Bash, PowerShell</li>
         <li>PyTorch, scikit-learn, Flask</li>
         <li>Kali Linux, Burp Suite, BloodHound</li>
-        <li>Wazuh, Suricata, Docker</li>
+        <li>Wazuh SIEM, Suricata IDS, Docker</li>
         <li>Claude API, MCP, Agent Systems</li>
       </ul>
     </div>

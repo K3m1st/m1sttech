@@ -122,22 +122,86 @@ a { color: inherit; text-decoration: none; }
   max-width: 800px;
 }
 
-.ascii-container {
+/* ── TERMINAL WINDOW ─────────────────────────── */
+.terminal {
+  --term-columns: 74;
+  --term-char-w: 7.2px;
+  --term-char-h: 16.6px;
+  --term-rows: 14;
+  --term-padding: 10px;
+  --term-header-h: 36px;
+
+  width: calc((var(--term-columns) * var(--term-char-w)) + (2 * var(--term-padding)) + 2px);
+  max-width: 95vw;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(168,85,247,0.08);
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  height: var(--term-header-h);
+  padding: 0 12px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  position: relative;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 8px;
+  z-index: 1;
+}
+.terminal-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.terminal-dots span:nth-child(1) { background: #ff605c; }
+.terminal-dots span:nth-child(2) { background: #ffbd44; }
+.terminal-dots span:nth-child(3) { background: #00ca4e; }
+
+.terminal-title {
+  position: absolute;
+  left: 0; right: 0;
+  text-align: center;
   font-family: var(--font-mono);
-  font-size: clamp(0.45rem, 1.1vw, 0.75rem);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.terminal-content {
+  padding: var(--term-padding);
+  font-family: var(--font-mono);
   line-height: 1.35;
   letter-spacing: 0.05em;
   white-space: pre;
-  margin-bottom: 3rem;
-  min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
+  min-height: calc(var(--term-rows) * var(--term-char-h));
+  color: var(--text-muted);
 }
 
-.ascii-frame { display: none; }
-.ascii-frame.active { display: block; }
+/* Responsive terminal sizing */
+.terminal.size-small .terminal-content { font-size: 12px; }
+.terminal.size-tiny .terminal-content { font-size: 10px; }
+.terminal.size-xtiny .terminal-content { font-size: 6px; }
 
+.terminal.size-tiny {
+  --term-char-w: 6px;
+  --term-char-h: 13.8px;
+}
+.terminal.size-xtiny {
+  --term-char-w: 3.6px;
+  --term-char-h: 9px;
+}
+
+/* Frame color classes */
 .c-oracle { color: var(--accent); }
 .c-elliot { color: var(--green); }
 .c-hub { color: var(--text-muted); }
@@ -145,6 +209,9 @@ a { color: inherit; text-decoration: none; }
 .c-data2 { color: var(--green-dim); }
 .c-dim { color: #3a3650; }
 .c-bright { color: var(--text-primary); }
+.c-blue { color: #60a5fa; }
+.c-cursor { color: var(--accent); animation: blink-cursor 1s step-end infinite; }
+@keyframes blink-cursor { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
 .hero-title {
   font-family: var(--font-mono);
@@ -251,6 +318,11 @@ a { color: inherit; text-decoration: none; }
   border-top: 2px solid var(--green);
 }
 .arch-card.elliot:hover { border-color: var(--green); }
+.arch-card.noire {
+  border-top: 2px solid #60a5fa;
+}
+.arch-card.noire:hover { border-color: #60a5fa; }
+.arch-card.noire .arch-card-name { color: #60a5fa; }
 
 .arch-card-name {
   font-family: var(--font-mono);
@@ -414,7 +486,6 @@ footer {
 @media (max-width: 700px) {
   .arch-grid { grid-template-columns: 1fr; }
   .tool-grid { grid-template-columns: 1fr; }
-  .ascii-container { font-size: 0.35rem; }
   .section { padding: 4rem 1.25rem; }
   #topbar { padding: 0 1rem; gap: 1rem; }
   .topbar-nav { gap: 0.75rem; }
@@ -422,7 +493,6 @@ footer {
 }
 
 @media (max-width: 440px) {
-  .ascii-container { font-size: 0.28rem; }
   .hero-title { letter-spacing: 0.08em; }
 }
 </style>
@@ -443,68 +513,12 @@ footer {
 <section id="hero">
   <canvas id="particles-canvas"></canvas>
   <div class="hero-content">
-    <div class="ascii-container" id="ascii-anim">
-
-      <!-- Frame 0: Idle / scanning -->
-      <div class="ascii-frame active" id="frame0"><span class="c-dim">                                                                          </span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |  </span><span class="c-data">recon</span><span class="c-oracle">     |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">analyze</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">|  HANDOFF  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">waiting</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">mapping</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">|  CHANNEL  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">........</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-dim">                                                                          </span></div>
-
-      <!-- Frame 1: Oracle sends contract -->
-      <div class="ascii-frame" id="frame1"><span class="c-dim">                                                                          </span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
-<span class="c-oracle">    |            |</span><span class="c-data">  ====>></span><span class="c-dim">..................    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-data">  ====>></span><span class="c-dim">  </span><span class="c-data">{contract}</span><span class="c-dim">        .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |  </span><span class="c-bright">SENDING</span><span class="c-oracle">   |</span><span class="c-data">  ====>></span><span class="c-dim">                .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">target:</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">waiting</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">10.10.x</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">| </span><span class="c-bright">ROUTING</span><span class="c-hub">   |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">........</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |  </span><span class="c-data">scope:web</span><span class="c-oracle"> |</span><span class="c-dim">    .    </span><span class="c-hub">|   </span><span class="c-data">>></span><span class="c-hub">      |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-dim">                                                                          </span></div>
-
-      <!-- Frame 2: Contract in transit / validating -->
-      <div class="ascii-frame" id="frame2"><span class="c-dim">                                                                          </span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |  </span><span class="c-data">awaiting</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">standby</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">response</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">| </span><span class="c-bright">VALIDATE</span><span class="c-hub">  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">loading</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">........</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  </span><span class="c-data">sig:OK</span><span class="c-hub">   |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">contract</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">  </span><span class="c-data2">====>></span><span class="c-elliot">|  </span><span class="c-data2">________</span><span class="c-elliot"> |</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    .                  </span><span class="c-data2">====>></span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    +============+</span><span class="c-dim">    ................</span><span class="c-data2">====>></span><span class="c-dim">    </span><span class="c-elliot">+============+</span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-dim">                                                                          </span></div>
-
-      <!-- Frame 3: Elliot executing -->
-      <div class="ascii-frame" id="frame3"><span class="c-dim">                                                                          </span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-oracle">    +============+</span><span class="c-dim">                              </span><span class="c-elliot">+============+</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    ........................    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    |  </span><span class="c-bright">ORACLE</span><span class="c-oracle">    |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|   </span><span class="c-bright">ELLIOT</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |  </span><span class="c-data">monitor</span><span class="c-oracle">   |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-bright">EXPLOIT</span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">progress</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  HANDOFF  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">SQLi >></span><span class="c-elliot">  |</span>
-<span class="c-oracle">    |  </span><span class="c-data">........</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">|  CHANNEL  |</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">shell!</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |  </span><span class="c-data">________</span><span class="c-oracle">  |</span><span class="c-dim">    .    </span><span class="c-hub">+-----------+</span><span class="c-dim">    .    </span><span class="c-elliot">|  </span><span class="c-data2">root #</span><span class="c-elliot">   |</span>
-<span class="c-oracle">    |            |</span><span class="c-dim">    .                      .    </span><span class="c-elliot">|            |</span>
-<span class="c-oracle">    +============+</span><span class="c-dim">    ........................    </span><span class="c-elliot">+============+</span>
-<span class="c-dim">         .  .     .       .    .        .       .     .  .                 </span>
-<span class="c-dim">                                                                          </span></div>
-
+    <div class="terminal size-small" id="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dots"><span></span><span></span><span></span></div>
+        <div class="terminal-title">ironthread -- oracle@m1st</div>
+      </div>
+      <div class="terminal-content" id="ascii-anim"></div>
     </div>
 
     <h1 class="hero-title">IRONTHREAD</h1>
@@ -518,101 +532,150 @@ footer {
   <div class="section-label">// 01</div>
   <h2 class="section-title">The Problem</h2>
   <p class="section-text">
-    Pentesting chains multiple technologies &mdash; reconnaissance, web enumeration,
-    exploitation, post-access investigation. A generalist model does everything okay.
-    Specialists do each step better. Narrow and deep beats broad and shallow.
-    IRONTHREAD splits the work into purpose-built agents with strict boundaries,
-    connected by structured contracts that enforce sequencing and prevent scope creep.
+    A single penetration test touches a dozen technologies. I've chained SSRF through three internal services to recover Tomcat credentials, deployed a WAR shell, then pivoted to a kernel exploit for root &mdash; every step a different domain. A generalist model can do all of that <em>okay</em>. But a reconnaissance specialist would know every enumeration technique for that exact service version. A Linux privesc agent would instantly map kernel version to exploit. Narrow and deep beats broad and shallow.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    IRONTHREAD splits offensive operations into purpose-built agents, each with strict boundaries and domain-specific tooling, connected by structured contracts that enforce sequencing. The question isn't whether AI can hack &mdash; it's whether you can orchestrate multiple AI agents to think strategically, execute precisely, and not step on each other.
   </p>
 </section>
 
 <!-- ── ARCHITECTURE ────────────────────────────── -->
 <section class="section reveal">
   <div class="section-label">// 02</div>
-  <h2 class="section-title">Architecture</h2>
+  <h2 class="section-title">Three Agents, One Loop</h2>
   <div class="arch-grid">
     <div class="arch-card oracle">
       <div class="arch-card-name">Oracle</div>
       <p class="arch-card-desc">
-        The strategic agent. Reconnaissance, analysis, attack surface mapping.
-        Decides <em>what</em> to attack and <em>why</em>. Builds a prioritized
-        target model and crafts scoped contracts for exploitation.
+        The strategic command layer. Uses MCP tool servers &mdash; Sova for reconnaissance, WebDig for web enumeration &mdash; to scan targets, research CVEs, decompose vulnerability primitives into all valid delivery forms, and map attack surfaces. Oracle never executes exploits &mdash; it thinks, scans, prioritizes, and authorizes. When recon is complete, Oracle generates a scoped handoff contract and deploys Elliot. After Elliot obtains access, Oracle deploys Noire for post-access investigation. When Noire reports back, Oracle scopes the final Elliot deployment for privilege escalation. Every brief follows a mandatory format: executive summary, full detail, one recommendation.
       </p>
     </div>
     <div class="arch-card elliot">
       <div class="arch-card-name">Elliot</div>
       <p class="arch-card-desc">
-        The exploitation agent. Scoped attacks within defined boundaries.
-        Focused, fast, constrained. Receives a contract, executes the attack chain,
-        reports results. No wandering.
+        The exploitation specialist. Deployed twice per engagement: first for initial access (web exploitation, credential extraction, shell access), then again for privilege escalation after Noire's investigation. Each deployment receives a scoped contract from Oracle defining the objective, authorized targets, stop conditions, and a turn budget. Validates the contract before touching a single tool. Operates within boundaries &mdash; when encountering out-of-scope surface, logs it as <code>[NEW SURFACE]</code> and continues the objective. Three failed attempts on any path triggers mandatory research before retrying. Turn budget is an absolute ceiling.
+      </p>
+    </div>
+  </div>
+  <div class="arch-grid" style="grid-template-columns: 1fr; margin-top: 0;">
+    <div class="arch-card" style="border-top: 2px solid #60a5fa;">
+      <div class="arch-card-name" style="color: #60a5fa;">Noire</div>
+      <p class="arch-card-desc">
+        The post-access investigator. Deployed by Oracle after Elliot establishes a foothold. Maps the local environment: users, sudo rights, SUID binaries, cron jobs, running services, credential files, SSH keys, misconfigurations. Ranks privilege escalation leads by evidence and yield. Critically, Noire <em>investigates but never escalates</em> &mdash; the boundary between "mapping what's here" and "trying to get in" is enforced. Findings go back to Oracle, who uses them to scope Elliot's final privilege escalation contract.
       </p>
     </div>
   </div>
   <div class="arch-handoff">
     <p>
-      Connected by structured handoff contracts &mdash; <code>JSON</code> protocols
-      that enforce sequencing, validate signatures, and prevent scope creep.
-      Oracle thinks. Elliot acts. The channel keeps them honest.
+      The full operational loop: <strong>Oracle</strong> (recon via MCP tools) &rarr; <strong>Elliot</strong> (exploit &amp; gain user access) &rarr; <strong>Oracle</strong> (assess, deploy Noire) &rarr; <strong>Noire</strong> (enumerate privesc vectors) &rarr; <strong>Oracle</strong> (scope privesc contract) &rarr; <strong>Elliot</strong> (privilege escalation &amp; root). Agents communicate through <strong>handoff contracts</strong> &mdash; JSON documents that define objective, scope boundaries, stop conditions, turn budgets, and explicit authorization flags. Elliot and Noire both validate their contracts before executing &mdash; if <code>authorized &ne; true</code>, they hard-stop. The operator confirms every major phase transition. No agent self-authorizes the next move.
     </p>
   </div>
 </section>
 
-<!-- ── TOOL LAYER ──────────────────────────────── -->
+<!-- ── FROM PROMPTS TO CONTRACTS ───────────────── -->
 <section class="section reveal">
   <div class="section-label">// 03</div>
+  <h2 class="section-title">From Prompts to Contracts</h2>
+  <p class="section-text">
+    The first version of IRONTHREAD was pure prompt engineering &mdash; five separate agent sessions with long system prompts defining roles, boundaries, and protocols. It worked, until it didn't. During a live test on an HTB machine, the exploitation agent burned 300,000 tokens on rogue exploration because the prompt said "stay in scope" but nothing <em>enforced</em> it.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    That failure drove a fundamental architectural shift: <strong>prompt obedience is useful, but not durable.</strong> Mission-critical behavior &mdash; scope boundaries, authorization gates, phase sequencing &mdash; moved out of prompts and into structured state. The pattern:
+  </p>
+  <div class="battle-callout" style="margin: 1.5rem 0;">
+    <code>prompt instruction</code> &rarr; <code>external contract</code> &rarr; <code>validation gate</code> &rarr; <code>logged decision</code>
+  </div>
+  <p class="section-text">
+    "Elliot must stay in scope" became a <code>handoff.json</code> with explicit <code>in_scope</code>, <code>out_of_scope</code>, and <code>stop_conditions</code> fields that Elliot validates before executing. "Oracle must recommend one next move" became a mandatory brief format with exactly one recommendation. The prompts still matter &mdash; they shape judgment, tone, and adaptation. But control lives in contracts, schemas, and gates. This is the bridge from PoC to infrastructure.
+  </p>
+</section>
+
+<!-- ── OPERATIONAL MEMORY ─────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 04</div>
+  <h2 class="section-title">Operational Memory</h2>
+  <p class="section-text">
+    Multi-session offensive operations lose context between sessions. An agent that found three credentials and mapped two attack paths in Session 3 starts Session 4 blind. The prompt can carry some of this, but prompts have limits &mdash; and stuffing operational state into a system prompt is fragile.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    <strong>Memoria</strong> is a SQLite-backed MCP server that provides structured operational memory. It tracks targets and their services, a credential vault (passwords, hashes, SSH keys, tokens), ranked findings (attack paths, privesc leads, misconfigurations, anomalies), and a full action audit trail. Every agent calls <code>memoria_get_state</code> at session start for instant operational awareness. Every credential discovered goes to the vault immediately. Every finding is ranked and tracked through its lifecycle.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    Memoria doesn't replace the flat-file artifacts &mdash; <code>attack_surface.md</code> remains the decision log, <code>exploit_log.md</code> tracks real-time execution, <code>checkpoint.md</code> provides clean session snapshots. Memoria is the fast path (structured queries), flat files are the detailed path (full context). Together they enable instant session resumption and decision auditability.
+  </p>
+</section>
+
+<!-- ── TOOL LAYER ──────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 05</div>
   <h2 class="section-title">Tool Layer</h2>
   <p class="section-text" style="margin-bottom: 0.5rem;">
-    Four MCP tool servers provide the capability backbone.
+    Four domain-specific MCP servers provide the capability backbone. Oracle calls Sova and WebDig directly during reconnaissance. Noire uses its dedicated tool server for post-access investigation. Memoria provides persistent operational memory across all agents and sessions.
   </p>
   <div class="tool-grid">
     <div class="tool-card">
       <span class="tool-icon">&#x25CE;</span>
-      <div class="tool-name">Reconnaissance</div>
-      <p class="tool-desc">Network scanning, port enumeration, service fingerprinting. The first look at the target.</p>
+      <div class="tool-name">Sova</div>
+      <p class="tool-desc">Reconnaissance. Full TCP scans, service fingerprinting, banner grabs, DNS zone transfers, SMB null sessions, FTP anonymous testing, host management. Oracle's eyes.</p>
     </div>
     <div class="tool-card">
       <span class="tool-icon">&#x25CB;</span>
-      <div class="tool-name">Web Enumeration</div>
-      <p class="tool-desc">Directory brute-forcing, subdomain discovery, tech stack identification. Mapping the surface.</p>
+      <div class="tool-name">WebDig</div>
+      <p class="tool-desc">Web enumeration. Directory busting with reasoned wordlists, vhost fuzzing with wildcard filtering, full HTTP control, JavaScript endpoint and secret extraction.</p>
     </div>
     <div class="tool-card">
       <span class="tool-icon">&#x2318;</span>
-      <div class="tool-name">Post-Access Investigation</div>
-      <p class="tool-desc">File system traversal, credential harvesting, privilege escalation paths. After the foothold.</p>
+      <div class="tool-name">Noire Tools</div>
+      <p class="tool-desc">Post-access investigation. System profiling, sudo checks, SUID scanning, cron inspection, service enumeration, config harvesting, writable path discovery. Executes via SSH or shell wrapper.</p>
     </div>
     <div class="tool-card">
       <span class="tool-icon">&#x2261;</span>
-      <div class="tool-name">Operational Memory</div>
-      <p class="tool-desc">Persistent storage across sessions. Findings, attack history, and learned patterns survive restarts.</p>
+      <div class="tool-name">Memoria</div>
+      <p class="tool-desc">Operational memory. SQLite-backed state management for targets, services, credentials, findings, and action audit trails. Session resumption in one call.</p>
     </div>
   </div>
 </section>
 
 <!-- ── BATTLE TESTED ───────────────────────────── -->
 <section class="section reveal">
-  <div class="section-label">// 04</div>
+  <div class="section-label">// 06</div>
   <h2 class="section-title">Battle-Tested</h2>
   <p class="battle-text">
-    Validated against real HackTheBox machines. Full attack chains from recon to root,
-    autonomously. No human intervention between phases.
+    IRONTHREAD has been validated against real HackTheBox machines &mdash; full attack chains from initial reconnaissance through privilege escalation, with the operator providing strategic direction while agents handle execution. The framework successfully completed multi-phase operations including web exploitation, Active Directory attacks, and CVE chains.
+  </p>
+  <p class="battle-text">
+    Each engagement generates two artifacts: a public writeup (educational, reproducible) and an internal debrief (honest assessment of what worked, what broke, and what needs to change in the framework). The internal debriefs drive iteration &mdash; every failure becomes a concrete improvement to the contracts, schemas, or agent prompts.
   </p>
   <div class="battle-callout">
-    Early testing exposed a critical gap &mdash; without handoff sequencing, agents burned
-    compute on rogue exploration. Elliot would wander off-scope, re-running recon instead
-    of exploiting. The fix &mdash; signed contracts with validation gates &mdash; is now a
-    core design principle. Failure drove the architecture.
+    The VariaType engagement exposed the critical handoff gap &mdash; without contract validation, Elliot burned 300K tokens on unauthorized exploration. The Pirate engagement (Insane-rated AD box) validated the Analyst + Operator dual-agent pattern &mdash; three parallel agents explored NTLM relay, web app, and DRS paths simultaneously, with the relay agent capturing user.txt while the others correctly identified dead ends. Parallel execution saved hours of sequential exploration.
   </div>
+</section>
+
+<!-- ── CURRENT STATE ──────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">// 07</div>
+  <h2 class="section-title">Where It Stands</h2>
+  <p class="section-text">
+    IRONTHREAD is crossing the bridge from proof-of-concept to real infrastructure. The prompt engineering is maxxed out &mdash; Oracle, Elliot, and Noire have deeply crafted system prompts with identification boundaries, confidence levels, vulnerability primitive decomposition, turn budgets, and mandatory brief formats. The contracts and schemas are stable. The MCP tool servers work.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    The next frontier is operational memory. Memoria exists and tracks state, but the real goal is a fully atomic sequencing layer &mdash; where phase transitions, agent deployments, and scope changes are mediated by the state database rather than operator orchestration. Today the operator manually runs <code>cd ../elliot && claude</code> to deploy Elliot. Tomorrow, the system handles agent lifecycle through the MCP state layer.
+  </p>
+  <p class="section-text" style="margin-top: 1rem;">
+    The broader vision: replay-based evaluation (did Oracle respect the identification boundary? did Elliot avoid unauthorized pivots?), richer Memoria queries for cross-operation pattern recognition, and expanding the agent roster with additional domain specialists.
+  </p>
 </section>
 
 <!-- ── DESIGN PRINCIPLES ──────────────────────── -->
 <section class="section reveal">
-  <div class="section-label">// 05</div>
+  <div class="section-label">// 08</div>
   <h2 class="section-title">Design Principles</h2>
   <ol class="principles-list">
-    <li>Split thinking from doing &mdash; strategy and execution are separate agents with separate contexts.</li>
-    <li>Structured handoffs prevent scope creep &mdash; JSON contracts with signatures and validation gates.</li>
-    <li>Persistent memory across sessions &mdash; operational knowledge survives restarts and compounds over time.</li>
-    <li>Human operator in the loop &mdash; autonomy within boundaries, escalation when confidence drops.</li>
+    <li>Split thinking from doing &mdash; Oracle scans via MCP tools and reasons about attack paths. Elliot executes exploits. Noire investigates without escalating. Oracle orchestrates the loop: recon &rarr; Elliot (access) &rarr; Noire (enum) &rarr; Elliot (privesc).</li>
+    <li>Contracts over prompts &mdash; scope boundaries, authorization gates, and phase sequencing live in structured JSON, not system prompts. Prompts shape judgment; contracts enforce behavior.</li>
+    <li>Operator confirmation gates &mdash; no agent self-authorizes the next major move. Every phase transition, every exploitation deployment, every strategy pivot requires human approval.</li>
+    <li>Persistent memory across sessions &mdash; credentials, findings, and action history survive between sessions via Memoria. Agents start informed, not blind.</li>
+    <li>Failure drives architecture &mdash; every engagement produces an internal debrief. Every failure becomes a concrete improvement. The system gets better because it's honest about what broke.</li>
   </ol>
 </section>
 
@@ -627,29 +690,515 @@ footer {
 </footer>
 
 <script>
-// ── ASCII ANIMATION ──────────────────────────────
+// ── FRAME DATA ──────────────────────────────────
+// Helper: o=oracle, e=elliot, h=hub, d=data, d2=data2, x=dim, b=bright, bl=blue, cu=cursor
+var O='c-oracle',E='c-elliot',H='c-hub',D='c-data',D2='c-data2',X='c-dim',B='c-bright',BL='c-blue',CU='c-cursor';
+function s(c,t){return '<span class="'+c+'">'+t+'</span>';}
+
+var FRAMES = [
+  // ═══════════════════════════════════════════════════
+  // PHASE 1: BOOT SEQUENCE (frames 0-2)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 0: Boot - blank terminal with cursor ──
+  [
+    s(X,"                                                                          "),
+    s(X,"  ")+s(B,"IRONTHREAD")+s(X," v0.1.4                                                     "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  initializing agent framework...")+s(CU,"_")+s(X,"                                     "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 1: Boot - loading MCP servers ──
+  [
+    s(X,"                                                                          "),
+    s(B,"  IRONTHREAD")+s(X," v0.1.4                                                         "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  initializing agent framework... ")+s(B,"OK"),
+    s(D,"  [sova]    ")+s(X,"reconnaissance server   ")+s(B,"LOADED"),
+    s(D,"  [webdig]  ")+s(X,"web enumeration server   ")+s(B,"LOADED"),
+    s(D2,"  [noire]   ")+s(X,"post-access tools        ")+s(B,"LOADED"),
+    s(BL,"  [memoria] ")+s(X,"operational memory       ")+s(B,"LOADED"),
+    s(X,"                                                                          "),
+    s(X,"  loading agent profiles...")+s(CU,"_")+s(X,"                                           "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 2: Boot - agents loaded ──
+  [
+    s(X,"                                                                          "),
+    s(B,"  IRONTHREAD")+s(X," v0.1.4                                                         "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  initializing agent framework... ")+s(B,"OK"),
+    s(D,"  [sova]    ")+s(X,"reconnaissance server   ")+s(B,"LOADED"),
+    s(D,"  [webdig]  ")+s(X,"web enumeration server   ")+s(B,"LOADED"),
+    s(D2,"  [noire]   ")+s(X,"post-access tools        ")+s(B,"LOADED"),
+    s(BL,"  [memoria] ")+s(X,"operational memory       ")+s(B,"LOADED"),
+    s(X,"                                                                          "),
+    s(X,"  loading agent profiles... ")+s(B,"OK"),
+    s(O,"  >> ORACLE  ")+s(X,"strategic command        ")+s(B,"READY"),
+    s(E,"  >> ELLIOT  ")+s(X,"exploitation specialist  ")+s(B,"READY"),
+    s(BL,"  >> NOIRE   ")+s(X,"post-access investigator ")+s(B,"READY"),
+    s(X,"                                                                          ")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 2: ORACLE RECON via MCP tools (frames 3-5)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 3: Oracle activates - Sova scan start ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"RECON")+s(X,"  via ")+s(D,"sova")+s(X,"    target: ")+s(B,"10.10.11.42")+s(X,"                     "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D,"  sova_full_scan(target='10.10.11.42')")+s(CU,"_"),
+    s(X,"                                                                          "),
+    s(X,"  scanning ports...")+s(X,"                                                     "),
+    s(X,"  ")+s(D,"[##")+s(X,"................] ")+s(X,"12%")+s(X,"                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 4: Oracle scanning via MCP - results streaming ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"RECON")+s(X,"  via ")+s(D,"sova")+s(X,"    target: ")+s(B,"10.10.11.42")+s(X,"                     "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D,"  sova_full_scan(target='10.10.11.42')  ")+s(B,"COMPLETE"),
+    s(D,"  webdig_dir_bust(url='http://10.10.11.42:3000')  ")+s(X,"running..."),
+    s(X,"  ")+s(D,"[#########")+s(X,".......] ")+s(X,"58%")+s(X,"                                          "),
+    s(X,"                                                                          "),
+    s(X,"  ")+s(D,"PORT     STATE  SERVICE    VERSION"),
+    s(X,"  ")+s(B,"22/tcp   open   ssh        OpenSSH 8.9"),
+    s(X,"  ")+s(B,"80/tcp   open   http       Apache 2.4.52"),
+    s(X,"  ")+s(B,"3000/tcp open   http       Node.js Express"),
+    s(X,"                                                                          "),
+    s(O,"  >> memoria_store(target, services)")+s(X," saved"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 5: Oracle analysis complete - generating Elliot contract ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"ANALYZING")+s(X,"  tools: ")+s(D,"sova")+s(X,", ")+s(D,"webdig")+s(X,", ")+s(BL,"memoria")+s(X,"               "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  ")+s(D,"PORT     STATE  SERVICE    VERSION"),
+    s(X,"  ")+s(B,"22/tcp   open   ssh        OpenSSH 8.9"),
+    s(X,"  ")+s(B,"80/tcp   open   http       Apache 2.4.52"),
+    s(X,"  ")+s(B,"3000/tcp open   http       Node.js Express"),
+    s(X,"                                                                          "),
+    s(X,"  ")+s(D,"[################] ")+s(B,"100%")+s(X,"  recon complete                        "),
+    s(X,"                                                                          "),
+    s(O,"  >> attack surface: ")+s(B,"3 services")+s(X," | ")+s(D,"2 web")+s(X," | ")+s(D,"1 ssh"),
+    s(O,"  >> recommendation: ")+s(B,"exploit Express app on :3000"),
+    s(O,"  >> generating ELLIOT contract...")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 3: ORACLE → ELLIOT handoff (frames 6-7)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 6: Elliot contract ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"CONTRACT")+s(X," for ")+s(E,"ELLIOT")+s(X,"                                          "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D,"  {"),
+    s(D,"    ")+s(X,'"objective"')+s(D,":  ")+s(B,'"exploit Express app, obtain user access"')+s(D,","),
+    s(D,"    ")+s(X,'"target"')+s(D,":     ")+s(B,'"10.10.11.42:3000"')+s(D,","),
+    s(D,"    ")+s(X,'"scope"')+s(D,":      ")+s(B,'"web_only"')+s(D,","),
+    s(D,"    ")+s(X,'"stop_conds"')+s(D,": ")+s(B,'"3_fails | 40_turns"')+s(D,","),
+    s(D,"    ")+s(X,'"authorized"')+s(D,": ")+s(B,"true"),
+    s(D,"  }"),
+    s(X,"                                                                          "),
+    s(O,"  >> awaiting operator confirmation...")+s(CU,"_"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 7: Operator confirms - handoff to Elliot ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"HANDOFF")+s(X," → ")+s(E,"ELLIOT")+s(X,"                                              "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  operator: ")+s(B,"CONFIRMED")+s(X,"  deploying elliot..."),
+    s(X,"                                                                          "),
+    s(O,"  ORACLE ")+s(D,"====")+s(D,"===>")+s(X," ")+s(H,"[ HANDOFF CHANNEL ]")+s(X," ")+s(D2,"===>")+s(D2,"====")+s(E," ELLIOT"),
+    s(X,"         ")+s(D,"====")+s(D,"===>")+s(X," ")+s(H,"[   ")+s(B,"ROUTING")+s(H,"       ]")+s(X," ")+s(D2,"===>")+s(D2,"====")+s(X,"       "),
+    s(X,"         ")+s(D,"====")+s(D,"===>")+s(X," ")+s(H,"[   ")+s(D,"sig:OK")+s(H,"        ]")+s(X," ")+s(D2,"===>")+s(D2,"====")+s(X,"       "),
+    s(X,"                                                                          "),
+    s(X,"  ")+s(D,"contract validated  ")+s(X,"|  ")+s(D2,"scope boundaries set"),
+    s(X,"  ")+s(D,"turn budget: 40     ")+s(X,"|  ")+s(D2,"stop conditions: active"),
+    s(X,"                                                                          "),
+    s(E,"  >> ELLIOT receiving contract...")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 4: ELLIOT exploits → user access (frames 8-11)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 8: Elliot validates contract ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"VALIDATING")+s(X,"                                                    "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D2,"  contract.objective:  ")+s(B,"exploit Express, obtain user access"),
+    s(D2,"  contract.target:     ")+s(B,"10.10.11.42:3000"),
+    s(D2,"  contract.scope:      ")+s(B,"web_only       ")+s(E,"PASS"),
+    s(D2,"  contract.authorized: ")+s(B,"true           ")+s(E,"PASS"),
+    s(D2,"  contract.stop_conds: ")+s(B,"3_fails|40_turns ")+s(E,"PASS"),
+    s(X,"                                                                          "),
+    s(E,"  >> all gates passed"),
+    s(E,"  >> exploitation mode: ")+s(B,"ACTIVE"),
+    s(E,"  >> beginning exploitation...")+s(CU,"_"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 9: Elliot - SQLi discovery ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"EXPLOITING")+s(X,"  turn: ")+s(B,"12")+s(X,"/40                                     "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D2,"  sqlmap -u 'http://10.10.11.42:3000/api/users?id=1' --dbs"),
+    s(X,"                                                                          "),
+    s(X,"  ")+s(B,"[*]")+s(X," parameter 'id' is vulnerable to blind SQLi"),
+    s(X,"  ")+s(B,"[*]")+s(X," back-end DBMS: PostgreSQL"),
+    s(X,"  ")+s(B,"[*]")+s(X," available databases:"),
+    s(X,"      ")+s(D,"[1]")+s(X," ironthread_app"),
+    s(X,"      ")+s(D,"[2]")+s(X," postgres"),
+    s(X,"                                                                          "),
+    s(E,"  >> ")+s(B,"SQLi confirmed!")+s(X," extracting credentials..."),
+    s(E,"  >> ")+s(D2,"[####")+s(X,"..........] 28%")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 10: Elliot - creds extracted, SSH access ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"EXPLOITING")+s(X,"  turn: ")+s(B,"19")+s(X,"/40                                     "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D2,"  creds extracted: ")+s(B,"admin:$2b$12...Kx")+s(X,"  (bcrypt)"),
+    s(D2,"  cracked via john: ")+s(B,"admin:ir0nthread!"),
+    s(X,"                                                                          "),
+    s(E,"  >> SSH with extracted creds..."),
+    s(X,"  ")+s(B,"$ ssh admin@10.10.11.42"),
+    s(X,"  ")+s(B,"admin@ironthread:~$ ")+s(D2,"whoami"),
+    s(X,"  ")+s(B,"admin"),
+    s(X,"  ")+s(B,"admin@ironthread:~$ ")+s(D2,"cat user.txt"),
+    s(X,"  ")+s(B,"a1b2c3d4e5f6...")+s(E,"  USER FLAG CAPTURED"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 11: Elliot reports back to Oracle ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"COMPLETE")+s(X,"  turns used: ")+s(B,"19")+s(X,"/40                                  "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(E,"  >> foothold: ")+s(B,"admin@10.10.11.42")+s(X," via SSH"),
+    s(E,"  >> flag: ")+s(B,"user.txt captured"),
+    s(E,"  >> reporting to ORACLE..."),
+    s(X,"                                                                          "),
+    s(E,"  ELLIOT ")+s(D2,"===>")+s(D2,"===>")+s(X," ")+s(H,"[ HANDOFF CHANNEL ]")+s(X," ")+s(D,"===>")+s(D,"===>")+s(O," ORACLE"),
+    s(X,"         ")+s(D2,"===>")+s(D2,"===>")+s(X," ")+s(H,"[   ")+s(B,"RESULTS")+s(H,"       ]")+s(X," ")+s(D,"===>")+s(D,"===>")+s(X,"       "),
+    s(X,"                                                                          "),
+    s(O,"  >> ORACLE: user access confirmed. preparing NOIRE deployment..."),
+    s(BL,"  >> memoria_store(credential, finding)")+s(X," saved"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 5: ORACLE → NOIRE handoff (frames 12-13)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 12: Oracle generates Noire contract ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"CONTRACT")+s(X," for ")+s(BL,"NOIRE")+s(X,"                                           "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D,"  {"),
+    s(D,"    ")+s(X,'"objective"')+s(D,":  ")+s(B,'"enumerate local privesc vectors"')+s(D,","),
+    s(D,"    ")+s(X,'"host"')+s(D,":       ")+s(B,'"admin@10.10.11.42"')+s(D,","),
+    s(D,"    ")+s(X,'"boundary"')+s(D,":   ")+s(B,'"investigate only, never escalate"')+s(D,","),
+    s(D,"    ")+s(X,'"authorized"')+s(D,": ")+s(B,"true"),
+    s(D,"  }"),
+    s(X,"                                                                          "),
+    s(O,"  >> operator: ")+s(B,"CONFIRMED")+s(X,"  deploying noire..."),
+    s(O,"  ORACLE ")+s(D,"====")+s(D,"===>")+s(X," ")+s(H,"[ HANDOFF CHANNEL ]")+s(X," ")+s(D2,"===>")+s(D2,"====")+s(BL," NOIRE"),
+    s(BL,"  >> NOIRE receiving contract...")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 13: Noire investigating ──
+  [
+    s(X,"                                                                          "),
+    s(BL,"  [NOIRE] ")+s(B,"INVESTIGATING")+s(X,"  host: ")+s(B,"ironthread")+s(X,"                               "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(BL,"  >> sudo -l: ")+s(B,"(ALL) NOPASSWD: /usr/bin/python3"),
+    s(BL,"  >> SUID:    ")+s(X,"/usr/bin/pkexec ")+s(D,"(CVE-2021-4034?)"),
+    s(BL,"  >> cron:    ")+s(X,"*/5 * * * * root /opt/backup.sh"),
+    s(BL,"  >> writable:")+s(X," /opt/backup.sh ")+s(B,"WORLD-WRITABLE"),
+    s(X,"                                                                          "),
+    s(BL,"  >> privesc leads ranked:"),
+    s(X,"     ")+s(B,"[1]")+s(X," sudo python3        ")+s(BL,"HIGH ")+s(X,"  direct root"),
+    s(X,"     ")+s(B,"[2]")+s(X," writable backup.sh   ")+s(BL,"HIGH ")+s(X,"  cron > root"),
+    s(X,"     ")+s(B,"[3]")+s(X," pkexec CVE           ")+s(BL,"MED  ")+s(X,"  needs verification"),
+    s(X,"                                                                          "),
+    s(BL,"  >> reporting findings to ORACLE...")+s(CU,"_")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 6: NOIRE → ORACLE → ELLIOT privesc (frames 14-17)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 14: Noire reports back to Oracle ──
+  [
+    s(X,"                                                                          "),
+    s(BL,"  [NOIRE] ")+s(B,"COMPLETE")+s(X,"  findings: ")+s(B,"3 privesc vectors")+s(X,"                          "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(BL,"  >> reporting to ORACLE..."),
+    s(X,"                                                                          "),
+    s(BL,"  NOIRE ")+s(D2,"===>")+s(D2,"===>")+s(X," ")+s(H,"[ HANDOFF CHANNEL ]")+s(X," ")+s(D,"===>")+s(D,"===>")+s(O," ORACLE"),
+    s(X,"        ")+s(D2,"===>")+s(D2,"===>")+s(X," ")+s(H,"[   ")+s(B,"FINDINGS")+s(H,"      ]")+s(X," ")+s(D,"===>")+s(D,"===>")+s(X,"       "),
+    s(X,"                                                                          "),
+    s(O,"  >> ORACLE: ")+s(B,"3")+s(X," privesc leads received from NOIRE"),
+    s(O,"  >> best vector: ")+s(B,"sudo python3")+s(X," (direct root, HIGH confidence)"),
+    s(O,"  >> generating ELLIOT privesc contract...")+s(CU,"_"),
+    s(BL,"  >> memoria_store(findings)")+s(X," saved"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 15: Oracle generates Elliot privesc contract ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"CONTRACT")+s(X," for ")+s(E,"ELLIOT")+s(X," (privesc)                                 "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D,"  {"),
+    s(D,"    ")+s(X,'"objective"')+s(D,":  ")+s(B,'"escalate to root via sudo python3"')+s(D,","),
+    s(D,"    ")+s(X,'"host"')+s(D,":       ")+s(B,'"admin@10.10.11.42"')+s(D,","),
+    s(D,"    ")+s(X,'"vector"')+s(D,":     ")+s(B,'"sudo /usr/bin/python3"')+s(D,","),
+    s(D,"    ")+s(X,'"stop_conds"')+s(D,": ")+s(B,'"3_fails | 10_turns"')+s(D,","),
+    s(D,"    ")+s(X,'"authorized"')+s(D,": ")+s(B,"true"),
+    s(D,"  }"),
+    s(X,"                                                                          "),
+    s(O,"  >> operator: ")+s(B,"CONFIRMED")+s(X,"  deploying elliot for privesc..."),
+    s(O,"  ORACLE ")+s(D,"====")+s(D,"===>")+s(X," ")+s(H,"[ HANDOFF CHANNEL ]")+s(X," ")+s(D2,"===>")+s(D2,"====")+s(E," ELLIOT"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 16: Elliot validates privesc contract ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"VALIDATING")+s(X," (privesc contract)                                  "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(D2,"  contract.objective:  ")+s(B,"escalate to root via sudo python3"),
+    s(D2,"  contract.vector:     ")+s(B,"sudo /usr/bin/python3"),
+    s(D2,"  contract.authorized: ")+s(B,"true           ")+s(E,"PASS"),
+    s(D2,"  contract.stop_conds: ")+s(B,"3_fails|10_turns ")+s(E,"PASS"),
+    s(X,"                                                                          "),
+    s(E,"  >> all gates passed"),
+    s(E,"  >> privesc mode: ")+s(B,"ACTIVE"),
+    s(E,"  >> executing: ")+s(B,"sudo python3 -c 'import os; os.execl(...)'"),
+    s(X,"                                                                          "),
+    s(X,"  ")+s(B,"admin@ironthread:~$ ")+s(D2,"sudo python3")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 17: Elliot gets root ──
+  [
+    s(X,"                                                                          "),
+    s(E,"  [ELLIOT] ")+s(B,"PRIVESC")+s(X,"  turn: ")+s(B,"3")+s(X,"/10                                          "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(X,"  ")+s(B,"admin@ironthread:~$ ")+s(D2,"sudo python3 -c 'import pty;pty.spawn(\"/bin/bash\")'"),
+    s(X,"  ")+s(B,"root@ironthread:/# ")+s(D2,"whoami"),
+    s(X,"  ")+s(B,"root"),
+    s(X,"  ")+s(B,"root@ironthread:/# ")+s(D2,"cat /root/root.txt"),
+    s(X,"  ")+s(B,"f9e8d7c6b5a4...")+s(E,"  ROOT FLAG CAPTURED"),
+    s(X,"                                                                          "),
+    s(E,"  >> ")+s(B,"FULL COMPROMISE")+s(X," — user.txt + root.txt"),
+    s(E,"  >> reporting final results to ORACLE..."),
+    s(BL,"  >> memoria_store(root_flag, credential)")+s(X," saved"),
+    s(X,"                                                                          "),
+    s(X,"                                                                          ")
+  ],
+
+  // ═══════════════════════════════════════════════════
+  // PHASE 7: COMPLETE + IDLE (frames 18-19)
+  // ═══════════════════════════════════════════════════
+
+  // ── Frame 18: Oracle final briefing ──
+  [
+    s(X,"                                                                          "),
+    s(O,"  [ORACLE] ")+s(B,"BRIEFING")+s(X,"  — engagement complete                                "),
+    s(X,"  -------------------------------------------------------                 "),
+    s(O,"  EXECUTIVE SUMMARY:"),
+    s(X,"  Phase 1: Oracle recon via ")+s(D,"sova")+s(X,", ")+s(D,"webdig")+s(X," — 3 services mapped"),
+    s(X,"  Phase 2: Elliot exploited SQLi → user access (19 turns)"),
+    s(X,"  Phase 3: Noire enumerated 3 privesc vectors"),
+    s(X,"  Phase 4: Elliot escalated via sudo python3 → root (3 turns)"),
+    s(X,"                                                                          "),
+    s(O,"  RESULT: ")+s(B,"FULL COMPROMISE")+s(X,"  |  Total turns: ")+s(B,"22"),
+    s(X,"  Flags: ")+s(E,"user.txt")+s(X," + ")+s(E,"root.txt"),
+    s(X,"                                                                          "),
+    s(O,"  >> generating writeup + internal debrief...")+s(CU,"_"),
+    s(X,"                                                                          ")
+  ],
+  // ── Frame 19: Idle / monitoring — all three agents ──
+  [
+    s(X,"    .  .     .       .    .        .       .     .  .     .               "),
+    s(O,"  +==========+")+s(X,"        ")+s(BL,"+==========+")+s(X,"        ")+s(E,"+==========+"),
+    s(O,"  |          |")+s(X,"        ")+s(BL,"|          |")+s(X,"        ")+s(E,"|          |"),
+    s(O,"  | ")+s(B,"ORACLE")+s(O,"   |")+s(X,"        ")+s(BL,"| ")+s(B,"NOIRE")+s(BL,"    |")+s(X,"        ")+s(E,"| ")+s(B,"ELLIOT")+s(E,"   |"),
+    s(O,"  | ")+s(D,"recon")+s(O,"    |")+s(D,"====>>")+s(BL,"| ")+s(D2,"enum")+s(BL,"     |")+s(D2,"====>>")+s(E,"| ")+s(D2,"exploit")+s(E,"  |"),
+    s(O,"  | ")+s(D,"analyze")+s(O,"  |")+s(X,"        ")+s(BL,"| ")+s(D2,"privesc")+s(BL,"  |")+s(X,"        ")+s(E,"| ")+s(D2,"access")+s(E,"   |"),
+    s(O,"  | ")+s(D,"mapping")+s(O,"  |")+s(D,"<<====")+s(BL,"| ")+s(D2,"ranking")+s(BL,"  |")+s(D2,"<<====")+s(E,"| ")+s(D2,"privesc")+s(E,"  |"),
+    s(O,"  |          |")+s(X,"        ")+s(BL,"|          |")+s(X,"        ")+s(E,"|          |"),
+    s(O,"  +==========+")+s(X,"        ")+s(BL,"+==========+")+s(X,"        ")+s(E,"+==========+"),
+    s(X,"        ")+s(D,"|")+s(X,"                  ")+s(D2,"|")+s(X,"                  ")+s(D2,"|"),
+    s(X,"        ")+s(H,"+---------- HANDOFF CONTRACTS ----------+"),
+    s(X,"        ")+s(H,"|  ")+s(D,"scope")+s(H," | ")+s(D,"auth")+s(H," | ")+s(D,"budget")+s(H," | ")+s(D,"gates")+s(H,"  |"),
+    s(X,"        ")+s(H,"+------------------------------------------+"),
+    s(X,"  ")+s(H,"system idle — awaiting next engagement")+s(CU,"_")+s(X,"                              ")
+  ]
+];
+
+// Per-frame display duration in ms (slowed down for readability)
+var DELAYS = [
+  1800,  // 0:  boot blank
+  2200,  // 1:  MCP servers loading
+  2800,  // 2:  agents loaded
+  2200,  // 3:  oracle sova scan start
+  2600,  // 4:  oracle scanning progress
+  3200,  // 5:  oracle analysis complete
+  3400,  // 6:  elliot contract
+  2800,  // 7:  handoff to elliot
+  2600,  // 8:  elliot validates
+  3000,  // 9:  elliot SQLi
+  3400,  // 10: elliot user access
+  2800,  // 11: elliot reports to oracle
+  3200,  // 12: oracle noire contract + handoff
+  3400,  // 13: noire investigating
+  3000,  // 14: noire reports to oracle
+  3200,  // 15: oracle elliot privesc contract
+  2800,  // 16: elliot validates privesc
+  3400,  // 17: elliot gets root
+  3600,  // 18: oracle final briefing
+  4000   // 19: idle
+];
+
+// ── ANIMATION CONTROLLER (rAF with delta accumulation) ──
 (function() {
-  const frames = document.querySelectorAll('.ascii-frame');
-  let current = 0;
-  const delays = [2200, 1800, 1600, 2400]; // ms per frame
-  function nextFrame() {
-    frames[current].classList.remove('active');
-    current = (current + 1) % frames.length;
-    frames[current].classList.add('active');
-    setTimeout(nextFrame, delays[current]);
+  var container = document.getElementById('ascii-anim');
+  var terminal = document.getElementById('terminal');
+  var frameIndex = 0;
+  var animId = null;
+  var lastTimestamp = -1;
+  var accumulated = 0;
+  var running = false;
+
+  function render() {
+    var rows = FRAMES[frameIndex];
+    var html = '';
+    for (var i = 0; i < rows.length; i++) {
+      html += rows[i];
+      if (i < rows.length - 1) html += '\n';
+    }
+    container.innerHTML = html;
   }
-  setTimeout(nextFrame, delays[0]);
+
+  function advance() {
+    frameIndex = (frameIndex + 1) % FRAMES.length;
+    render();
+  }
+
+  function update(timestamp) {
+    if (lastTimestamp === -1) {
+      lastTimestamp = timestamp;
+      animId = requestAnimationFrame(update);
+      return;
+    }
+    accumulated += timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+
+    var currentDelay = DELAYS[frameIndex];
+    // Catch-up loop: advance frames if we've been away (tab hidden etc)
+    while (accumulated >= currentDelay) {
+      accumulated -= currentDelay;
+      advance();
+      currentDelay = DELAYS[frameIndex];
+    }
+    animId = requestAnimationFrame(update);
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    lastTimestamp = -1;
+    accumulated = 0;
+    animId = requestAnimationFrame(update);
+  }
+
+  function pause() {
+    if (!running) return;
+    running = false;
+    if (animId) cancelAnimationFrame(animId);
+    animId = null;
+  }
+
+  // Respect prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    frameIndex = 19; // show idle frame
+    render();
+  } else {
+    // Start mid-animation for variety
+    frameIndex = Math.floor(Math.random() * 4);
+    render();
+
+    // Pause on tab hidden, resume on visible
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) pause(); else start();
+    });
+    window.addEventListener('focus', start);
+    window.addEventListener('blur', pause);
+
+    if (document.visibilityState === 'visible') start();
+  }
+
+  // ── RESPONSIVE SIZING ──
+  function updateSize() {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    terminal.classList.remove('size-small', 'size-tiny', 'size-xtiny');
+    var sizeX = w > 700 ? 'small' : w > 440 ? 'tiny' : 'xtiny';
+    var sizeY = h > 700 ? 'small' : h > 500 ? 'tiny' : 'xtiny';
+    // Use the smaller of the two
+    var sizes = ['xtiny', 'tiny', 'small'];
+    var pick = sizes[Math.min(sizes.indexOf(sizeX), sizes.indexOf(sizeY))];
+    terminal.classList.add('size-' + pick);
+  }
+  updateSize();
+  window.addEventListener('resize', updateSize);
 })();
 
 // ── PARTICLE BACKGROUND (hero only) ─────────────
 (function() {
-  const canvas = document.getElementById('particles-canvas');
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  const N = 30;
+  var canvas = document.getElementById('particles-canvas');
+  var ctx = canvas.getContext('2d');
+  var particles = [];
+  var N = 30;
 
   function resize() {
-    const hero = document.getElementById('hero');
+    var hero = document.getElementById('hero');
     canvas.width = hero.offsetWidth;
     canvas.height = hero.offsetHeight;
   }
@@ -670,20 +1219,21 @@ footer {
     if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
   };
 
-  for (let i = 0; i < N; i++) particles.push(new Particle());
+  for (var i = 0; i < N; i++) particles.push(new Particle());
 
+  var particleAnimId = null;
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < N; i++) {
+    for (var i = 0; i < N; i++) {
       particles[i].update();
       ctx.beginPath();
       ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(168,85,247,0.35)';
       ctx.fill();
-      for (let j = i + 1; j < N; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const d = Math.sqrt(dx * dx + dy * dy);
+      for (var j = i + 1; j < N; j++) {
+        var dx = particles[i].x - particles[j].x;
+        var dy = particles[i].y - particles[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
         if (d < 150) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -694,14 +1244,24 @@ footer {
         }
       }
     }
-    requestAnimationFrame(animate);
+    particleAnimId = requestAnimationFrame(animate);
   }
+
+  // Pause particles too on hidden
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      if (particleAnimId) cancelAnimationFrame(particleAnimId);
+      particleAnimId = null;
+    } else {
+      if (!particleAnimId) animate();
+    }
+  });
   animate();
 })();
 
 // ── SCROLL REVEAL ────────────────────────────────
 (function() {
-  const observer = new IntersectionObserver(function(entries) {
+  var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
