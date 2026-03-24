@@ -34,7 +34,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent-dim) var(--bg-primary);
 }
@@ -45,6 +44,8 @@ body {
   color: var(--text-primary);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
 }
 
 ::selection {
@@ -100,11 +101,22 @@ nav {
   padding: 0 2rem;
 }
 
-/* ── HERO ─────────────────────────────────────── */
+/* ── HERO (State 1) ──────────────────────────── */
 .hero {
-  padding-top: 160px;
-  padding-bottom: 100px;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  z-index: 50;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.hero.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .hero h1 {
@@ -126,6 +138,47 @@ nav {
   max-width: 560px;
   margin: 0 auto;
   line-height: 1.8;
+}
+
+.hero-enter-btn {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: pulse-down 2s ease-in-out infinite;
+}
+.hero-enter-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-dim);
+  background: rgba(168, 85, 247, 0.08);
+}
+.hero-enter-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes pulse-down {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(6px); }
 }
 
 /* ── SHIELD SCANNER ──────────────────────────── */
@@ -265,21 +318,58 @@ nav {
   80%, 95% { border-color: var(--red); box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); }
 }
 
-/* ── SECTIONS ─────────────────────────────────── */
-.section {
-  padding: 5rem 0;
-  border-top: 1px solid var(--border);
+/* ── CONTENT BROWSER (State 2) ───────────────── */
+.content-browser {
+  position: fixed;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
+.content-browser.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
+/* ── PANELS ──────────────────────────────────── */
+.panel-viewport {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  bottom: 72px; /* room for pill nav */
+  overflow: hidden;
+}
+
+.panel {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) transparent;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 2rem 2rem;
+}
+
+.panel.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.panel-inner {
+  max-width: 960px;
+  width: 100%;
+}
+
+/* ── SECTION STYLES (reused) ─────────────────── */
 .section-title {
   font-family: var(--font-sans);
   font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -533,8 +623,120 @@ nav {
   display: inline-block;
 }
 
-/* ── FOOTER ───────────────────────────────────── */
+/* ── FLOATING PILL NAV ───────────────────────── */
+.pill-nav-wrapper {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 0 1rem;
+}
+
+.pill-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(14, 12, 21, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  padding: 0.35rem 0.5rem;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pill-nav::-webkit-scrollbar { display: none; }
+
+.pill-tab {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.pill-tab:hover {
+  color: var(--text-secondary);
+}
+
+.pill-tab.active {
+  color: #fff;
+  background: var(--accent-dim);
+}
+
+/* ── ARROW NAV ──────────────────────────────── */
+.arrow-nav {
+  position: fixed;
+  bottom: calc(72px + 1.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.arrow-nav.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(14, 12, 21, 0.7);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.arrow-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-dim);
+  background: rgba(168, 85, 247, 0.1);
+}
+.arrow-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrow-nav-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  min-width: 3rem;
+  text-align: center;
+}
+
+/* ── FOOTER (hidden in content browser) ──────── */
 footer {
+  display: none;
   position: relative;
   z-index: 1;
   text-align: center;
@@ -560,18 +762,6 @@ footer .copy {
   color: var(--text-muted);
 }
 
-/* ── REVEAL ANIMATION ─────────────────────────── */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ── RESPONSIVE ───────────────────────────────── */
 @media (max-width: 768px) {
   nav {
@@ -586,12 +776,8 @@ footer .copy {
   .container {
     padding: 0 1.25rem;
   }
-  .hero {
-    padding-top: 120px;
-    padding-bottom: 60px;
-  }
-  .section {
-    padding: 3.5rem 0;
+  .panel {
+    padding: 2rem 1.25rem 1.5rem;
   }
   .pipeline-flow {
     flex-direction: column;
@@ -604,6 +790,10 @@ footer .copy {
   }
   .decision-grid {
     grid-template-columns: 1fr;
+  }
+  .pill-tab {
+    font-size: 0.72rem;
+    padding: 0.45rem 0.85rem;
   }
 }
 
@@ -629,10 +819,10 @@ footer .copy {
   </div>
 </nav>
 
-<!-- HERO -->
-<header class="hero">
+<!-- HERO (State 1) -->
+<header class="hero" id="hero">
   <div class="container">
-    <div class="shield-scanner reveal">
+    <div class="shield-scanner">
       <div class="shield">
         <div class="shield-body">
           <div class="shield-lines">
@@ -649,195 +839,209 @@ footer .copy {
       <div class="scan-result result-high">HIGH</div>
       <div class="scan-result result-crit">CRITICAL</div>
     </div>
-    <h1 class="reveal">Homelab<span class="accent-dot">.</span></h1>
-    <p class="reveal">Defense in depth &mdash; from DNS filtering to AI-powered alert triage</p>
+    <h1>Homelab<span class="accent-dot">.</span></h1>
+    <p>Defense in depth &mdash; from DNS filtering to AI-powered alert triage</p>
+    <button class="hero-enter-btn" id="heroEnterBtn">Learn more <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
   </div>
 </header>
 
-<main>
+<!-- CONTENT BROWSER (State 2) -->
+<div class="content-browser" id="contentBrowser">
 
-<!-- SECTION 01: THE STACK -->
-<section class="section" id="stack">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">// 01</div>
-      <h2 class="section-title">Six Layers Deep</h2>
-      <p class="section-desc">Build like someone's already in. The perimeter is solid &mdash; VPN-only access, DNS filtering, encrypted upstream DNS. What was missing: visibility and reasoning.</p>
+  <!-- Arrow Navigation -->
+  <div class="arrow-nav" id="arrowNav">
+    <button class="arrow-btn" id="arrowPrev" title="Previous section">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span class="arrow-nav-label" id="arrowLabel">1 / 5</span>
+    <button class="arrow-btn" id="arrowNext" title="Next section">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+  </div>
+
+  <!-- Panel Viewport -->
+  <div class="panel-viewport">
+
+    <!-- Panel: Stack -->
+    <div class="panel" id="panel-stack" data-tab="stack">
+      <div class="panel-inner">
+        <h2 class="section-title">Six Layers Deep</h2>
+        <p class="section-desc">Build like someone's already in. The perimeter is solid &mdash; VPN-only access, DNS filtering, encrypted upstream DNS. What was missing: visibility and reasoning.</p>
+        <div class="layer-stack">
+          <div class="layer-card">
+            <div class="layer-num">01</div>
+            <div class="layer-content">
+              <h3>DNS Filtering</h3>
+              <p>Pi-Hole blocks known malicious and ad domains at the network level.</p>
+            </div>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">02</div>
+            <div class="layer-content">
+              <h3>DNS Privacy</h3>
+              <p>DNS-over-HTTPS prevents ISP and upstream DNS snooping.</p>
+            </div>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">03</div>
+            <div class="layer-content">
+              <h3>Remote Access</h3>
+              <p>Pi-VPN provides encrypted tunnel access. No services exposed to the internet.</p>
+            </div>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">04</div>
+            <div class="layer-content">
+              <h3>Network IDS</h3>
+              <p>Suricata running in AF_PACKET mode with ~48,500 Emerging Threats rules. Sees every packet on the wire.</p>
+            </div>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">05</div>
+            <div class="layer-content">
+              <h3>Host Monitoring</h3>
+              <p>Wazuh agents on every device (Ubuntu, macOS, Raspberry Pi). File integrity, rootkit detection, CIS benchmarks, vulnerability scanning.</p>
+            </div>
+          </div>
+          <div class="layer-card">
+            <div class="layer-num">06</div>
+            <div class="layer-content">
+              <h3>SIEM/XDR</h3>
+              <p>Wazuh Manager correlates host and network events into a single pane of glass. Suricata feeds into Wazuh for unified alerting.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="layer-stack">
-      <div class="layer-card reveal">
-        <div class="layer-num">01</div>
-        <div class="layer-content">
-          <h3>DNS Filtering</h3>
-          <p>Pi-Hole blocks known malicious and ad domains at the network level.</p>
+
+    <!-- Panel: The Problem -->
+    <div class="panel" id="panel-problem" data-tab="problem">
+      <div class="panel-inner">
+        <h2 class="section-title">Thousands of Alerts, One Pair of Eyes</h2>
+        <p class="problem-text">A typical day generates ~7,800 alerts across all severity levels. Level 3 Suricata protocol decodes, generic network noise, routine system events. The signal is buried in the noise. Manual triage is unsustainable for a homelab. But you can't fully automate response without confidence. The answer: an AI layer that enriches, reasons, and flags &mdash; a junior analyst that works 24/7 and escalates the edge cases.</p>
+      </div>
+    </div>
+
+    <!-- Panel: TriageAgent -->
+    <div class="panel" id="panel-triage" data-tab="triage">
+      <div class="panel-inner">
+        <h2 class="section-title">AI-Powered Alert Triage</h2>
+
+        <!-- Pipeline Flow -->
+        <div class="pipeline-flow">
+          <div class="pipeline-stage">
+            <h4>Suricata + Wazuh</h4>
+            <p>IDS / SIEM</p>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-stage">
+            <h4>Alert Poller</h4>
+            <p>Level 5+</p>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-stage">
+            <h4>Enrichment</h4>
+            <p>GeoIP + AbuseIPDB + Context Window</p>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-stage">
+            <h4>AI Analysis</h4>
+            <p>Claude Haiku</p>
+          </div>
+          <div class="pipeline-arrow">&rarr;</div>
+          <div class="pipeline-stage">
+            <h4>Discord</h4>
+            <p>Color-coded embeds</p>
+          </div>
+        </div>
+
+        <!-- Stage Details -->
+        <div class="stage-details">
+          <div class="stage-detail">
+            <h3>Alert Poller</h3>
+            <p>Polls alerts.json every 10 seconds. Filters at level 5+ &mdash; cutting ~4,800 daily low-level noise alerts. Skips internal-only traffic that doesn't need reputation lookups.</p>
+          </div>
+
+          <div class="stage-detail">
+            <h3>Enrichment</h3>
+            <p>Three data sources layered onto each alert:</p>
+            <ul>
+              <li><strong>GeoIP</strong> (ip-api.com) &mdash; country, ISP, ASN for external IPs</li>
+              <li><strong>AbuseIPDB</strong> &mdash; abuse confidence score, total reports, usage type</li>
+              <li><strong>Context Window</strong> &mdash; surrounding alerts from the same agent within &plusmn;5 minutes (capped at 10 for the AI prompt)</li>
+            </ul>
+            <p>Plus a dynamic agent registry that refreshes from the Wazuh API every 5 minutes &mdash; new devices appear automatically.</p>
+          </div>
+
+          <div class="stage-detail">
+            <h3>AI Analysis</h3>
+            <p>Claude Haiku (chosen for cost efficiency at high alert volume) receives the enriched alert and returns structured JSON: summary, risk level (Low/Medium/High/Critical), risk reasoning, MITRE ATT&CK technique mapping, and a specific recommended action. Prompted as a senior SOC analyst reviewing a homelab &mdash; "avoid over-alarming on routine system noise."</p>
+          </div>
+
+          <div class="stage-detail">
+            <h3>Discord Notification</h3>
+            <p>Color-coded embeds by severity:</p>
+            <div style="margin: 0.75rem 0;">
+              <span class="color-swatch"><span class="dot" style="background: var(--red);"></span> Critical</span>
+              <span class="color-swatch"><span class="dot" style="background: var(--orange);"></span> High</span>
+              <span class="color-swatch"><span class="dot" style="background: var(--yellow);"></span> Medium</span>
+              <span class="color-swatch"><span class="dot" style="background: var(--green);"></span> Low</span>
+            </div>
+            <p>Each embed includes the agent name, rule details, AI summary, risk reasoning, IP context with abuse scores, MITRE mapping, and recommended action.</p>
+          </div>
         </div>
       </div>
-      <div class="layer-card reveal">
-        <div class="layer-num">02</div>
-        <div class="layer-content">
-          <h3>DNS Privacy</h3>
-          <p>DNS-over-HTTPS prevents ISP and upstream DNS snooping.</p>
+    </div>
+
+    <!-- Panel: Decisions -->
+    <div class="panel" id="panel-decisions" data-tab="decisions">
+      <div class="panel-inner">
+        <h2 class="section-title">Why It Works This Way</h2>
+        <div class="decision-grid">
+          <div class="decision-card">
+            <h3>Haiku over Sonnet</h3>
+            <p>Alert volume can spike to thousands per day. Haiku is fast and cost-efficient for a continuous triage loop. Structured prompts ensure consistent output regardless of model tier.</p>
+          </div>
+          <div class="decision-card">
+            <h3>Poll alerts.json, not OpenSearch</h3>
+            <p>Reading directly from the Wazuh manager container is simpler and more reliable than authenticating to OpenSearch. Same data, fewer dependencies.</p>
+          </div>
+          <div class="decision-card">
+            <h3>Suricata native, Wazuh in Docker</h3>
+            <p>Suricata needs raw packet access to the NIC via AF_PACKET. Docker would add an abstraction layer on the critical packet capture path. Wazuh's Java/OpenSearch/Node.js stack benefits from container isolation and easy version upgrades.</p>
+          </div>
+          <div class="decision-card">
+            <h3>Enrich first, reason second</h3>
+            <p>Raw alerts are noise. GeoIP + reputation + temporal context transforms a "port scan detected" into "port scan from a Russian hosting provider with 87% abuse score, preceded by 3 SSH failures in the last 5 minutes." The AI layer reasons over signal, not noise.</p>
+          </div>
         </div>
       </div>
-      <div class="layer-card reveal">
-        <div class="layer-num">03</div>
-        <div class="layer-content">
-          <h3>Remote Access</h3>
-          <p>Pi-VPN provides encrypted tunnel access. No services exposed to the internet.</p>
-        </div>
+    </div>
+
+    <!-- Panel: What's Next -->
+    <div class="panel" id="panel-next" data-tab="next">
+      <div class="panel-inner">
+        <h2 class="section-title">Where It's Going</h2>
+        <p class="next-text">Phase 4 (Discord notifications) is working. Phase 5 is auto-response &mdash; iptables blocking on Critical severity with confidence threshold guardrails. The philosophy: automate enrichment and analysis completely, but keep a human in the loop for response until confidence is proven. Ship fast, iterate, add complexity only after the system works.</p>
       </div>
-      <div class="layer-card reveal">
-        <div class="layer-num">04</div>
-        <div class="layer-content">
-          <h3>Network IDS</h3>
-          <p>Suricata running in AF_PACKET mode with ~48,500 Emerging Threats rules. Sees every packet on the wire.</p>
-        </div>
-      </div>
-      <div class="layer-card reveal">
-        <div class="layer-num">05</div>
-        <div class="layer-content">
-          <h3>Host Monitoring</h3>
-          <p>Wazuh agents on every device (Ubuntu, macOS, Raspberry Pi). File integrity, rootkit detection, CIS benchmarks, vulnerability scanning.</p>
-        </div>
-      </div>
-      <div class="layer-card reveal">
-        <div class="layer-num">06</div>
-        <div class="layer-content">
-          <h3>SIEM/XDR</h3>
-          <p>Wazuh Manager correlates host and network events into a single pane of glass. Suricata feeds into Wazuh for unified alerting.</p>
-        </div>
-      </div>
+    </div>
+
+  </div><!-- /panel-viewport -->
+
+  <!-- Floating Pill Nav -->
+  <div class="pill-nav-wrapper">
+    <div class="pill-nav" id="pillNav">
+      <button class="pill-tab active" data-tab="stack">Stack</button>
+      <button class="pill-tab" data-tab="problem">The Problem</button>
+      <button class="pill-tab" data-tab="triage">TriageAgent</button>
+      <button class="pill-tab" data-tab="decisions">Decisions</button>
+      <button class="pill-tab" data-tab="next">What's Next</button>
     </div>
   </div>
-</section>
 
-<!-- SECTION 02: THE PROBLEM -->
-<section class="section" id="problem">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">// 02</div>
-      <h2 class="section-title">Thousands of Alerts, One Pair of Eyes</h2>
-    </div>
-    <p class="problem-text reveal">A typical day generates ~7,800 alerts across all severity levels. Level 3 Suricata protocol decodes, generic network noise, routine system events. The signal is buried in the noise. Manual triage is unsustainable for a homelab. But you can't fully automate response without confidence. The answer: an AI layer that enriches, reasons, and flags &mdash; a junior analyst that works 24/7 and escalates the edge cases.</p>
-  </div>
-</section>
+</div><!-- /content-browser -->
 
-<!-- SECTION 03: TRIAGEAGENT -->
-<section class="section" id="triage">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">// 03</div>
-      <h2 class="section-title">AI-Powered Alert Triage</h2>
-    </div>
-
-    <!-- Pipeline Flow -->
-    <div class="pipeline-flow reveal">
-      <div class="pipeline-stage">
-        <h4>Suricata + Wazuh</h4>
-        <p>IDS / SIEM</p>
-      </div>
-      <div class="pipeline-arrow">&rarr;</div>
-      <div class="pipeline-stage">
-        <h4>Alert Poller</h4>
-        <p>Level 5+</p>
-      </div>
-      <div class="pipeline-arrow">&rarr;</div>
-      <div class="pipeline-stage">
-        <h4>Enrichment</h4>
-        <p>GeoIP + AbuseIPDB + Context Window</p>
-      </div>
-      <div class="pipeline-arrow">&rarr;</div>
-      <div class="pipeline-stage">
-        <h4>AI Analysis</h4>
-        <p>Claude Haiku</p>
-      </div>
-      <div class="pipeline-arrow">&rarr;</div>
-      <div class="pipeline-stage">
-        <h4>Discord</h4>
-        <p>Color-coded embeds</p>
-      </div>
-    </div>
-
-    <!-- Stage Details -->
-    <div class="stage-details">
-      <div class="stage-detail reveal">
-        <h3>Alert Poller</h3>
-        <p>Polls alerts.json every 10 seconds. Filters at level 5+ &mdash; cutting ~4,800 daily low-level noise alerts. Skips internal-only traffic that doesn't need reputation lookups.</p>
-      </div>
-
-      <div class="stage-detail reveal">
-        <h3>Enrichment</h3>
-        <p>Three data sources layered onto each alert:</p>
-        <ul>
-          <li><strong>GeoIP</strong> (ip-api.com) &mdash; country, ISP, ASN for external IPs</li>
-          <li><strong>AbuseIPDB</strong> &mdash; abuse confidence score, total reports, usage type</li>
-          <li><strong>Context Window</strong> &mdash; surrounding alerts from the same agent within &plusmn;5 minutes (capped at 10 for the AI prompt)</li>
-        </ul>
-        <p>Plus a dynamic agent registry that refreshes from the Wazuh API every 5 minutes &mdash; new devices appear automatically.</p>
-      </div>
-
-      <div class="stage-detail reveal">
-        <h3>AI Analysis</h3>
-        <p>Claude Haiku (chosen for cost efficiency at high alert volume) receives the enriched alert and returns structured JSON: summary, risk level (Low/Medium/High/Critical), risk reasoning, MITRE ATT&CK technique mapping, and a specific recommended action. Prompted as a senior SOC analyst reviewing a homelab &mdash; "avoid over-alarming on routine system noise."</p>
-      </div>
-
-      <div class="stage-detail reveal">
-        <h3>Discord Notification</h3>
-        <p>Color-coded embeds by severity:</p>
-        <div style="margin: 0.75rem 0;">
-          <span class="color-swatch"><span class="dot" style="background: var(--red);"></span> Critical</span>
-          <span class="color-swatch"><span class="dot" style="background: var(--orange);"></span> High</span>
-          <span class="color-swatch"><span class="dot" style="background: var(--yellow);"></span> Medium</span>
-          <span class="color-swatch"><span class="dot" style="background: var(--green);"></span> Low</span>
-        </div>
-        <p>Each embed includes the agent name, rule details, AI summary, risk reasoning, IP context with abuse scores, MITRE mapping, and recommended action.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SECTION 04: DESIGN DECISIONS -->
-<section class="section" id="decisions">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">// 04</div>
-      <h2 class="section-title">Why It Works This Way</h2>
-    </div>
-    <div class="decision-grid">
-      <div class="decision-card reveal">
-        <h3>Haiku over Sonnet</h3>
-        <p>Alert volume can spike to thousands per day. Haiku is fast and cost-efficient for a continuous triage loop. Structured prompts ensure consistent output regardless of model tier.</p>
-      </div>
-      <div class="decision-card reveal">
-        <h3>Poll alerts.json, not OpenSearch</h3>
-        <p>Reading directly from the Wazuh manager container is simpler and more reliable than authenticating to OpenSearch. Same data, fewer dependencies.</p>
-      </div>
-      <div class="decision-card reveal">
-        <h3>Suricata native, Wazuh in Docker</h3>
-        <p>Suricata needs raw packet access to the NIC via AF_PACKET. Docker would add an abstraction layer on the critical packet capture path. Wazuh's Java/OpenSearch/Node.js stack benefits from container isolation and easy version upgrades.</p>
-      </div>
-      <div class="decision-card reveal">
-        <h3>Enrich first, reason second</h3>
-        <p>Raw alerts are noise. GeoIP + reputation + temporal context transforms a "port scan detected" into "port scan from a Russian hosting provider with 87% abuse score, preceded by 3 SSH failures in the last 5 minutes." The AI layer reasons over signal, not noise.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SECTION 05: WHAT'S NEXT -->
-<section class="section" id="next">
-  <div class="container">
-    <div class="reveal">
-      <div class="section-label">// 05</div>
-      <h2 class="section-title">Where It's Going</h2>
-    </div>
-    <p class="next-text reveal">Phase 4 (Discord notifications) is working. Phase 5 is auto-response &mdash; iptables blocking on Critical severity with confidence threshold guardrails. The philosophy: automate enrichment and analysis completely, but keep a human in the loop for response until confidence is proven. Ship fast, iterate, add complexity only after the system works.</p>
-  </div>
-</section>
-
-</main>
-
-<!-- FOOTER -->
+<!-- FOOTER (hidden in content browser mode) -->
 <footer>
   <div class="footer-links">
     <a href="https://github.com/K3m1st" target="_blank" rel="noopener">GitHub</a>
@@ -848,7 +1052,7 @@ footer .copy {
 </footer>
 
 <script>
-// ── SCROLL REVEAL ────────────────────────────────
+// ── SCROLL REVEAL (kept for hero elements) ──────
 (function() {
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
@@ -863,6 +1067,109 @@ footer .copy {
 
   document.querySelectorAll('.reveal').forEach(function(el) {
     observer.observe(el);
+  });
+})();
+
+// ── TAB INTERFACE ───────────────────────────────
+(function() {
+  var hero = document.getElementById('hero');
+  var browser = document.getElementById('contentBrowser');
+  var heroBtn = document.getElementById('heroEnterBtn');
+  var pillNav = document.getElementById('pillNav');
+  var tabs = pillNav.querySelectorAll('.pill-tab');
+  var panels = document.querySelectorAll('.panel');
+  var arrowNav = document.getElementById('arrowNav');
+  var prevBtn = document.getElementById('arrowPrev');
+  var nextBtn = document.getElementById('arrowNext');
+  var arrowLabel = document.getElementById('arrowLabel');
+
+  var tabOrder = ['stack', 'problem', 'triage', 'decisions', 'next'];
+  var currentIndex = 0;
+
+  function showBrowser() {
+    hero.classList.add('hidden');
+    browser.classList.add('active');
+    arrowNav.classList.add('active');
+    switchTo(currentIndex);
+  }
+
+  function showHero() {
+    hero.classList.remove('hidden');
+    browser.classList.remove('active');
+    arrowNav.classList.remove('active');
+  }
+
+  function switchTo(index) {
+    if (index < 0 || index >= tabOrder.length) return;
+    currentIndex = index;
+    var target = tabOrder[index];
+
+    // Update tabs
+    tabs.forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-tab') === target);
+    });
+
+    // Update panels
+    panels.forEach(function(p) {
+      var isTarget = p.getAttribute('data-tab') === target;
+      p.classList.toggle('active', isTarget);
+      if (isTarget) {
+        p.scrollTop = 0;
+      }
+    });
+
+    // Update arrow label
+    arrowLabel.textContent = (currentIndex + 1) + ' / ' + tabOrder.length;
+
+    // Scroll active pill tab into view on mobile
+    var activeTab = pillNav.querySelector('.pill-tab.active');
+    if (activeTab) {
+      activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  // Hero enter button
+  heroBtn.addEventListener('click', showBrowser);
+
+  // Pill tab clicks
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var target = this.getAttribute('data-tab');
+      var idx = tabOrder.indexOf(target);
+      if (idx !== -1) switchTo(idx);
+    });
+  });
+
+  // Arrow buttons
+  prevBtn.addEventListener('click', function() {
+    switchTo(currentIndex - 1);
+  });
+  nextBtn.addEventListener('click', function() {
+    switchTo(currentIndex + 1);
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    // Only handle if content browser is active
+    if (!browser.classList.contains('active')) {
+      // Enter or Space on hero to open browser
+      if (e.key === 'Enter' || e.key === ' ') {
+        showBrowser();
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowLeft') {
+      switchTo(currentIndex - 1);
+      e.preventDefault();
+    } else if (e.key === 'ArrowRight') {
+      switchTo(currentIndex + 1);
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      showHero();
+      e.preventDefault();
+    }
   });
 })();
 </script>

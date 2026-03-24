@@ -33,10 +33,11 @@
   --green-glow: rgba(74, 222, 128, 0.3);
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+  --pill-nav-height: 56px;
+  --border-light: #2a2740;
 }
 
 html {
-  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--accent-dim) var(--bg-secondary);
 }
@@ -46,8 +47,9 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.7;
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  height: 100vh;
 }
 
 a {
@@ -151,15 +153,26 @@ nav.scrolled {
    HERO
    ============================================ */
 .hero {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 6rem 2rem 4rem;
   text-align: center;
+  background: var(--bg-primary);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.hero.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .hero h1 {
@@ -180,6 +193,47 @@ nav.scrolled {
   color: var(--text-secondary);
   max-width: 600px;
   margin-bottom: 3rem;
+}
+
+.hero-enter-btn {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: pulse-down 2s ease-in-out infinite;
+}
+.hero-enter-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-dim);
+  background: rgba(168, 85, 247, 0.08);
+}
+.hero-enter-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes pulse-down {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(6px); }
 }
 
 /* Envelope Animation */
@@ -289,25 +343,226 @@ nav.scrolled {
 }
 
 /* ============================================
-   SECTIONS (SHARED)
+   CONTENT BROWSER
    ============================================ */
-section {
+.content-browser {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-browser.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Content area */
+.content-area {
+  flex: 1;
+  padding-top: 70px; /* nav height */
+  padding-bottom: 80px; /* pill nav height */
+  overflow: hidden;
   position: relative;
-  z-index: 1;
+}
+
+/* Panels */
+.panel {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 80px;
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  display: flex;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-dim) var(--bg-secondary);
+}
+
+.panel::-webkit-scrollbar {
+  width: 6px;
+}
+.panel::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+.panel::-webkit-scrollbar-thumb {
+  background: var(--accent-dim);
+  border-radius: 3px;
+}
+
+.panel.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.panel-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 6rem 2rem;
+  padding: 3rem 2rem;
+  width: 100%;
 }
 
-.section-label {
+/* Center content vertically for short panels */
+.panel.center-content {
+  align-items: center;
+}
+.panel.center-content .panel-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+}
+
+/* Arrow navigation */
+.arrow-nav {
+  position: fixed;
+  bottom: calc(var(--pill-nav-height) + 1.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.arrow-nav.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(14, 12, 21, 0.7);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.arrow-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-dim);
+  background: rgba(168, 85, 247, 0.1);
+}
+.arrow-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.arrow-nav-label {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  min-width: 3rem;
+  text-align: center;
 }
 
+/* ============================================
+   FLOATING PILL NAV
+   ============================================ */
+.pill-nav {
+  position: fixed;
+  bottom: 1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  background: rgba(14, 12, 21, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  max-width: calc(100vw - 2rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pill-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.pill-nav.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pill-tab {
+  padding: 0.45rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+.pill-tab:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pill-tab.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* ============================================
+   SECTIONS (SHARED)
+   ============================================ */
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 650px;
+  margin-bottom: 3rem;
+}
+
+/* ============================================
+   TL;DR
+   ============================================ */
 .tldr {
   max-width: 760px;
   margin: 0 auto;
@@ -332,33 +587,6 @@ section {
   line-height: 1.8;
 }
 .tldr strong { color: var(--text-primary); }
-
-.section-title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 700;
-  margin-bottom: 1rem;
-  letter-spacing: -0.01em;
-}
-
-.section-desc {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  max-width: 650px;
-  margin-bottom: 3rem;
-}
-
-/* ============================================
-   REVEAL ANIMATION
-   ============================================ */
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* ============================================
    TIMELINE / STORY
@@ -817,31 +1045,18 @@ section {
 }
 
 /* ============================================
-   FOOTER
+   HONEST TAKE SECTION
    ============================================ */
-footer {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 3rem 2rem;
-  border-top: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: 0.85rem;
+.honest-content {
+  max-width: 780px;
 }
-footer .footer-socials {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
+
+.honest-content .section-desc {
+  max-width: 100%;
 }
-footer .footer-socials a {
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  transition: color 0.2s;
-}
-footer .footer-socials a:hover {
-  color: var(--accent);
+
+.honest-content .section-desc + .section-desc {
+  margin-top: 1rem;
 }
 
 /* ============================================
@@ -895,6 +1110,19 @@ footer .footer-socials a:hover {
   .insight-box {
     padding: 1.5rem;
   }
+
+  .pill-nav {
+    bottom: 0.8rem;
+  }
+
+  .pill-tab {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  .panel-inner {
+    padding: 2rem 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -932,8 +1160,8 @@ footer .footer-socials a:hover {
 </nav>
 
 <!-- Hero -->
-<div class="hero">
-  <div class="envelope-scanner reveal">
+<div class="hero" id="hero">
+  <div class="envelope-scanner">
     <div class="envelope">
       <div class="envelope-body">
         <div class="envelope-flap"></div>
@@ -948,247 +1176,263 @@ footer .footer-socials a:hover {
     <div class="scan-result result-safe" style="animation: showResult 5s ease-in-out infinite;">&#10003;</div>
     <div class="scan-result result-phish" style="animation: showResult 5s ease-in-out infinite 2.5s;">&#10007;</div>
   </div>
-  <h1 class="reveal" style="margin-top: 2rem;">MailMind</h1>
-  <p class="hero-subtitle reveal">What happens when you take a Berkeley homework assignment and point it at your own inbox</p>
+  <h1 style="margin-top: 2rem;">MailMind</h1>
+  <p class="hero-subtitle">What happens when you take a Berkeley homework assignment and point it at your own inbox</p>
+  <button class="hero-enter-btn" id="heroCta">
+    Learn more
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+  </button>
 </div>
 
-<!-- TL;DR -->
-<section style="max-width: 900px; margin: 0 auto; padding: 2rem 2rem 0;">
-  <div class="tldr reveal">
-    <div class="tldr-label">// TL;DR</div>
-    <p>MailMind is a <strong>proof of concept</strong>, not a product. It started as a Berkeley ML homework assignment and became a phishing classifier trained on my own Gmail inbox &mdash; a darkweb-exposed address that's been receiving the same campaigns for years. <strong>V1</strong> used Naive Bayes, hand-labeled 585 emails, and ran on an HP Mini PC auto-quarantining phishing. <strong>V2</strong> rebuilt with a 96K-parameter character-level CNN, expanded to 840 emails, and hit 0.994 ROC-AUC. The biggest lesson: <strong>data quality beats model architecture</strong>. Fixing 20 mislabeled emails improved performance more than adding 100 new ones. Collecting real phishing from Gmail's spam folder mattered more than switching from NB to CNN.</p>
-  </div>
-</section>
+<!-- Content Browser -->
+<div class="content-browser" id="contentBrowser">
 
-<!-- Section 1: The Story -->
-<section id="story">
-  <div class="reveal">
-    <div class="section-label">01 // The Story</div>
-    <h2 class="section-title">From Homework to Homelab</h2>
-    <p class="section-desc">My Gmail address has been on the darkweb for years. Same phishing campaigns, same credential theft attempts, same CarShield and Fidelity Life scams cycling through on repeat. When a Berkeley ML homework asked me to build a Naive Bayes text classifier, I thought: why train on a textbook dataset when I have a real one sitting in my inbox?</p>
-  </div>
-  <div class="story-timeline">
-    <div class="phase-card reveal">
-      <div class="phase-badge">1</div>
-      <div class="phase-meta">Berkeley ML Coursework</div>
-      <h3>The Spark</h3>
-      <p>Implemented a Naive Bayes classifier on the 20 Newsgroups dataset for Berkeley MICS. Text vectorization, conditional probability, evaluation metrics. Standard homework &mdash; but the idea wouldn't leave my head: what if I pointed this at real email?</p>
-    </div>
-    <div class="phase-card reveal">
-      <div class="phase-badge">2</div>
-      <div class="phase-meta">MailMind V1 &mdash; The 3-Day Sprint</div>
-      <h3>Naive Bayes on Real Gmail</h3>
-      <p>Built the entire pipeline in 72 hours &mdash; IMAP ingestion, preprocessing, classifier, Flask dashboard, auto-quarantine poller, Docker deployment. Ported the homework code directly into production. First attempt used 17,536 synthetic emails from HuggingFace. Looked amazing in testing: 0.97 F1. <strong>Deployed against real Gmail: 59% of legitimate emails flagged as phishing.</strong> Synthetic data poisoned the model. Pivoted to pure Gmail data &mdash; 64 hand-labeled emails outperformed 17,536 synthetic ones. Scaled to 585 labels with active learning.</p>
-    </div>
-    <div class="phase-card reveal">
-      <div class="phase-badge">3</div>
-      <div class="phase-meta">MailMind V2 &mdash; Going Deeper</div>
-      <h3>Character-Level CNN</h3>
-      <p>NB plateau'd at 81% phishing recall. Rebuilt with a 96K-parameter character-level CNN with multi-scale convolutions. Expanded dataset to 840 emails by auditing Gmail's spam folder &mdash; pulled 263 emails, manually reviewed each one, removed 8 false positives, kept 255 genuine phishing. No synthetic data. Real data, carefully labeled.</p>
-    </div>
-  </div>
-</section>
-
-<!-- Section 2: Model Comparison -->
-<section id="comparison">
-  <div class="reveal">
-    <div class="section-label">02 // Model Comparison</div>
-    <h2 class="section-title">CNN vs. Naive Bayes</h2>
-    <p class="section-desc">Same stratified 5-fold cross-validation splits, augmentation applied inside folds to prevent data leakage. Toggle between datasets to see how data expansion (not model architecture) drove the biggest gains.</p>
+  <!-- Arrow Navigation -->
+  <div class="arrow-nav" id="arrowNav">
+    <button class="arrow-btn" id="prevArrow" aria-label="Previous section">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span class="arrow-nav-label" id="arrowLabel">1 / 8</span>
+    <button class="arrow-btn" id="nextArrow" aria-label="Next section">
+      <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
   </div>
 
-  <div class="reveal">
-    <div class="chart-tabs">
-      <button class="chart-tab active" data-dataset="original" onclick="switchDataset('original')">Original (585)</button>
-      <button class="chart-tab" data-dataset="expanded" onclick="switchDataset('expanded')">Expanded (840)</button>
-    </div>
-
-    <div class="chart-container" id="chartContainer">
-      <div class="chart-legend">
-        <div class="legend-item"><div class="legend-swatch nb"></div>Naive Bayes</div>
-        <div class="legend-item"><div class="legend-swatch cnn"></div>CNN</div>
-      </div>
-      <div id="chartBars"></div>
-    </div>
-  </div>
-</section>
-
-<!-- Section 3: Architecture -->
-<section id="architecture">
-  <div class="reveal">
-    <div class="section-label">03 // Architecture</div>
-    <h2 class="section-title">Character-Level CNN</h2>
-    <p class="section-desc">Multi-scale convolutions capture patterns at different granularities, from individual character anomalies to word-level deception cues.</p>
-  </div>
-
-  <div class="arch-flow reveal">
-    <div class="arch-node">
-      <div class="arch-node-title">Input</div>
-      <div class="arch-node-desc">Raw Email Text</div>
-      <div class="arch-node-sub">char-level tokens</div>
-    </div>
-    <div class="arch-arrow"></div>
-    <div class="arch-node">
-      <div class="arch-node-title">Embed</div>
-      <div class="arch-node-desc">Character Embedding</div>
-      <div class="arch-node-sub">learned vectors</div>
-    </div>
-    <div class="arch-arrow"></div>
-    <div class="arch-parallel">
-      <div class="arch-parallel-label">Parallel Conv1D</div>
-      <div class="arch-node">
-        <div class="arch-node-desc">Kernel 3</div>
-        <div class="arch-node-sub">local patterns</div>
-      </div>
-      <div class="arch-node">
-        <div class="arch-node-desc">Kernel 5</div>
-        <div class="arch-node-sub">word fragments</div>
-      </div>
-      <div class="arch-node">
-        <div class="arch-node-desc">Kernel 7</div>
-        <div class="arch-node-sub">word-level</div>
-      </div>
-    </div>
-    <div class="arch-arrow"></div>
-    <div class="arch-node">
-      <div class="arch-node-title">Pool</div>
-      <div class="arch-node-desc">Global Max Pool</div>
-      <div class="arch-node-sub">concatenate</div>
-    </div>
-    <div class="arch-arrow"></div>
-    <div class="arch-node" style="border-color: var(--green-dim);">
-      <div class="arch-node-title" style="color: var(--green);">Output</div>
-      <div class="arch-node-desc">Dense Classifier</div>
-      <div class="arch-node-sub">phishing / legit</div>
-    </div>
-  </div>
-</section>
-
-<!-- Section 4: Key Stats -->
-<section id="stats">
-  <div class="reveal">
-    <div class="section-label">04 // Key Stats</div>
-    <h2 class="section-title">By the Numbers</h2>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card reveal">
-      <div class="stat-value">96K</div>
-      <div class="stat-label">Parameters</div>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-value">840</div>
-      <div class="stat-label">Emails Trained On</div>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-value">0.994</div>
-      <div class="stat-label">ROC-AUC</div>
-    </div>
-    <div class="stat-card reveal">
-      <div class="stat-value">6</div>
-      <div class="stat-label">Augmentation Strategies</div>
-    </div>
-  </div>
-</section>
-
-<!-- Section 5: Data Augmentation -->
-<section id="augmentation">
-  <div class="reveal">
-    <div class="section-label">05 // Data Augmentation</div>
-    <h2 class="section-title">6 Strategies for Robustness</h2>
-    <p class="section-desc">Each augmentation simulates real-world obfuscation techniques that attackers use to bypass naive text classifiers.</p>
-  </div>
-  <div class="aug-grid">
-    <div class="aug-card reveal">
-      <div class="aug-num">01</div>
-      <div class="aug-name">Character Swap</div>
-      <div class="aug-example">
-        <span class="aug-before">security</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">secruity</span>
-      </div>
-    </div>
-    <div class="aug-card reveal">
-      <div class="aug-num">02</div>
-      <div class="aug-name">Character Insertion</div>
-      <div class="aug-example">
-        <span class="aug-before">account</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">accoount</span>
-      </div>
-    </div>
-    <div class="aug-card reveal">
-      <div class="aug-num">03</div>
-      <div class="aug-name">Character Deletion</div>
-      <div class="aug-example">
-        <span class="aug-before">password</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">pasword</span>
-      </div>
-    </div>
-    <div class="aug-card reveal">
-      <div class="aug-num">04</div>
-      <div class="aug-name">Homoglyph Substitution</div>
-      <div class="aug-example">
-        <span class="aug-before">PayPal</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">PayPaI</span>
-      </div>
-    </div>
-    <div class="aug-card reveal">
-      <div class="aug-num">05</div>
-      <div class="aug-name">Whitespace Perturbation</div>
-      <div class="aug-example">
-        <span class="aug-before">click here</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">click&nbsp; here</span>
-      </div>
-    </div>
-    <div class="aug-card reveal">
-      <div class="aug-num">06</div>
-      <div class="aug-name">Case Flipping</div>
-      <div class="aug-example">
-        <span class="aug-before">URGENT</span>
-        <span class="aug-arrow-txt">&rarr;</span>
-        <span class="aug-after">uRGENT</span>
+  <!-- Panel: Overview -->
+  <div class="panel center-content" id="panel-overview" data-tab="overview">
+    <div class="panel-inner">
+      <div class="tldr">
+        <div class="tldr-label">TL;DR</div>
+        <p>MailMind is a <strong>proof of concept</strong>, not a product. It started as a Berkeley ML homework assignment and became a phishing classifier trained on my own Gmail inbox &mdash; a darkweb-exposed address that's been receiving the same campaigns for years. <strong>V1</strong> used Naive Bayes, hand-labeled 585 emails, and ran on an HP Mini PC auto-quarantining phishing. <strong>V2</strong> rebuilt with a 96K-parameter character-level CNN, expanded to 840 emails, and hit 0.994 ROC-AUC. The biggest lesson: <strong>data quality beats model architecture</strong>. Fixing 20 mislabeled emails improved performance more than adding 100 new ones. Collecting real phishing from Gmail's spam folder mattered more than switching from NB to CNN.</p>
       </div>
     </div>
   </div>
-</section>
 
-<!-- Section 6: Key Insight -->
-<section id="insight">
-  <div class="insight-box reveal">
-    <div class="insight-icon">// Key Insight</div>
-    <p>Data expansion (6.2:1 &rarr; 1.5:1 class ratio) had a <em>larger impact on model performance</em> than switching from Naive Bayes to CNN. The model architecture matters less than the data it trains on.</p>
+  <!-- Panel: Story -->
+  <div class="panel" id="panel-story" data-tab="story">
+    <div class="panel-inner">
+      <h2 class="section-title">From Homework to Homelab</h2>
+      <p class="section-desc">My Gmail address has been on the darkweb for years. Same phishing campaigns, same credential theft attempts, same CarShield and Fidelity Life scams cycling through on repeat. When a Berkeley ML homework asked me to build a Naive Bayes text classifier, I thought: why train on a textbook dataset when I have a real one sitting in my inbox?</p>
+      <div class="story-timeline">
+        <div class="phase-card">
+          <div class="phase-badge">1</div>
+          <div class="phase-meta">Berkeley ML Coursework</div>
+          <h3>The Spark</h3>
+          <p>Implemented a Naive Bayes classifier on the 20 Newsgroups dataset for Berkeley MICS. Text vectorization, conditional probability, evaluation metrics. Standard homework &mdash; but the idea wouldn't leave my head: what if I pointed this at real email?</p>
+        </div>
+        <div class="phase-card">
+          <div class="phase-badge">2</div>
+          <div class="phase-meta">MailMind V1 &mdash; The 3-Day Sprint</div>
+          <h3>Naive Bayes on Real Gmail</h3>
+          <p>Built the entire pipeline in 72 hours &mdash; IMAP ingestion, preprocessing, classifier, Flask dashboard, auto-quarantine poller, Docker deployment. Ported the homework code directly into production. First attempt used 17,536 synthetic emails from HuggingFace. Looked amazing in testing: 0.97 F1. <strong>Deployed against real Gmail: 59% of legitimate emails flagged as phishing.</strong> Synthetic data poisoned the model. Pivoted to pure Gmail data &mdash; 64 hand-labeled emails outperformed 17,536 synthetic ones. Scaled to 585 labels with active learning.</p>
+        </div>
+        <div class="phase-card">
+          <div class="phase-badge">3</div>
+          <div class="phase-meta">MailMind V2 &mdash; Going Deeper</div>
+          <h3>Character-Level CNN</h3>
+          <p>NB plateau'd at 81% phishing recall. Rebuilt with a 96K-parameter character-level CNN with multi-scale convolutions. Expanded dataset to 840 emails by auditing Gmail's spam folder &mdash; pulled 263 emails, manually reviewed each one, removed 8 false positives, kept 255 genuine phishing. No synthetic data. Real data, carefully labeled.</p>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
 
-<!-- Section 7: Honest Limitations -->
-<section id="honest" style="max-width: 780px; margin: 0 auto; padding: 4rem 2rem;">
-  <div class="reveal">
-    <div class="section-label">07 // What This Actually Is</div>
-    <h2 class="section-title">A Proof of Concept, Not a Product</h2>
-    <p class="section-desc" style="max-width: 100%;">
-      Let me be honest about what MailMind is and isn't. My inbox is predictable &mdash; the same phishing campaigns have been hitting it for years. CarShield, Fidelity Life, Endurance Warranty, credential theft templates that barely change between runs. Many of the Gmail-collected phishing emails come from the same spam campaigns, which means near-duplicate emails likely appear across train and test folds. The 0.994 ROC-AUC should be interpreted with that caveat.
-    </p>
-    <p class="section-desc" style="max-width: 100%; margin-top: 1rem;">
-      At 250 hand-labeled emails, model performance <em>dropped</em>. Not because the model got worse &mdash; because my labels got worse. Twenty emails were mislabeled: aggressive marketing (PlayStation deals, gaming promotions) marked as phishing. Same senders had opposite labels. <strong>Fixing 20 labels improved F1 more than adding 100 new ones.</strong> That's the real lesson of this project. Not the CNN architecture. Not the augmentation pipeline. Understanding your data matters more than tuning hyperparameters.
-    </p>
-    <p class="section-desc" style="max-width: 100%; margin-top: 1rem;">
-      V2 has never been deployed as a live filter. V1 ran on an HP Mini PC auto-quarantining emails &mdash; V2 exists as a research artifact. The boundary between "phishing" and "aggressive spam" is subjective. 840 emails is small by ML standards. Performance on novel phishing tactics is unknown. This project taught me more about the practice of machine learning than any course &mdash; but it's a proof of concept built from homework, not a production security tool.
-    </p>
+  <!-- Panel: Comparison -->
+  <div class="panel center-content" id="panel-comparison" data-tab="comparison">
+    <div class="panel-inner">
+      <h2 class="section-title">CNN vs. Naive Bayes</h2>
+      <p class="section-desc">Same stratified 5-fold cross-validation splits, augmentation applied inside folds to prevent data leakage. Toggle between datasets to see how data expansion (not model architecture) drove the biggest gains.</p>
+      <div class="chart-tabs">
+        <button class="chart-tab active" data-dataset="original" onclick="switchDataset('original')">Original (585)</button>
+        <button class="chart-tab" data-dataset="expanded" onclick="switchDataset('expanded')">Expanded (840)</button>
+      </div>
+      <div class="chart-container" id="chartContainer">
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-swatch nb"></div>Naive Bayes</div>
+          <div class="legend-item"><div class="legend-swatch cnn"></div>CNN</div>
+        </div>
+        <div id="chartBars"></div>
+      </div>
+    </div>
   </div>
-</section>
 
-<!-- Footer -->
-<footer>
-  <div class="footer-socials">
-    <a href="https://github.com/K3m1st" target="_blank" rel="noopener">GitHub</a>
-    <a href="index.html">Portfolio</a>
-    <a href="blog.html">Writeups</a>
+  <!-- Panel: Architecture -->
+  <div class="panel center-content" id="panel-architecture" data-tab="architecture">
+    <div class="panel-inner">
+      <h2 class="section-title">Character-Level CNN</h2>
+      <p class="section-desc">Multi-scale convolutions capture patterns at different granularities, from individual character anomalies to word-level deception cues.</p>
+      <div class="arch-flow">
+        <div class="arch-node">
+          <div class="arch-node-title">Input</div>
+          <div class="arch-node-desc">Raw Email Text</div>
+          <div class="arch-node-sub">char-level tokens</div>
+        </div>
+        <div class="arch-arrow"></div>
+        <div class="arch-node">
+          <div class="arch-node-title">Embed</div>
+          <div class="arch-node-desc">Character Embedding</div>
+          <div class="arch-node-sub">learned vectors</div>
+        </div>
+        <div class="arch-arrow"></div>
+        <div class="arch-parallel">
+          <div class="arch-parallel-label">Parallel Conv1D</div>
+          <div class="arch-node">
+            <div class="arch-node-desc">Kernel 3</div>
+            <div class="arch-node-sub">local patterns</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-desc">Kernel 5</div>
+            <div class="arch-node-sub">word fragments</div>
+          </div>
+          <div class="arch-node">
+            <div class="arch-node-desc">Kernel 7</div>
+            <div class="arch-node-sub">word-level</div>
+          </div>
+        </div>
+        <div class="arch-arrow"></div>
+        <div class="arch-node">
+          <div class="arch-node-title">Pool</div>
+          <div class="arch-node-desc">Global Max Pool</div>
+          <div class="arch-node-sub">concatenate</div>
+        </div>
+        <div class="arch-arrow"></div>
+        <div class="arch-node" style="border-color: var(--green-dim);">
+          <div class="arch-node-title" style="color: var(--green);">Output</div>
+          <div class="arch-node-desc">Dense Classifier</div>
+          <div class="arch-node-sub">phishing / legit</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <p>&copy; 2026 m1st</p>
-</footer>
+
+  <!-- Panel: Stats -->
+  <div class="panel center-content" id="panel-stats" data-tab="stats">
+    <div class="panel-inner">
+      <h2 class="section-title">By the Numbers</h2>
+      <div class="stats-grid" style="margin-top: 2rem;">
+        <div class="stat-card">
+          <div class="stat-value">96K</div>
+          <div class="stat-label">Parameters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">840</div>
+          <div class="stat-label">Emails Trained On</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">0.994</div>
+          <div class="stat-label">ROC-AUC</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">6</div>
+          <div class="stat-label">Augmentation Strategies</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Augmentation -->
+  <div class="panel" id="panel-augmentation" data-tab="augmentation">
+    <div class="panel-inner">
+      <h2 class="section-title">6 Strategies for Robustness</h2>
+      <p class="section-desc">Each augmentation simulates real-world obfuscation techniques that attackers use to bypass naive text classifiers.</p>
+      <div class="aug-grid">
+        <div class="aug-card">
+          <div class="aug-num">01</div>
+          <div class="aug-name">Character Swap</div>
+          <div class="aug-example">
+            <span class="aug-before">security</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">secruity</span>
+          </div>
+        </div>
+        <div class="aug-card">
+          <div class="aug-num">02</div>
+          <div class="aug-name">Character Insertion</div>
+          <div class="aug-example">
+            <span class="aug-before">account</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">accoount</span>
+          </div>
+        </div>
+        <div class="aug-card">
+          <div class="aug-num">03</div>
+          <div class="aug-name">Character Deletion</div>
+          <div class="aug-example">
+            <span class="aug-before">password</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">pasword</span>
+          </div>
+        </div>
+        <div class="aug-card">
+          <div class="aug-num">04</div>
+          <div class="aug-name">Homoglyph Substitution</div>
+          <div class="aug-example">
+            <span class="aug-before">PayPal</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">PayPaI</span>
+          </div>
+        </div>
+        <div class="aug-card">
+          <div class="aug-num">05</div>
+          <div class="aug-name">Whitespace Perturbation</div>
+          <div class="aug-example">
+            <span class="aug-before">click here</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">click&nbsp; here</span>
+          </div>
+        </div>
+        <div class="aug-card">
+          <div class="aug-num">06</div>
+          <div class="aug-name">Case Flipping</div>
+          <div class="aug-example">
+            <span class="aug-before">URGENT</span>
+            <span class="aug-arrow-txt">&rarr;</span>
+            <span class="aug-after">uRGENT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Insight -->
+  <div class="panel center-content" id="panel-insight" data-tab="insight">
+    <div class="panel-inner">
+      <div class="insight-box">
+        <div class="insight-icon">Key Insight</div>
+        <p>Data expansion (6.2:1 &rarr; 1.5:1 class ratio) had a <em>larger impact on model performance</em> than switching from Naive Bayes to CNN. The model architecture matters less than the data it trains on.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Honest Take -->
+  <div class="panel" id="panel-honest" data-tab="honest">
+    <div class="panel-inner">
+      <div class="honest-content">
+        <h2 class="section-title">A Proof of Concept, Not a Product</h2>
+        <p class="section-desc">
+          Let me be honest about what MailMind is and isn't. My inbox is predictable &mdash; the same phishing campaigns have been hitting it for years. CarShield, Fidelity Life, Endurance Warranty, credential theft templates that barely change between runs. Many of the Gmail-collected phishing emails come from the same spam campaigns, which means near-duplicate emails likely appear across train and test folds. The 0.994 ROC-AUC should be interpreted with that caveat.
+        </p>
+        <p class="section-desc">
+          At 250 hand-labeled emails, model performance <em>dropped</em>. Not because the model got worse &mdash; because my labels got worse. Twenty emails were mislabeled: aggressive marketing (PlayStation deals, gaming promotions) marked as phishing. Same senders had opposite labels. <strong>Fixing 20 labels improved F1 more than adding 100 new ones.</strong> That's the real lesson of this project. Not the CNN architecture. Not the augmentation pipeline. Understanding your data matters more than tuning hyperparameters.
+        </p>
+        <p class="section-desc">
+          V2 has never been deployed as a live filter. V1 ran on an HP Mini PC auto-quarantining emails &mdash; V2 exists as a research artifact. The boundary between "phishing" and "aggressive spam" is subjective. 840 emails is small by ML standards. Performance on novel phishing tactics is unknown. This project taught me more about the practice of machine learning than any course &mdash; but it's a proof of concept built from homework, not a production security tool.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Pill Nav -->
+  <div class="pill-nav" id="pillNav">
+    <button class="pill-tab active" data-tab="overview">Overview</button>
+    <button class="pill-tab" data-tab="story">Story</button>
+    <button class="pill-tab" data-tab="comparison">Comparison</button>
+    <button class="pill-tab" data-tab="architecture">Architecture</button>
+    <button class="pill-tab" data-tab="stats">Stats</button>
+    <button class="pill-tab" data-tab="augmentation">Augmentation</button>
+    <button class="pill-tab" data-tab="insight">Insight</button>
+    <button class="pill-tab" data-tab="honest">Honest Take</button>
+  </div>
+</div>
 
 <!-- ============================================
      JAVASCRIPT
@@ -1280,45 +1524,132 @@ function animateBars() {
 // Initial render
 renderChart('original');
 
-// ---- Scroll Reveal ----
+// ---- Tab Navigation System ----
 (function() {
-  var reveals = document.querySelectorAll('.reveal');
-  var chartContainer = document.getElementById('chartContainer');
+  var tabOrder = ['overview', 'story', 'comparison', 'architecture', 'stats', 'augmentation', 'insight', 'honest'];
+  var currentTab = 'overview';
+  var heroEl = document.getElementById('hero');
+  var browserEl = document.getElementById('contentBrowser');
+  var pillNav = document.getElementById('pillNav');
+  var arrowNav = document.getElementById('arrowNav');
+  var prevArrow = document.getElementById('prevArrow');
+  var nextArrow = document.getElementById('nextArrow');
+  var arrowLabel = document.getElementById('arrowLabel');
+  var totalTabs = tabOrder.length;
+  var heroCta = document.getElementById('heroCta');
+  var pillTabs = document.querySelectorAll('.pill-tab');
+  var panels = document.querySelectorAll('.panel');
+  var heroActive = true;
+  var chartAnimatedOnce = false;
 
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-
-        // Animate bars when chart comes into view
-        if (entry.target.contains(chartContainer) || entry.target === chartContainer) {
-          setTimeout(animateBars, 300);
-        }
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-  for (var i = 0; i < reveals.length; i++) {
-    observer.observe(reveals[i]);
+  function showBrowser() {
+    heroActive = false;
+    heroEl.classList.add('hidden');
+    browserEl.classList.add('active');
+    pillNav.classList.add('active');
+    arrowNav.classList.add('active');
+    switchTab('overview');
   }
 
-  // Also observe chart container directly for bar animation
-  var chartObserver = new IntersectionObserver(function(entries) {
-    if (entries[0].isIntersecting) {
+  function showHero() {
+    heroActive = true;
+    heroEl.classList.remove('hidden');
+    browserEl.classList.remove('active');
+    pillNav.classList.remove('active');
+    arrowNav.classList.remove('active');
+    // Deactivate all panels
+    for (var i = 0; i < panels.length; i++) {
+      panels[i].classList.remove('active');
+    }
+  }
+
+  function switchTab(tabName) {
+    currentTab = tabName;
+
+    // Update pill tabs
+    for (var i = 0; i < pillTabs.length; i++) {
+      pillTabs[i].classList.toggle('active', pillTabs[i].getAttribute('data-tab') === tabName);
+    }
+
+    // Update panels
+    for (var j = 0; j < panels.length; j++) {
+      var isTarget = panels[j].getAttribute('data-tab') === tabName;
+      if (isTarget) {
+        panels[j].classList.add('active');
+        // Reset scroll position
+        panels[j].scrollTop = 0;
+      } else {
+        panels[j].classList.remove('active');
+      }
+    }
+
+    // Trigger chart animation when comparison tab is first shown
+    if (tabName === 'comparison' && !chartAnimatedOnce) {
+      chartAnimatedOnce = true;
       setTimeout(animateBars, 300);
     }
-  }, { threshold: 0.2 });
-  chartObserver.observe(chartContainer);
-})();
 
-// ---- Nav Scroll Effect ----
-(function() {
-  var nav = document.getElementById('navbar');
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 50) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
+    // Update arrow states and label
+    var idx = tabOrder.indexOf(tabName);
+    arrowLabel.textContent = (idx + 1) + ' / ' + totalTabs;
+
+    // Scroll the active pill tab into view
+    var activePill = pillNav.querySelector('.pill-tab.active');
+    if (activePill) {
+      activePill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  function goNext() {
+    var idx = tabOrder.indexOf(currentTab);
+    if (idx < tabOrder.length - 1) {
+      switchTab(tabOrder[idx + 1]);
+    }
+  }
+
+  function goPrev() {
+    var idx = tabOrder.indexOf(currentTab);
+    if (idx > 0) {
+      switchTab(tabOrder[idx - 1]);
+    }
+  }
+
+  // Hero CTA click
+  heroCta.addEventListener('click', showBrowser);
+
+  // Pill tab clicks
+  for (var i = 0; i < pillTabs.length; i++) {
+    pillTabs[i].addEventListener('click', function() {
+      switchTab(this.getAttribute('data-tab'));
+    });
+  }
+
+  // Arrow clicks
+  prevArrow.addEventListener('click', goPrev);
+  nextArrow.addEventListener('click', goNext);
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (heroActive) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        showBrowser();
+      }
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      showHero();
+      return;
+    }
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goNext();
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goPrev();
     }
   });
 })();
