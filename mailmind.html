@@ -308,6 +308,31 @@ section {
   margin-bottom: 0.75rem;
 }
 
+.tldr {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+}
+.tldr-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.tldr p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.tldr strong { color: var(--text-primary); }
+
 .section-title {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 700;
@@ -926,6 +951,14 @@ footer .footer-socials a:hover {
   <h1 class="reveal" style="margin-top: 2rem;">MailMind</h1>
   <p class="hero-subtitle reveal">What happens when you take a Berkeley homework assignment and point it at your own inbox</p>
 </div>
+
+<!-- TL;DR -->
+<section style="max-width: 900px; margin: 0 auto; padding: 2rem 2rem 0;">
+  <div class="tldr reveal">
+    <div class="tldr-label">// TL;DR</div>
+    <p>MailMind is a <strong>proof of concept</strong>, not a product. It started as a Berkeley ML homework assignment and became a phishing classifier trained on my own Gmail inbox &mdash; a darkweb-exposed address that's been receiving the same campaigns for years. <strong>V1</strong> used Naive Bayes, hand-labeled 585 emails, and ran on an HP Mini PC auto-quarantining phishing. <strong>V2</strong> rebuilt with a 96K-parameter character-level CNN, expanded to 840 emails, and hit 0.994 ROC-AUC. The biggest lesson: <strong>data quality beats model architecture</strong>. Fixing 20 mislabeled emails improved performance more than adding 100 new ones. Collecting real phishing from Gmail's spam folder mattered more than switching from NB to CNN.</p>
+  </div>
+</section>
 
 <!-- Section 1: The Story -->
 <section id="story">
